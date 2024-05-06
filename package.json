@@ -21,7 +21,7 @@
     "url": "https://github.com/TheFireCo/genkitx-openai.git",
     "directory": ""
   },
-  "author": "davidoort",
+  "author": "TheFireCo",
   "license": "Apache-2.0",
   "dependencies": {
     "openai": "^4.28.4",
