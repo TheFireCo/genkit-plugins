@@ -1,6 +1,6 @@
 {
-  "name": "genkitx-openai-plugin",
-  "description": "Firebase Genkit AI framework plugin for OpenAI APIs.",
+  "name": "genkitx-openai",
+  "description": "Genkit AI framework plugin for OpenAI APIs.",
   "keywords": [
     "genkit",
     "genkit-plugin",
@@ -14,28 +14,26 @@
     "genai",
     "generative-ai"
   ],
-  "version": "0.3.0",
+  "version": "0.1.0",
   "type": "commonjs",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TheFireCo/genkit-plugins.git",
+    "url": "https://github.com/Dabolus/genkit-plugins.git",
     "directory": "plugins/openai"
   },
-  "author": "TheFireCo",
+  "author": "Dabolus",
   "license": "Apache-2.0",
   "dependencies": {
-    "openai": "^4.28.4",
-    "zod": "^3.22.4"
-  },
-  "peerDependencies": {
-    "@genkit-ai/ai": "^0.5.0",
-    "@genkit-ai/core": "^0.5.0"
+    "@genkit-ai/ai": "0.5.0-rc.9",
+    "@genkit-ai/core": "0.5.0-rc.9",
+    "openai": "^4.43.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@types/node": "^20.11.16",
+    "@types/node": "^20.12.11",
     "npm-run-all": "^4.1.5",
     "tsup": "^8.0.2",
-    "tsx": "^4.7.0",
+    "tsx": "^4.9.3",
     "typescript": "^4.9.5"
   },
   "types": "./lib/index.d.ts",
@@ -50,10 +48,6 @@
   "files": [
     "lib"
   ],
-  "publishConfig": {
-    "provenance": true,
-    "access": "public"
-  },
   "scripts": {
     "check": "tsc",
     "compile": "tsup-node",
@@ -61,6 +55,5 @@
     "build": "npm-run-all build:clean check compile",
     "build:watch": "tsup-node --watch",
     "test": "node --import tsx --test ./tests/*_test.ts"
-  },
-  "gitHead": "4da11b05d2693c9f5dd0fd85b721afd1d2d8f381"
+  }
 }

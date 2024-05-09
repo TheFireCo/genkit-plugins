@@ -1,19 +1,3 @@
-/**
- * Copyright 2024 The Fire Company
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import { Message } from '@genkit-ai/ai';
 import {
   CandidateData,
@@ -41,14 +25,11 @@ import {
 import z from 'zod';
 
 const API_NAME_MAP = {
-  'gpt-4-turbo': 'gpt-4-turbo',
+  'gpt-4-turbo': 'gpt-4-turbo-preview',
   'gpt-4-vision': 'gpt-4-vision-preview',
 };
 
-type VisualDetailLevel = 'low' | 'auto' | 'high';
-
 const MODELS_SUPPORTING_OPENAI_RESPONSE_FORMAT = [
-  'gpt-4-turbo',
   'gpt-4-turbo-preview',
   'gpt-4-1106-preview',
   'gpt-3.5-turbo-0125',
@@ -64,23 +45,6 @@ export const OpenAiConfigSchema = z.object({
   seed: z.number().int().optional(),
   topLogProbs: z.number().int().min(0).max(20).optional(),
   user: z.string().optional(),
-  visualDetailLevel: z.string().optional(),
-});
-
-export const gpt4o = modelRef({
-  name: 'openai/gpt-4o',
-  info: {
-    versions: ['gpt-4o-2024-05-13'],
-    label: 'OpenAI - GPT-4o',
-    supports: {
-      multiturn: true,
-      tools: true,
-      media: true,
-      systemRole: true,
-      output: ['text', 'json'],
-    },
-  },
-  configSchema: OpenAiConfigSchema,
 });
 
 export const gpt4Turbo = modelRef({
@@ -90,14 +54,12 @@ export const gpt4Turbo = modelRef({
       'gpt-4-turbo-preview',
       'gpt-4-0125-preview',
       'gpt-4-1106-prevew',
-      'gpt-4-turbo-2024-04-09',
     ],
     label: 'OpenAI - GPT-4 Turbo',
     supports: {
       multiturn: true,
       tools: true,
-      media: true,
-      systemRole: true,
+      media: false,
       output: ['text', 'json'],
     },
   },
@@ -113,7 +75,6 @@ export const gpt4Vision = modelRef({
       multiturn: true,
       tools: false,
       media: true,
-      systemRole: true,
       output: ['text'],
     },
   },
@@ -129,7 +90,6 @@ export const gpt4 = modelRef({
       multiturn: true,
       tools: true,
       media: false,
-      systemRole: true,
       output: ['text'],
     },
   },
@@ -145,7 +105,6 @@ export const gpt35Turbo = modelRef({
       multiturn: true,
       tools: true,
       media: false,
-      systemRole: true,
       output: ['json', 'text'],
     },
   },
@@ -184,10 +143,7 @@ function toOpenAiTool(tool: ToolDefinition): ChatCompletionTool {
   };
 }
 
-export function toOpenAiTextAndMedia(
-  part: Part,
-  visualDetailLevel: VisualDetailLevel
-): ChatCompletionContentPart {
+export function toOpenAiTextAndMedia(part: Part): ChatCompletionContentPart {
   if (part.text) {
     return {
       type: 'text',
@@ -198,18 +154,16 @@ export function toOpenAiTextAndMedia(
       type: 'image_url',
       image_url: {
         url: part.media.url,
-        detail: visualDetailLevel,
       },
     };
   }
   throw Error(
-    `Unsupported genkit part fields encountered for current message role: ${part}.`
+    `Unsupported genkit part fields encountered for current message role: ${part}.`,
   );
 }
 
 export function toOpenAiMessages(
   messages: MessageData[],
-  visualDetailLevel: VisualDetailLevel = 'auto'
 ): ChatCompletionMessageParam[] {
   const openAiMsgs: ChatCompletionMessageParam[] = [];
   for (const message of messages) {
@@ -219,9 +173,7 @@ export function toOpenAiMessages(
       case 'user':
         openAiMsgs.push({
           role: role,
-          content: msg.content.map((part) =>
-            toOpenAiTextAndMedia(part, visualDetailLevel)
-          ),
+          content: msg.content.map(toOpenAiTextAndMedia),
         });
         break;
       case 'system':
@@ -232,11 +184,11 @@ export function toOpenAiMessages(
         break;
       case 'assistant':
         const toolCalls: ChatCompletionMessageToolCall[] = msg.content
-          .filter((part) => part.toolRequest)
-          .map((part) => {
+          .filter(part => part.toolRequest)
+          .map(part => {
             if (!part.toolRequest) {
               throw Error(
-                'Mapping genkit message to openai tool call content part but message.toolRequest not provided.'
+                'Mapping genkit message to openai tool call content part but message.toolRequest not provided.',
               );
             }
             return {
@@ -262,7 +214,7 @@ export function toOpenAiMessages(
         break;
       case 'tool':
         const toolResponseParts = msg.toolResponseParts();
-        toolResponseParts.map((part) => {
+        toolResponseParts.map(part => {
           openAiMsgs.push({
             role: role,
             tool_call_id: part.toolResponse.ref || '',
@@ -294,11 +246,11 @@ const finishReasonMap: Record<
 function fromOpenAiToolCall(
   toolCall:
     | ChatCompletionMessageToolCall
-    | ChatCompletionChunk.Choice.Delta.ToolCall
+    | ChatCompletionChunk.Choice.Delta.ToolCall,
 ) {
   if (!toolCall.function) {
     throw Error(
-      `Unexpected openAI chunk choice. tool_calls was provided but one or more tool_calls is missing.`
+      `Unexpected openAI chunk choice. tool_calls was provided but one or more tool_calls is missing.`,
     );
   }
   const f = toolCall.function;
@@ -313,7 +265,7 @@ function fromOpenAiToolCall(
 
 function fromOpenAiChoice(
   choice: ChatCompletion['choices'][0],
-  jsonMode = false
+  jsonMode = false,
 ): CandidateData {
   const toolRequestParts = choice.message.tool_calls?.map(fromOpenAiToolCall);
   return {
@@ -337,7 +289,7 @@ function fromOpenAiChoice(
 
 function fromOpenAiChunkChoice(
   choice: ChatCompletionChunk['choices'][0],
-  jsonMode = false
+  jsonMode = false,
 ): CandidateData {
   const toolRequestParts = choice.delta.tool_calls?.map(fromOpenAiToolCall);
   return {
@@ -363,15 +315,15 @@ function fromOpenAiChunkChoice(
 
 export function toOpenAiRequestBody(
   modelName: string,
-  request: GenerateRequest
+  request: GenerateRequest,
 ) {
   const mapToSnakeCase = <T extends Record<string, any>>(
-    obj: T
+    obj: T,
   ): Record<string, any> => {
     return Object.entries(obj).reduce((acc, [key, value]) => {
       const snakeCaseKey = key.replace(
         /[A-Z]/g,
-        (letter) => `_${letter.toLowerCase()}`
+        letter => `_${letter.toLowerCase()}`,
       );
       acc[snakeCaseKey] = value;
       return acc;
@@ -379,10 +331,7 @@ export function toOpenAiRequestBody(
   };
   const model = SUPPORTED_GPT_MODELS[modelName];
   if (!model) throw new Error(`Unsupported model: ${modelName}`);
-  const openAiMessages = toOpenAiMessages(
-    request.messages,
-    request.config?.visualDetailLevel
-  );
+  const openAiMessages = toOpenAiMessages(request.messages);
   const mappedModelName =
     request.config?.version || API_NAME_MAP[modelName] || modelName;
   const body = {
@@ -418,7 +367,7 @@ export function toOpenAiRequestBody(
       };
     } else {
       throw new Error(
-        `${response_format} format is not supported for GPT models currently`
+        `${response_format} format is not supported for GPT models currently`,
       );
     }
   }
@@ -444,15 +393,15 @@ export function gptModel(name: string, client: OpenAI) {
       configSchema: SUPPORTED_GPT_MODELS[name].configSchema,
     },
     async (request, streamingCallback) => {
-      let response: ChatCompletion;
+      let response;
       const body = toOpenAiRequestBody(name, request);
       if (streamingCallback) {
-        const stream = client.beta.chat.completions.stream({
+        const stream = await client.beta.chat.completions.stream({
           ...body,
           stream: true,
         });
         for await (const chunk of stream) {
-          chunk.choices?.forEach((chunk) => {
+          chunk.choices?.forEach(chunk => {
             const c = fromOpenAiChunkChoice(chunk);
             streamingCallback({
               index: c.index,
@@ -465,8 +414,8 @@ export function gptModel(name: string, client: OpenAI) {
         response = await client.chat.completions.create(body);
       }
       return {
-        candidates: response.choices.map((c) =>
-          fromOpenAiChoice(c, request.output?.format === 'json')
+        candidates: response.choices.map(c =>
+          fromOpenAiChoice(c, request.output?.format === 'json'),
         ),
         usage: {
           inputTokens: response.usage?.prompt_tokens,
@@ -475,6 +424,6 @@ export function gptModel(name: string, client: OpenAI) {
         },
         custom: response,
       };
-    }
+    },
   );
 }

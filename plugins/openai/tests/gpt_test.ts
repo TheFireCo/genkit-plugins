@@ -1,19 +1,3 @@
-/**
- * Copyright 2024 The Fire Company
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import { GenerateRequest, MessageData } from '@genkit-ai/ai/model';
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
@@ -115,7 +99,6 @@ describe('toOpenAiMessages', () => {
               type: 'image_url',
               image_url: {
                 url: 'https://img.freepik.com/free-photo/abstract-autumn-beauty-multi-colored-leaf-vein-pattern-generated-by-ai_188544-9871.jpg?size=626&ext=jpg&ga=GA1.1.735520172.1710720000&semt=ais',
-                detail: 'auto',
               },
             },
           ],
@@ -126,7 +109,7 @@ describe('toOpenAiMessages', () => {
   for (const test of testCases) {
     it(test.should, () => {
       const actualOutput = toOpenAiMessages(
-        test.inputMessages as MessageData[]
+        test.inputMessages as MessageData[],
       );
       assert.deepStrictEqual(actualOutput, test.expectedOutput);
     });
@@ -467,7 +450,7 @@ describe('toOpenAiRequestBody', () => {
             },
           },
         ],
-        model: 'gpt-4-turbo',
+        model: 'gpt-4-turbo-preview',
         response_format: { type: 'json_object' },
       },
     },
@@ -476,7 +459,7 @@ describe('toOpenAiRequestBody', () => {
     it(test.should, () => {
       const actualOutput = toOpenAiRequestBody(
         test.modelName,
-        test.genkitRequest as GenerateRequest
+        test.genkitRequest as GenerateRequest,
       );
       assert.deepStrictEqual(actualOutput, test.expectedOutput);
     });
@@ -625,11 +608,11 @@ describe('toOpenAiRequestBody', () => {
     };
     const actualOutput1 = toOpenAiRequestBody(
       modelName,
-      genkitRequestTextFormat as GenerateRequest
+      genkitRequestTextFormat as GenerateRequest,
     );
     const actualOutput2 = toOpenAiRequestBody(
       modelName,
-      genkitRequestJsonFormat as GenerateRequest
+      genkitRequestJsonFormat as GenerateRequest,
     );
     assert.deepStrictEqual(actualOutput1, expectedOutput);
     assert.deepStrictEqual(actualOutput2, expectedOutput);
@@ -777,11 +760,11 @@ describe('toOpenAiRequestBody', () => {
     };
     const actualOutput1 = toOpenAiRequestBody(
       modelName,
-      genkitRequestTextFormat as GenerateRequest
+      genkitRequestTextFormat as GenerateRequest,
     );
     const actualOutput2 = toOpenAiRequestBody(
       modelName,
-      genkitRequestJsonFormat as GenerateRequest
+      genkitRequestJsonFormat as GenerateRequest,
     );
     assert.deepStrictEqual(actualOutput1, expectedOutput);
     assert.deepStrictEqual(actualOutput2, expectedOutput);
