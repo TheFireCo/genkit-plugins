@@ -18,7 +18,7 @@
   "type": "commonjs",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TheFireCo/genkitx-openai.git",
+    "url": "git+https://github.com/TheFireCo/genkitx-openai.git",
     "directory": ""
   },
   "author": "TheFireCo",
@@ -45,6 +45,9 @@
       "types": "./lib/index.d.ts"
     }
   },
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "check": "tsc",
     "compile": "tsup-node",
