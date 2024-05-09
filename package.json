@@ -1,5 +1,5 @@
 {
-  "name": "@firecompany/openai",
+  "name": "@firecompany/genkitx-openai",
   "description": "Firebase Genkit AI framework plugin for OpenAI APIs.",
   "keywords": [
     "genkit",
