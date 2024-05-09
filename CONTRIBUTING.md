@@ -6,6 +6,7 @@ This document describes our development process. Following these guidelines show
 
 Before reading further, please note that:
 
+> [!NOTE]  
 > This repository depends on Google's Firebase Genkit. For issues and questions related to GenKit, please refer to instructions available in [GenKit's repository](https://github.com/firebase/genkit).
 
 ## Table of Contents
