@@ -1,6 +1,6 @@
 {
-  "name": "***REMOVED***",
-  "description": "Genkit AI framework plugin for OpenAI APIs.",
+  "name": "@firecompany/openai",
+  "description": "Firebase Genkit AI framework plugin for OpenAI APIs.",
   "keywords": [
     "genkit",
     "genkit-plugin",
@@ -15,7 +15,7 @@
     "generative-ai"
   ],
   "version": "0.0.1",
-  "type": "commonjs",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/TheFireCo/genkitx-openai.git",
