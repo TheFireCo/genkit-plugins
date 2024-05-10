@@ -49,7 +49,8 @@
     "lib"
   ],
   "publishConfig": {
-    "provenance": true
+    "provenance": true,
+    "access": "public"
   },
   "scripts": {
     "check": "tsc",
