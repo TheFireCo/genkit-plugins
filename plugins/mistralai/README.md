@@ -1,17 +1,17 @@
-<h1 align="center">Firebase Genkit <> Cohere Plugin</h1>
+<h1 align="center">Firebase Genkit <> Mistral AI Plugin</h1>
 
-<h4 align="center">Cohere Community Plugin for Google Firebase Genkit</h4>
+<h4 align="center">Mistral AI Community Plugin for Google Firebase Genkit</h4>
 
 <div align="center"></div>
 
-`genkitx-cohere` is a community plugin for using Cohere and all its supported models with [Firebase GenKit](https://github.com/firebase/genkit).
+`genkitx-mistralai` is a community plugin for using Mistral AI and all its supported models with [Firebase GenKit](https://github.com/firebase/genkit).
 
 ## Installation
 
 Install the plugin in your project with your favorite package manager:
 
-- `npm install genkitx-cohere`
-- `yarn add genkitx-cohere`
+- `npm install genkitx-mistralai`
+- `yarn add genkitx-mistralai`
 
 ## Usage
 
