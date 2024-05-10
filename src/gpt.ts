@@ -44,12 +44,10 @@ const API_NAME_MAP = {
   'gpt-4-turbo': 'gpt-4-turbo',
   'gpt-4-vision': 'gpt-4-vision-preview',
 };
-enum VISUAL_DETATIL_LEVEL {
-  LOW = 'low',
-  AUTO = 'auto',
-  HIGH = 'high',
-}
-export const CHOSEN_VISUAL_DETAIL_LEVEL = VISUAL_DETATIL_LEVEL.LOW; 
+
+type VisualDetailLevel = 'low' | 'auto' | 'high';
+
+export const CHOSEN_VISUAL_DETAIL_LEVEL: VisualDetailLevel = "low"; 
 
 const MODELS_SUPPORTING_OPENAI_RESPONSE_FORMAT = [
   'gpt-4-turbo',
