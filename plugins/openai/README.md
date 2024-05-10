@@ -43,6 +43,6 @@ This plugin is proudly maintained by the team at [**The Fire Company**](https://
 
 ## License
 
-This project is licensed under the [Apache 2.0 License](LICENSE.md).
+This project is licensed under the [Apache 2.0 License](https://github.com/TheFireCo/genkitx-openai/blob/main/LICENSE).
 
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202%2E0-lightgrey.svg)](LICENSE.md)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202%2E0-lightgrey.svg)](https://github.com/TheFireCo/genkitx-openai/blob/main/LICENSE)
