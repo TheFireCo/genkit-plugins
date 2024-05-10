@@ -36,7 +36,7 @@ By participating in this project and submitting contributions, you agree to lice
 
 ## Questions
 
-If you have any support questions, please open a [GitHub discussion](https://github.com/TheFireCo/genkitx-openai/discussion). The GitHub issue tracker is not for support-related requests. 
+If you have any support questions, please open a [GitHub discussion](https://github.com/TheFireCo/genkit-plugins/discussion). The GitHub issue tracker is not for support-related requests. 
 
 ## Feature Requests
 
@@ -49,7 +49,7 @@ Small Changes can directly be crafted and submitted to the GitHub Repository as 
 
 **If you discover a security vulnerability, do NOT open an issue. Email info@firecompany.co instead.**
 
-Before you submit your issue, please [search the issue archive](https://github.com/TheFireCo/genkitx-openai/issues) - your issue might have already been identified or addressed.
+Before you submit your issue, please [search the issue archive](https://github.com/TheFireCo/genkit-plugins/issues) - your issue might have already been identified or addressed.
 
 If you find a bug in the source code, you can help us by submitting an issue or, even better, you can submit a Pull Request with a fix.
 
@@ -82,7 +82,7 @@ You can set up the local development environment as follows:
 
 ### Finding an Issue
 
-The list of open feature requests and bugs can be found on our on our [GitHub issue tracker](https://github.com/TheFireCo/genkitx-openai/issues). Pick an unassigned issue that you think you can accomplish and add a comment that you are attempting to do it.
+The list of open feature requests and bugs can be found on our on our [GitHub issue tracker](https://github.com/TheFireCo/genkit-plugins/issues). Pick an unassigned issue that you think you can accomplish and add a comment that you are attempting to do it.
 
 
 ### Development Process
