@@ -1,12 +1,8 @@
-&lt;h1 align="center"&gt; Firebase Genkit &lt;&gt; Groq Plugin &lt;/h1&gt;
+<h1 align="center">Firebase Genkit <> Groq Plugin</h1>
 
-&lt;h4 align="center"&gt;Groq Community Plugin for Google Firebase Genkit&lt;/h4&gt;
+<h4 align="center">Groq Community Plugin for Google Firebase Genkit</h4>
 
-&lt;div align="center"&gt;
-
-&lt;/div&gt;
-
-&lt;/br&gt;
+<div align="center"></div>
 
 `genkitx-groq` is a community plugin for using Groq and all its supported models with [Firebase GenKit](https://github.com/firebase/genkit).
 
