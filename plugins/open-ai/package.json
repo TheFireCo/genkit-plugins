@@ -14,7 +14,7 @@
     "genai",
     "generative-ai"
   ],
-  "version": "0.0.4",
+  "version": "0.0.5",
   "type": "commonjs",
   "repository": {
     "type": "git",
@@ -49,7 +49,7 @@
     "lib"
   ],
   "publishConfig": {
-    "provenance":true
+    "provenance": true
   },
   "scripts": {
     "check": "tsc",
