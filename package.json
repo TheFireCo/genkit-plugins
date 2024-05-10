@@ -4,6 +4,10 @@
   "workspaces": [
     "plugins/*"
   ],
+  "scripts":{
+    "build": "lerna run build --no-private",
+    "publish": "lerna publish --no-private"
+  },
   "dependencies": {},
   "devDependencies": {
     "lerna": "^8.1.2"
