@@ -48,6 +48,9 @@
   "files": [
     "lib"
   ],
+  "publishConfig": {
+    "provenance": true
+  },
   "scripts": {
     "check": "tsc",
     "compile": "tsup-node",
