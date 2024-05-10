@@ -1,0 +1,26 @@
+{
+  "name": "groq",
+  "version": "0.0.0",
+  "description": "Firebase Genkit AI framework plugin for Groq APIs.",
+  "author": "EPMatt <30753195+EPMatt@users.noreply.github.com>",
+  "homepage": "https://github.com/TheFireCo/genkitx-openai#readme",
+  "license": "Apache-2.0",
+  "main": "lib/grow.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheFireCo/genkitx-openai.git"
+  },
+  "scripts": {
+    "test": "node ./__tests__/grow.test.js"
+  },
+  "bugs": {
+    "url": "https://github.com/TheFireCo/genkitx-openai/issues"
+  }
+}
