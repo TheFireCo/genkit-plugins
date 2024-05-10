@@ -18,8 +18,8 @@
   "type": "commonjs",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TheFireCo/genkitx-plugins.git",
-    "directory": ""
+    "url": "git+https://github.com/TheFireCo/genkit-plugins.git",
+    "directory": "plugins/open-ai"
   },
   "author": "TheFireCo",
   "license": "Apache-2.0",
