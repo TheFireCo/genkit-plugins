@@ -1,5 +1,5 @@
 /**
- * Copyright 2024 Giftit Social, Inc.
+ * Copyright 2024 The Fire Company
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
