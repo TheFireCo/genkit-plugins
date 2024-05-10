@@ -5,8 +5,9 @@
     "plugins/*"
   ],
   "scripts":{
-    "build": "lerna run build --no-private",
-    "publish": "lerna publish --no-private"
+    "build": "lerna run build",
+    "publish": "lerna publish --no-private",
+    "test": "lerna run test"
   },
   "dependencies": {},
   "devDependencies": {
