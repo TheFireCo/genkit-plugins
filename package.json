@@ -6,7 +6,7 @@
   ],
   "scripts":{
     "build": "lerna run build",
-    "publish": "lerna publish --no-private from-package",
+    "publish": "lerna publish --no-private -y from-package",
     "test": "lerna run test"
   },
   "dependencies": {},
