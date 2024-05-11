@@ -19,7 +19,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TheFireCo/genkit-plugins.git",
-    "directory": "plugins/open-ai"
+    "directory": "plugins/openai"
   },
   "author": "TheFireCo",
   "license": "Apache-2.0",
