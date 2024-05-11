@@ -4,7 +4,7 @@ import { generate } from '@genkit-ai/ai';
 import { configureGenkit } from '@genkit-ai/core';
 import { defineFlow, startFlowsServer } from '@genkit-ai/flow';
 
-import { openAI } from 'genkitx-openai-plugin';
+import { gpt35Turbo, openAI } from 'genkitx-openai-plugin';
 
 import * as z from 'zod';
 
@@ -27,7 +27,7 @@ export const menuSuggestionFlow = defineFlow(
   async (subject) => {
     const llmResponse = await generate({
       prompt: `Suggest an item for the menu of a ${subject} themed restaurant`,
-      model: '' /* TODO: Set a model. */,
+      model: 'openai/gpt-3.5-turbo',
       config: {
         temperature: 1,
       },
