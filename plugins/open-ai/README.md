@@ -24,8 +24,7 @@ Install the plugin in your project with your favorite package manager:
 
 ## Usage
         
-> [!WARNING]  
-> Documentation is currently work in progress.
+> Here we add some usage examples for this plugin.
 
 ## Contributing
 
