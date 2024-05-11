@@ -1,0 +1,61 @@
+{
+  "name": "genkitx-anthropicai",
+  "description": "Firebase Genkit AI framework plugin for Anthropic AI APIs.",
+  "keywords": [
+    "genkit",
+    "genkit-plugin",
+    "genkit-model",
+    "anthropic",
+    "anthropicai",
+    "claude",
+    "claude-3",
+    "sonnet",
+    "haiku",
+    "opus",
+    "ai",
+    "genai",
+    "generative-ai"
+  ],
+  "version": "0.0.0",
+  "type": "commonjs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheFireCo/genkit-plugins.git",
+    "directory": "plugins/anthropic"
+  },
+  "author": "TheFireCo",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@genkit-ai/ai": "0.5.0-rc.8",
+    "@genkit-ai/core": "0.5.0-rc.8",
+    "@anthropic-ai/sdk": "^0.20.9",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.16",
+    "npm-run-all": "^4.1.5",
+    "tsup": "^8.0.2",
+    "tsx": "^4.7.0",
+    "typescript": "^4.9.5"
+  },
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./lib/index.js",
+      "default": "./lib/index.js",
+      "import": "./lib/index.mjs",
+      "types": "./lib/index.d.ts"
+    }
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "check": "tsc",
+    "compile": "tsup-node",
+    "build:clean": "rm -rf ./lib",
+    "build": "npm-run-all build:clean check compile",
+    "build:watch": "tsup-node --watch",
+    "test": "node --import tsx --test ./tests/*_test.ts"
+  }
+}
