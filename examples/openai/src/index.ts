@@ -3,10 +3,9 @@ import 'dotenv/config';
 import { dotprompt, prompt } from '@genkit-ai/dotprompt';
 import { generate, renderPrompt, definePrompt } from '@genkit-ai/ai';
 import { configureGenkit } from '@genkit-ai/core';
-import { defineFlow, startFlowsServer } from '@genkit-ai/flow';
-
-import { gpt35Turbo, openAI } from 'genkitx-openai-plugin';
-
+import {helloPrompt} from './prompts/helloPrompt';
+//import { defineFlow, startFlowsServer } from '@genkit-ai/flow';
+import { openAI } from 'genkitx-openai-plugin';
 import * as z from 'zod';
 
 configureGenkit({
@@ -19,20 +18,6 @@ configureGenkit({
   enableTracingAndMetrics: true,
 });
 
-export const menuSuggestionFlow = defineFlow(
-  {
-    name: 'menuSuggestionFlow',
-    inputSchema: z.string(),
-    outputSchema: z.string(),
-  },
-  async (subject) => {
-    const llmResponse = await generate({
-      prompt: `Suggest an item for the menu of a ${subject} themed restaurant`,
-      model: 'openai/gpt-3.5-turbo',
-      config: {
-        temperature: 1,
-      },
-    });
 
 const helloPrompt = definePrompt(
   {
