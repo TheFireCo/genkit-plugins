@@ -22,10 +22,10 @@ export interface PluginOptions {
   apiKey?: string;
 }
 
-export const mistralai: Plugin<[PluginOptions] | []> = genkitPlugin(
-  'mistralai',
+export const mistral: Plugin<[PluginOptions] | []> = genkitPlugin(
+  'mistral',
   async (options?: PluginOptions) => {
-    let apiKey = options?.apiKey || process.env.MISTRALAI_API_KEY;
+    let apiKey = options?.apiKey || process.env.MISTRAL_API_KEY;
     if (!apiKey)
       throw new Error(
         'Please pass in the API key or set the MISTRALAI_API_KEY environment variable'
@@ -39,5 +39,5 @@ export const mistralai: Plugin<[PluginOptions] | []> = genkitPlugin(
   }
 );
 
-export default mistralai;
+export default mistral;
 
