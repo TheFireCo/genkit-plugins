@@ -1,4 +1,3 @@
-
 /**
  * Copyright 2024 The Fire Company
  *
@@ -15,28 +14,57 @@
  * limitations under the License.
  */
 
-import { genkitPlugin, Plugin } from '@genkit-ai/core';
-import Groq from 'groq-sdk';
+import { genkitPlugin, Plugin } from "@genkit-ai/core";
+import Groq from "groq-sdk";
+import { groqModel, SUPPORTED_GROQ_MODELS } from "./groq_models";
 
 export interface PluginOptions {
-  apiKey?: string;
+  /**
+   * Defaults to process.env['GROQ_API_KEY'].
+   */
+  apiKey?: string | undefined;
+
+  /**
+   * Override the default base URL for the API, e.g., "https://api.example.com/v2/"
+   *
+   * Defaults to process.env['GROQ_BASE_URL'].
+   */
+  baseURL?: string | null | undefined;
+
+  /**
+   * The maximum amount of time (in milliseconds) that the client should wait for a response
+   * from the server before timing out a single request.
+   *
+   * Note that request timeouts are retried by default, so in a worst-case scenario you may wait
+   * much longer than this timeout before the promise succeeds or fails.
+   */
+  timeout?: number;
+
+  /**
+   * The maximum number of times that the client will retry a request in case of a
+   * temporary failure, like a network error or a 5XX error from the server.
+   *
+   * @default 2
+   */
+  maxRetries?: number;
+
+  // TODO: add additional options supported by the Groq SDK
 }
 
 export const groq: Plugin<[PluginOptions] | []> = genkitPlugin(
-  'groq',
+  "groq",
   async (options?: PluginOptions) => {
-    let apiKey = options?.apiKey || process.env.GROQ_API_KEY;
-    if (!apiKey)
-      throw new Error(
-        'please pass in the API key or set the GROQ_API_KEY environment variable'
-      );
-    const client = new Groq({ apiKey });
+    const client = new Groq({
+      baseURL: options?.baseURL || process.env.GROQ_BASE_URL,
+      apiKey: options?.apiKey || process.env.GROQ_API_KEY,
+      timeout: options?.timeout,
+      maxRetries: options?.maxRetries,
+    });
     return {
       models: [
-        // TODO: Add support for GROQ models
-        // ...Object.keys(SUPPORTED_GROQ_MODELS).map((name) =>
-        //   model(name, client)
-        // ),
+        ...Object.keys(SUPPORTED_GROQ_MODELS).map((name) =>
+          groqModel(name, client)
+        ),
       ],
     };
   }

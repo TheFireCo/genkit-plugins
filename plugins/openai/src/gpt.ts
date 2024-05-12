@@ -416,7 +416,7 @@ export function gptModel(name: string, client: OpenAI) {
       configSchema: SUPPORTED_GPT_MODELS[name].configSchema,
     },
     async (request, streamingCallback) => {
-      let response;
+      let response: ChatCompletion;
       const body = toOpenAiRequestBody(name, request);
       if (streamingCallback) {
         const stream = await client.beta.chat.completions.stream({
