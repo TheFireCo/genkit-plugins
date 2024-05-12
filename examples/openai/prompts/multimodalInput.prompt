@@ -1,0 +1,9 @@
+---
+model: openai/gpt-4-vision
+input:
+  schema:
+    photoUrl: string
+    object_type: string
+---
+
+What {{object_type}} is shown in the image? {{media url=photoUrl}}

@@ -1,0 +1,14 @@
+---
+model: openai/gpt-3.5-turbo
+config:
+  temperature: 0.9
+  maxOutputTokens: 300
+  topP: 0.7
+  topK: 40
+  stopSequence: abc
+input:
+  schema:
+    context: string
+---
+
+Tell me a short inspirational quote about {{context}}.
