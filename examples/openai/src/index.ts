@@ -18,10 +18,10 @@ export default configureGenkit({
 });
 
 // Basic usage of an LLM
-const llmResponse = generate({
-  model: 'openai/gpt-3.5-turbo',
-  prompt: 'Tell me a joke.',
-});
+// const llmResponse = generate({
+//   model: 'openai/gpt-3.5-turbo',
+//   prompt: 'Tell me a joke.',
+// });
 
 // Define standard prompts
 const helloPrompt = definePrompt(
