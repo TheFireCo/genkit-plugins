@@ -23,7 +23,6 @@ import {
   modelRef,
   Part,
   Role,
-  TextPart,
   ToolDefinition,
   ToolRequestPart,
 } from "@genkit-ai/ai/model";
@@ -159,6 +158,20 @@ function toGroqTool(tool: ToolDefinition): CompletionCreateParams.Tool {
   };
 }
 
+export function toGroqTextAndMedia(part: Part): string {
+  if (part.text) {
+    return part.text;
+  } else if (part.media) {
+    console.warn(
+      `Media cannot be used in Groq completions. Passing media as raw URL: ${part.media.url}`
+    );
+    return part.media.url;
+  }
+  throw new Error(
+    `Unsupported part type. Only text and media (url) parts are supported.`
+  );
+}
+
 function toGroqMessages(
   messages: MessageData[]
 ): CompletionCreateParams.Message[] {
@@ -169,7 +182,7 @@ function toGroqMessages(
       case "user":
         groqMsgs.push({
           role: toGroqRole(message.role),
-          content: msg.text(),
+          content: msg.content.map(toGroqTextAndMedia).join(""),
         });
         break;
       case "system":
@@ -179,12 +192,52 @@ function toGroqMessages(
         });
         break;
       case "model":
-      // TODO: tool use
+        const toolCalls: CompletionCreateParams.Message.ToolCall[] = msg.content
+          .filter((part) => part.toolRequest)
+          .map((part) => {
+            if (!part.toolRequest) {
+              throw Error(
+                "Mapping genkit message to Groq tool call content part but message.toolRequest not provided."
+              );
+            }
+            return {
+              id: part.toolRequest.ref || "",
+              type: "function",
+              function: {
+                name: part.toolRequest.name,
+                arguments: JSON.stringify(part.toolRequest.input),
+              },
+            };
+          });
+        if (toolCalls?.length > 0) {
+          groqMsgs.push({
+            content: msg.text(),
+            role: toGroqRole(message.role),
+            tool_calls: toolCalls,
+          });
+        } else {
+          groqMsgs.push({
+            role: toGroqRole(message.role),
+            content: msg.text(),
+          });
+        }
+        break;
+      case "tool":
+        const toolResponseParts = msg.toolResponseParts();
+        toolResponseParts.map((part) => {
+          groqMsgs.push({
+            role: toGroqRole(message.role),
+            tool_call_id: part.toolResponse.ref || "",
+            content:
+              typeof part.toolResponse.output === "string"
+                ? part.toolResponse.output
+                : JSON.stringify(part.toolResponse.output),
+          });
+        });
+        break;
+      default:
+        throw new Error("unrecognized role");
     }
-    groqMsgs.push({
-      role: toGroqRole(message.role),
-      content: new Message(message).text(),
-    });
   }
   return groqMsgs;
 }
@@ -267,21 +320,43 @@ function fromGroqChunkChoice(
   };
 }
 
-function toGroqRequestBody(
+export function toGroqRequestBody(
   modelName: string,
   request: GenerateRequest
 ): ChatCompletionCreateParamsBase {
-  const model = groqModel;
+  const mapToSnakeCase = <T extends Record<string, any>>(
+    obj: T
+  ): Record<string, any> => {
+    return Object.entries(obj).reduce((acc, [key, value]) => {
+      const snakeCaseKey = key.replace(
+        /[A-Z]/g,
+        (letter) => `_${letter.toLowerCase()}`
+      );
+      acc[snakeCaseKey] = value;
+      return acc;
+    }, {});
+  };
+  const model = SUPPORTED_GROQ_MODELS[modelName];
   if (!model) throw new Error(`Unsupported model: ${modelName}`);
 
   const body: ChatCompletionCreateParamsBase = {
     messages: toGroqMessages(request.messages),
+    tools: request.tools?.map(toGroqTool),
     model: request.config?.version || modelName,
     temperature: request.config?.temperature,
     max_tokens: request.config?.maxTokens,
     top_p: request.config?.topP,
     stop: request.config?.stopSequences,
+    n: request.candidates,
     stream: request.config?.stream,
+    frequency_penalty: request.config?.frequencyPenalty,
+    logit_bias: request.config?.logitBias,
+    seed: request.config?.seed,
+    top_logprobs: request.config?.topLogprobs,
+    user: request.config?.user,
+    tool_choice: request.config?.toolChoice,
+    response_format: request.config?.responseFormat,
+    ...mapToSnakeCase(request.config?.custom || {}),
   };
 
   const response_format = request.output?.format;
@@ -292,8 +367,23 @@ function toGroqRequestBody(
     body.response_format = {
       type: "json_object",
     };
+  } else if (
+    response_format === "text" &&
+    model.info.supports?.output?.includes("text")
+  ) {
+    body.response_format = {
+      type: "text",
+    };
+  } else {
+    throw new Error(
+      `${response_format} format is not supported for ${modelName} currently`
+    );
   }
 
+  for (const key in body) {
+    if (!body[key] || (Array.isArray(body[key]) && !body[key].length))
+      delete body[key];
+  }
   return body;
 }
 
@@ -325,33 +415,33 @@ export function groqModel(name: string, client: Groq) {
         let totalPromptTokens = 0;
         let totalCompletionTokens = 0;
         let choices: ChatCompletion.Choice[] = [];
-        let model: string;
-        let id: string;
-        let created: number;
-        let system_fingerprint: string;
-        let object: string;
-        let chunkIdx: number = 0;
+        let completionMetadata: {
+          model: string;
+          id: string;
+          created: number;
+          system_fingerprint?: string;
+          object: string;
+        } = {} as any;
         for await (const chunk of stream) {
           totalPromptTokens += chunk.x_groq?.usage?.prompt_tokens || 0;
           totalCompletionTokens += chunk.x_groq?.usage?.completion_tokens || 0;
-          if (chunkIdx === 0) {
-            model = chunk.model || "";
-            id = chunk.id || "";
-            created = chunk.created || 0;
-            system_fingerprint = chunk.system_fingerprint || "";
-            object = chunk.object || "";
-            chunkIdx++;
+          if (!completionMetadata.model) {
+            completionMetadata.model = chunk.model;
+            completionMetadata.id = chunk.id;
+            completionMetadata.created = chunk.created;
+            completionMetadata.system_fingerprint = chunk.system_fingerprint;
+            completionMetadata.object = chunk.object;
           }
           chunk.choices.forEach((choice) => {
             choices.push({
-                index: choice.index,
-                logprobs: choice.logprobs as ChatCompletion.Choice.Logprobs, 
-                message: {
-                    content: choice.delta.content || "",
-                    role: "model",
-                    tool_calls: choice.delta.tool_calls,
-                },
-                finish_reason: choice.finish_reason || "unknown",
+              index: choice.index,
+              logprobs: choice.logprobs as ChatCompletion.Choice.Logprobs,
+              message: {
+                content: choice.delta.content || "",
+                role: "model",
+                tool_calls: choice.delta.tool_calls,
+              },
+              finish_reason: choice.finish_reason || "unknown",
             });
             const c = fromGroqChunkChoice(choice);
             streamingCallback({
@@ -359,17 +449,12 @@ export function groqModel(name: string, client: Groq) {
               content: c.message.content,
             });
             fullContent += choice.delta.content || "";
-            
           });
         }
         response = {
-            id: id,
-            created: created,
-            system_fingerprint: system_fingerprint,
-            model: model,
-            object: object,
-            choices: choices,
-            usage: {
+          ...completionMetadata,
+          choices: choices,
+          usage: {
             prompt_tokens: totalPromptTokens,
             completion_tokens: totalCompletionTokens,
             total_tokens: totalPromptTokens + totalCompletionTokens,
