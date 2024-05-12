@@ -16,7 +16,21 @@
 
 import { genkitPlugin, Plugin } from "@genkit-ai/core";
 import Groq from "groq-sdk";
-import { groqModel, SUPPORTED_GROQ_MODELS } from "./groq_models";
+import {
+  llama_3_70b,
+  llama_3_8b,
+  gemma_7b,
+  mixtral_8_7b,
+  groqModel,
+  SUPPORTED_GROQ_MODELS,
+} from "./groq_models";
+
+export {
+  llama_3_70b,
+  llama_3_8b,
+  gemma_7b,
+  mixtral_8_7b,
+};
 
 export interface PluginOptions {
   /**

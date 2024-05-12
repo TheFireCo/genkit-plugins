@@ -42,11 +42,17 @@ export const GroqConfigSchema = z.object({
   topP: z.number().min(0).max(1).optional(),
   stop: z.string().optional(),
   stream: z.boolean().optional(),
-  responseFormat: z
-    .object({
-      type: z.literal("json_object"),
-    })
-    .optional(),
+  frequencyPenalty: z.number().optional(),
+  logitBias: z.record(z.number()).optional(),
+  seed: z.number().int().optional(),
+  topLogprobs: z.number().optional(),
+  user: z.string().optional(),
+  toolChoice: z.string().optional(),
+  //   responseFormat: z
+  //     .object({
+  //       type: z.literal("json_object"),
+  //     })
+  //     .optional(),
 });
 
 // Worst at JSON mode
@@ -128,7 +134,7 @@ export const SUPPORTED_GROQ_MODELS = {
  * @returns The converted Groq role. Note - the Groq SDK does not declare an explicit type for this.
  * @throws {Error} If the role doesn't map to a Groq role.
  */
-function toGroqRole(role: Role): "system" | "user" | "assistant" {
+export function toGroqRole(role: Role): "system" | "user" | "assistant" {
   switch (role) {
     case "user":
       return "user";
@@ -147,7 +153,7 @@ function toGroqRole(role: Role): "system" | "user" | "assistant" {
  * @param tool - The tool definition containing the name, description, and input schema.
  * @returns A Groq tool object formatted for use in completion creation parameters.
  */
-function toGroqTool(tool: ToolDefinition): CompletionCreateParams.Tool {
+export function toGroqTool(tool: ToolDefinition): CompletionCreateParams.Tool {
   return {
     type: "function",
     function: {
@@ -172,7 +178,7 @@ export function toGroqTextAndMedia(part: Part): string {
   );
 }
 
-function toGroqMessages(
+export function toGroqMessages(
   messages: MessageData[]
 ): CompletionCreateParams.Message[] {
   const groqMsgs: CompletionCreateParams.Message[] = [];
@@ -355,7 +361,7 @@ export function toGroqRequestBody(
     top_logprobs: request.config?.topLogprobs,
     user: request.config?.user,
     tool_choice: request.config?.toolChoice,
-    response_format: request.config?.responseFormat,
+    // response_format: request.config?.responseFormat, // Being set automatically
     ...mapToSnakeCase(request.config?.custom || {}),
   };
 
