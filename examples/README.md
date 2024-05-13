@@ -1,9 +1,12 @@
-# OpenAI plugin examples
+# Plugin usage examples
 
-This module provides examples of usage of OpenAI plugin for Genkit, which wraps around the
-OpenAI API.
+This module provides examples of usage of different API plugins for Genkit, which wraps around the
+native APIs. Currently, we support [Anthropic](https://www.anthropic.com/), [Cohere](https://cohere.com/), [Groq](https://groq.com/), [Mistral](https://mistral.ai/) and [OpenAI](https://openai.com/) plugins.
+Still, Genkit is *plugin-agnostic*, it allows you to have the same structure, prompts and code for different models and plugins.
+
 ## Set up Genkit packages and DevUI
-1. Rename .env.local to .env and add your OpenAI API key to it, or specify it in the environment variable `OPENAI_API_KEY`.
+1. Rename .env.local to .env and add your API key to it, or specify it in the environment variable `{PLUGIN_NAME}_API_KEY` (e.g. `OPENAI_API_KEY`).
+
 2. Run `npm install` to install the dependencies.
 3. Run `npm run start` to launch the Genkit Dev UI.
 
@@ -12,16 +15,22 @@ Genkit is configured from the `index.ts`, where you can import and initialize th
 ```
 import { configureGenkit } from '@genkit-ai/core';
 import { openAI } from 'genkitx-openai-plugin';
+import {anthropicAI} from 'genkitx-anthropicai';
+import {Groq} from 'genkitx-groq';
+// Here you can import other plugins, depending on your needs
 
 export default configureGenkit({
   plugins: [
-    openAI({ apiKey: process.env.OPENAI_API_KEY }),
+    openAI(),
+    anthropicAI(),
+    Groq(),
+    // Initialize other plugins if necessary
   ],
   logLevel: 'debug',
   enableTracingAndMetrics: true,
 });
 ```
-List of all available OpenAI models as well as their pricing, specification and capabilities could be found in the official [OpenAI API documentation](https://platform.openai.com/docs/overview).
+List of all available models as well as their pricing, specification and capabilities could be found in the official documentation for every corresponding API.
 
 ## Example usage
 
@@ -29,11 +38,11 @@ List of all available OpenAI models as well as their pricing, specification and 
 The simplest way to call the text generation model is by using the helper function `generate`:
 ```
 import { generate } from '@genkit-ai/ai';
-import {gpt35Turbo} from 'genkitx-openai-plugin';
+import {claude3Haiku} from 'genkitx-anthropicai';
 
 // Basic usage of an LLM
 const response = await generate({
-    model: gpt35Turbo,
+    model: claude3Haiku,
     prompt: 'Tell me a joke.',
 });
 
@@ -50,11 +59,6 @@ const response = await generate({
     { text: 'What animal is in the photo?' },
     { media: { url: imageUrl} },
   ],
-  config: {
-        // control of the level of visual detail when processing image embeddings
-        // Low detail level also decreases the token usage
-        visual_detail_level: 'low',
-      },
 });
 console.log(await response.text());
 ```
@@ -85,6 +89,8 @@ const response = await generate({
 console.log(await response.text());
 ```
 
+Genkit doesn't prevent you from using any of the available models from various aforementioned providers. Feel free to play around with different models in any of our prompt examples by conveniently swapping different models in the `model` field!
+
 ### Defining the prompts
 
 One of the main benefits of Genkit is the ability to define the prompt as code and register it with Genkit,and for that you can use `definePrompt` function:
@@ -108,15 +114,17 @@ const helloPrompt = definePrompt(
   }
 );
 ```
-In this way, you can test your prompts independently of the code, in the Genkit Dev UI. This also enables the 
+In this way, you can test your prompts independently of the code or specific model in the Genkit Dev UI. This also enables the 
 definition of input schemas, which enable you to customize each prompt call with a specific set of arguments, or specify the output format, as showcased a bit later below. To use this prompt in your development, you can use the `renderPrompt` function:
 ``` 
 import { generate, renderPrompt } from '@genkit-ai/ai';
+import {gemma_7b} from 'genkitx-groq';
+
 const response = await generate(
    renderPrompt({
      prompt: helloPrompt,
      input: { name: 'Fred' },
-     model: gpt4Turbo
+     model: gemma_7b
     })
 );
 console.log(await response.text());
@@ -183,6 +191,7 @@ const codeDotPrompt = defineDotprompt(
       maxOutputTokens: 100,
       topK: 20,
       stopSequences: ['abc'],
+      visual_detail_level: 'high', //Only for OpenAI models
     },
   },
   `Does the object {{object_name}} exist in the given image {{media url=image_url}}? If it does, what color is it and what are some details about it?`
@@ -208,8 +217,9 @@ console.log(await response.output());
 Flows are the enhanced version of the standard functions, which are strongly typed, streamable, and locally and remotely callable. They can also be registered and later tested in Genkit Dev UI. To define and run a flow, one can use `defineFlow` and `runFlow` functions:
 ```
 import { defineFlow, runFlow } from '@genkit-ai/flow';
-
+import {llama_3_70b} from 'genkitx-groq';
 \\define Flow
+
 export const myFlow = defineFlow(
   {
     name: 'menuSuggestionFlow',
@@ -219,7 +229,7 @@ export const myFlow = defineFlow(
   async (subject) => {
     const llmResponse = await generate({
       prompt: `Suggest an item for the menu of a ${subject} themed restaurant`,
-      model: gpt4Turbo,
+      model: llama_3_70b,
     });
 
     return llmResponse.text();
@@ -297,7 +307,7 @@ const firestoreArtifactsRetriever = defineRetriever(
   }
 );
 ```
-In the [official Genkit documentation](Add Genkit docs link) you can find many more usage examples as well as detailed specification and full instructions of the usage of the Genkit framework.
+In the [official Genkit documentation]( https://firebase.google.com/docs/genkit/get-started) you can find many more usage examples as well as detailed specification and full instructions of the usage of the Genkit framework.
 
 ## Contributing
 If you want to contribute to the OpenAI plugin, you can link to a local instance of the plugin by running `npm link` in the plugin directory and `npm link genkitx-openai-plugin` in the examples directory.

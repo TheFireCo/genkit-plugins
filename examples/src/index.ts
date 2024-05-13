@@ -9,12 +9,13 @@ import * as z from 'zod';
 
 export default configureGenkit({
   plugins: [
-    openAI({ apiKey: process.env.OPENAI_API_KEY }),
+    openAI(),
     dotprompt(),
   ],
   logLevel: 'debug',
   enableTracingAndMetrics: true,
 });
+
 
 // Define standard prompts
 const helloPrompt = definePrompt(
@@ -78,6 +79,7 @@ const codeDotPrompt = defineDotprompt(
       maxOutputTokens: 100,
       topK: 20,
       stopSequences: ['abc'],
+      visual_detail_level: 'high',
     },
   },
   `Does the object {{object_name}} exist in the given image {{media url=image_url}}? If it does, what color is it and what are some details about it?`

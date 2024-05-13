@@ -47,8 +47,6 @@ const API_NAME_MAP = {
 
 type VisualDetailLevel = 'low' | 'auto' | 'high';
 
-// export const CHOSEN_VISUAL_DETAIL_LEVEL: VisualDetailLevel = "low"; 
-
 const MODELS_SUPPORTING_OPENAI_RESPONSE_FORMAT = [
   'gpt-4-turbo',
   'gpt-4-turbo-preview',
