@@ -5,7 +5,7 @@ OpenAI API.
 ## Set up Genkit packages and DevUI
 1. Rename .env.local to .env and add your OpenAI API key to it, or specify it in the environment variable `OPENAI_API_KEY`.
 2. Run `npm install` to install the dependencies.
-3. Run `npx genkit start` to launch the Genkit Dev UI.
+3. Run `npm run start` to launch the Genkit Dev UI.
 
 Genkit is configured from the `index.ts`, where you can import and initialize the plugin and define prompts, flows, models and other tools which could be accessed directly through Gekit Dev UI:
 
@@ -50,6 +50,11 @@ const response = await generate({
     { text: 'What animal is in the photo?' },
     { media: { url: imageUrl} },
   ],
+  config: {
+        // control of the level of visual detail when processing image embeddings
+        // Low detail level also decreases the token usage
+        visual_detail_level: 'low',
+      },
 });
 console.log(await response.text());
 ```

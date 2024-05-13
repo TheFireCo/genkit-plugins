@@ -21,7 +21,6 @@
     "@genkit-ai/flow": "0.5.0-rc.11",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
-    "genkitx-openai-plugin": "0.0.8",
     "zod": "^3.23.8"
   },
   "devDependencies": {
