@@ -24,12 +24,16 @@
   "author": "Dabolus",
   "license": "Apache-2.0",
   "dependencies": {
-    "@genkit-ai/ai": "0.5.0-rc.9",
-    "@genkit-ai/core": "0.5.0-rc.9",
     "openai": "^4.43.0",
     "zod": "^3.23.8"
   },
+  "peerDependencies": {
+    "@genkit-ai/ai": ">=0.5.0-rc.0",
+    "@genkit-ai/core": ">=0.5.0-rc.0"
+  },
   "devDependencies": {
+    "@genkit-ai/ai": "0.5.0-rc.12",
+    "@genkit-ai/core": "0.5.0-rc.12",
     "@types/node": "^20.12.11",
     "npm-run-all": "^4.1.5",
     "tsup": "^8.0.2",
