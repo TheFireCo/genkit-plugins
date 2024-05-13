@@ -14,7 +14,7 @@
     "genai",
     "generative-ai"
   ],
-  "version": "0.0.8",
+  "version": "0.0.10",
   "type": "commonjs",
   "repository": {
     "type": "git",
@@ -24,8 +24,8 @@
   "author": "TheFireCo",
   "license": "Apache-2.0",
   "dependencies": {
-    "@genkit-ai/ai": "0.5.0-rc.8",
-    "@genkit-ai/core": "0.5.0-rc.8",
+    "@genkit-ai/ai": "0.5.0-rc.12",
+    "@genkit-ai/core": "0.5.0-rc.12",
     "groq-sdk": "^0.3.3",
     "zod": "^3.22.4"
   },
@@ -57,6 +57,7 @@
     "compile": "tsup-node",
     "build:clean": "rm -rf ./lib",
     "build": "npm-run-all build:clean check compile",
-    "build:watch": "tsup-node --watch"
+    "build:watch": "tsup-node --watch",
+    "test": "node --import tsx --test ./tests/*_test.ts"
   }
 }
