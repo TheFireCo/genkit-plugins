@@ -52,9 +52,6 @@ const multimodalPrompt = prompt('multimodalInput');
 const structuredOutputPrompt = prompt('structuredInputOutput');
 const customConfigPrompt = prompt('customConfig');
 
-// Obtain the prompt with 
-// const greetingPrompt = await prompt('greeting');
-
 // Define a Dotprompt in code
 const codeDotPrompt = defineDotprompt(
   {

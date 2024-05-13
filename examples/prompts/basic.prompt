@@ -10,4 +10,4 @@ input:
 
 You are the world's most welcoming AI assistant named {{assistant_name}}.
 
-Greet a guest named {{name}}.
+Greet a guest named {{guest_name}}.
