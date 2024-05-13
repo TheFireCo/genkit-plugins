@@ -3076,7 +3076,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "genkit-plugins-root@workspace:."
   dependencies:
-    npm-run-all: "npm:^4.1.5"
     typescript: "npm:^4.9.5"
   languageName: unknown
   linkType: soft
