@@ -20,7 +20,7 @@ import { PluginOptions } from '.';
 import { CohereClient } from 'cohere-ai';
 
 export const TextEmbeddingConfigSchema = z.object({
-  // its difficult with the schema to make this an array therefore its only a single string for now
+  // Its difficult with the schema to make this an array therefore its only a single string for now
   // embeddingTypes: z.array(
   //   z.enum(['float', 'int8', 'uint8', 'binary', 'ubinary'])
   // ).optional(),
