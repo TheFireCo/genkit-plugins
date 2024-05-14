@@ -33,6 +33,7 @@ export const mistral: Plugin<[PluginOptions] | []> = genkitPlugin(
     const client = new MistralClient(apiKey);
     return {
       models: [
+        //...Object.keys()
         // TODO: Add Mistral AI models as needed
       ],
     };
