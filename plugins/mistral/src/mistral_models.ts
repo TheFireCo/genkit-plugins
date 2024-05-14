@@ -28,13 +28,9 @@ ToolRequestPart,
 
 } from '@genkit-ai/ai/model';
 import MistralClient from './mistralai.mjs';
-import {Tool, Function, ChatCompletionResponseChoice, ToolCalls } from "@mistralai/mistralai";
+import {Tool, Function, ChatCompletionResponseChoice, ChatCompletionResponseChunk, ToolCalls, ChatRequest, ChatCompletionResponse } from "@mistralai/mistralai";
 
 import z from 'zod';
-
-// const API_NAME_MAP = {
-// 'mistral-7b-instruct': 'mistral-7b-instruct',
-// };
 
 
 export const MistralConfigSchema = z.object({
@@ -148,9 +144,9 @@ for (const message of messages) {
 return mistralMsgs;
 }
 
-const finishReasonMap: Record< // Might be a better way to do this
-NonNullable<string>,
-string
+const finishReasonMap: Record< 
+NonNullable<string>, 
+CandidateData['finishReason']
 > = {
 length: 'length',
 stop: 'stop',
@@ -209,7 +205,7 @@ return {
 }
 
 function fromMistralChunkChoice(
-choice: CompletionChunk['choices'][0] 
+choice: ChatCompletionResponseChunk['choices'][0] 
 ): CandidateData {
 return {
     index: choice.index,
@@ -246,7 +242,7 @@ const model = SUPPORTED_MISTRAL_MODELS[modelName];
 if (!model) throw new Error(`Unsupported model: ${modelName}`);
 const mistralMessages = toMistralMessages(request.messages);
 const mappedModelName =
-    request.config?.version || API_NAME_MAP[modelName] || modelName;
+    request.config?.version || modelName;
 const body = {
     messages: mistralMessages,
     tools: request.tools?.map(toMistralTool),
@@ -257,7 +253,7 @@ const body = {
     n: request.candidates,
     stop_sequences: request.config?.stopSequences,
     ...mapToSnakeCase(request.config?.custom || {}),
-} as CompletionCreateParams;
+} as ChatRequest;
 
 for (const key in body) {
     if (!body[key] || (Array.isArray(body[key]) && !body[key].length))
@@ -281,7 +277,7 @@ return defineModel(
     configSchema: SUPPORTED_MISTRAL_MODELS[name].configSchema,
     },
     async (request, streamingCallback) => {
-    let response: Completion;
+    let response: ChatCompletionResponse;
     const body = toMistralRequestBody(name, request);
     if (streamingCallback) {
         const stream = await client.completions.create({
