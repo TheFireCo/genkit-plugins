@@ -1,22 +1,30 @@
 # Plugin usage examples
 
-This module provides examples of usage of different API plugins for Genkit, which wraps around the
-native APIs. Currently, we support [Anthropic](https://www.anthropic.com/), [Cohere](https://cohere.com/), [Groq](https://groq.com/), [Mistral](https://mistral.ai/) and [OpenAI](https://openai.com/) plugins.
-Still, Genkit is *plugin-agnostic*, it allows you to have the same structure, prompts and code for different models and plugins.
+This module provides examples of usage of the Genkit plugins in this repository. This includes:
+- [OpenAI](../plugins/openai) - [website](https://openai.com/)
+- [Anthropic](../plugins/anthropicai) - [website](https://anthropic.com/)
+- [Groq](../plugins/groq) - [website](https://groq.com/)
+- [Cohere](../plugins/cohere) - [website](https://cohere.com/)
+- [Mistral](../plugins/mistral) - [website](https://mistral.ai/)
+
+The beauty of a framework like Genkit is that it provides a standard interface to the models, retrievers, embedders, etc exposed by these plugins. This allows you to easily swap out components while keeping prompts, flows, agents, etc the same.
+
+NOTE: as you will see, you do not need to have a Firebase project to use Genkit and these plugins. You can use it as a standalone library in the same way you'd use Langchain.
 
 ## Set up Genkit packages and DevUI
 1. Rename .env.local to .env and add your API key to it, or specify it in the environment variable `{PLUGIN_NAME}_API_KEY` (e.g. `OPENAI_API_KEY`).
 
 2. Run `npm install` to install the dependencies.
-3. Run `npm run start` to launch the Genkit Dev UI.
+3. Run `npm run start:browser` to launch Genkit and the Dev UI.
 
 Genkit is configured from the `index.ts`, where you can import and initialize the plugin and define prompts, flows, models and other tools which could be accessed directly through Gekit Dev UI:
 
 ```
 import { configureGenkit } from '@genkit-ai/core';
+
 import { openAI } from 'genkitx-openai-plugin';
-import {anthropic} from 'genkitx-anthropicai';
-import {groq} from 'genkitx-groq';
+import { anthropic } from 'genkitx-anthropicai';
+import { groq } from 'genkitx-groq';
 // Here you can import other plugins, depending on your needs
 
 export default configureGenkit({

@@ -10,6 +10,7 @@ import { openAI, gpt4Turbo, gpt35Turbo } from 'genkitx-openai-plugin';
 import groq from 'genkitx-groq';
 import cohere from 'genkitx-cohere';
 import anthropic from 'genkitx-anthropicai';
+import mistral from 'genkitx-mistral';
 
 export default configureGenkit({
   plugins: [
@@ -17,6 +18,7 @@ export default configureGenkit({
     groq(),
     cohere(),
     anthropic(),
+    mistral(),
     dotprompt(),
   ],
   logLevel: 'debug',
@@ -91,7 +93,6 @@ const codeDotPrompt = defineDotprompt(
 
 
 // Define flows
-
 export const myFlow = defineFlow(
   {
     name: 'menuSuggestionFlow',

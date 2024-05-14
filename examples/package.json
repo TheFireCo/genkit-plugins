@@ -2,6 +2,7 @@
   "main": "lib/index.js",
   "scripts": {
     "start": "npx genkit start",
+    "start:browser": "npx genkit start -o",
     "compile": "npx tsc",
     "build": "npm run build:clean && npm run compile",
     "build:clean": "rm -rf ./lib",
