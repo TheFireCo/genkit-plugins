@@ -1,4 +1,3 @@
-
 /**
  * Copyright 2024 The Fire Company
  *
@@ -15,29 +14,49 @@
  * limitations under the License.
  */
 
-import { genkitPlugin, Plugin } from '@genkit-ai/core';
-import { CohereClient } from 'cohere-ai';
+import { genkitPlugin, Plugin } from "@genkit-ai/core";
+import { CohereClient } from "cohere-ai";
+import {
+  cohereEmbedder,
+  SUPPORTED_EMBEDDING_MODELS,
+  embedEnglish3,
+  embedEnglishLight3,
+  embedMultilingual3,
+  embedMultilingualLight3,
+} from './embedder';
+import {
+  command,
+  commandLight,
+  commandR,
+  commandRPlus,
+  commandModel,
+  SUPPORTED_COMMAND_MODELS,
+} from "./command";
+
+export { command, commandLight, commandR, commandRPlus,  };
 
 export interface PluginOptions {
   apiKey?: string;
 }
 
 export const cohere: Plugin<[PluginOptions] | []> = genkitPlugin(
-  'cohere',
+  "cohere",
   async (options?: PluginOptions) => {
     let apiKey = options?.apiKey || process.env.COHERE_API_KEY;
     if (!apiKey)
       throw new Error(
-        'Please pass in the API key or set the COHERE_API_KEY environment variable'
+        "Please pass in the API key or set the COHERE_API_KEY environment variable"
       );
     const client = new CohereClient({ token: apiKey });
     return {
       models: [
-        // Example: Add support for Cohere models
-        // { name: 'generate', model: client.generate },
-        // { name: 'embed', model: client.embed },
-        // Add other Cohere models as needed
+        ...Object.keys(SUPPORTED_COMMAND_MODELS).map((name) =>
+          commandModel(name, client)
+        ),
       ],
+      embedders: Object.keys(SUPPORTED_EMBEDDING_MODELS).map((name) =>
+        cohereEmbedder(name, options)
+      ),
     };
   }
 );
