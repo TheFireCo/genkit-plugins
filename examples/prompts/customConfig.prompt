@@ -1,5 +1,5 @@
 ---
-model: anthropicai/claude-3-opus
+model: anthropic/claude-3-opus
 config:
   temperature: 0.9
   maxOutputTokens: 300
