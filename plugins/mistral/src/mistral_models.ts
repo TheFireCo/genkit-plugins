@@ -27,11 +27,9 @@ ToolDefinition,
 ToolRequestPart,
 
 } from '@genkit-ai/ai/model';
-import MistralClient from './mistralai.mjs';
-import {Tool, Function, ChatCompletionResponseChoice, ChatCompletionResponseChunk, ToolCalls, ChatRequest, ChatCompletionResponse } from "@mistralai/mistralai";
+import type {Tool, Function, ChatCompletionResponseChoice, ChatCompletionResponseChunk, ToolCalls, ChatRequest, ChatCompletionResponse } from "@mistralai/mistralai";
 
 import z from 'zod';
-
 
 export const MistralConfigSchema = z.object({
 temperature: z.number().min(0).max(1).optional(),
@@ -262,10 +260,17 @@ for (const key in body) {
 return body;
 }
 
-/**
- *
- */
-export function mistralModel(name: string, client: MistralClient) {
+// async combineChunks(request: ChatRequest, options?: ChatRequestOptions): Promise<ChatCompletionResponse> {
+//     let fullResponse: ChatCompletionResponse = { text: "" };
+
+//     for await (const chunk of this.chatStream(request, options)) {
+//       fullResponse.text += chunk.text;
+//     }
+
+//     return fullResponse;
+//   }
+
+export function mistralModel(name: string, client: any) { //Ugly any type, should be MistralClient but cannot import it here
 const modelId = `mistral/${name}`;
 const model = SUPPORTED_MISTRAL_MODELS[name];
 if (!model) throw new Error(`Unsupported model: ${name}`);
@@ -277,13 +282,10 @@ return defineModel(
     configSchema: SUPPORTED_MISTRAL_MODELS[name].configSchema,
     },
     async (request, streamingCallback) => {
-    let response: ChatCompletionResponse;
+    let response: ChatCompletionResponse| ChatCompletionResponseChunk;
     const body = toMistralRequestBody(name, request);
     if (streamingCallback) {
-        const stream = await client.completions.create({
-        ...body,
-        stream: true,
-        });
+        const stream = await client.chatStream( body);
         for await (const chunk of stream) {
         chunk.choices?.forEach((chunk) => {
             const c = fromMistralChunkChoice(chunk);
@@ -293,9 +295,10 @@ return defineModel(
             });
         });
         }
-        response = await stream.finalCompletion();
+
+        response = await client.chat(body);
     } else {
-        response = await client.completions.create(body);
+        response = await client.chat(body);
     }
     return {
         candidates: response.choices.map((c) =>
