@@ -51,6 +51,13 @@ Usage examples of the plugins are available [here](https://github.com/TheFireCo/
 
 For more detailed information on how to use GenKit plugins, please refer to the [official Genkit documentation](https://firebase.google.com/docs/genkit/get-started).
 
+## Showcase
+
+Products built with `genkit-plugins`: 
+
+- 🔥 **[Fireview](https://fireview.dev)** - Notion for your Firestore data
+- 🎁 **[Giftit](https://giftit.social)** - an award-winning social gifting app (mobile)
+
 ## Contributing
 
 Want to contribute to the project? That's awesome! Head over to our [Contribution Guidelines](https://github.com/TheFireCo/genkit-plugins/blob/main/CONTRIBUTING.md).
