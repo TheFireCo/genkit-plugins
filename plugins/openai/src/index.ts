@@ -29,6 +29,7 @@ import {
   gpt4,
   gpt4Turbo,
   gpt4Vision,
+  gpt4o,
   gptModel,
   SUPPORTED_GPT_MODELS,
 } from './gpt.js';
@@ -38,6 +39,7 @@ export {
   gpt4,
   gpt4Turbo,
   gpt4Vision,
+  gpt4o,
   textEmbedding3Large,
   textEmbedding3Small,
 };

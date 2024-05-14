@@ -67,6 +67,21 @@ export const OpenAiConfigSchema = z.object({
   visual_detail_level: z.string().optional(),
 });
 
+export const gpt4o = modelRef({
+  name: 'openai/gpt-4o',
+  info: {
+    versions: ['gpt-4o-2024-05-13'],
+    label: 'OpenAI - GPT-4o',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: true,
+      output: ['text', 'json'],
+    },
+  },
+  configSchema: OpenAiConfigSchema,
+});
+
 export const gpt4Turbo = modelRef({
   name: 'openai/gpt-4-turbo',
   info: {
