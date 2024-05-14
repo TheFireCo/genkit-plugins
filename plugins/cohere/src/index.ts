@@ -17,6 +17,14 @@
 import { genkitPlugin, Plugin } from "@genkit-ai/core";
 import { CohereClient } from "cohere-ai";
 import {
+  cohereEmbedder,
+  SUPPORTED_EMBEDDING_MODELS,
+  embedEnglish3,
+  embedEnglishLight3,
+  embedMultilingual3,
+  embedMultilingualLight3,
+} from './embedder';
+import {
   command,
   commandLight,
   commandR,
@@ -25,7 +33,7 @@ import {
   SUPPORTED_COMMAND_MODELS,
 } from "./command";
 
-export { command, commandLight, commandR, commandRPlus };
+export { command, commandLight, commandR, commandRPlus,  };
 
 export interface PluginOptions {
   apiKey?: string;
@@ -46,6 +54,9 @@ export const cohere: Plugin<[PluginOptions] | []> = genkitPlugin(
           commandModel(name, client)
         ),
       ],
+      embedders: Object.keys(SUPPORTED_EMBEDDING_MODELS).map((name) =>
+        cohereEmbedder(name, options)
+      ),
     };
   }
 );
