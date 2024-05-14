@@ -24,12 +24,9 @@ import {
 } from 'openai/resources/index.mjs';
 import z from 'zod';
 
-const API_NAME_MAP = {
-  'gpt-4-turbo': 'gpt-4-turbo-preview',
-  'gpt-4-vision': 'gpt-4-vision-preview',
-};
-
 const MODELS_SUPPORTING_OPENAI_RESPONSE_FORMAT = [
+  'gpt-4o',
+  'gpt-4o-2024-05-13',
   'gpt-4-turbo',
   'gpt-4-turbo-2024-04-09',
   'gpt-4-turbo-preview',
@@ -48,6 +45,22 @@ export const OpenAiConfigSchema = z.object({
   seed: z.number().int().optional(),
   topLogProbs: z.number().int().min(0).max(20).optional(),
   user: z.string().optional(),
+});
+
+export const gpt4o = modelRef({
+  name: 'openai/gpt-4o',
+  info: {
+    versions: ['gpt-4o', 'gpt-4o-2024-05-13'],
+    label: 'OpenAI - GPT-4o',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: true,
+      systemRole: true,
+      output: ['text', 'json'],
+    },
+  },
+  configSchema: OpenAiConfigSchema,
 });
 
 export const gpt4Turbo = modelRef({
@@ -121,6 +134,7 @@ export const gpt35Turbo = modelRef({
 });
 
 export const SUPPORTED_GPT_MODELS = {
+  'gpt-4o': gpt4o,
   'gpt-4-turbo': gpt4Turbo,
   'gpt-4-vision': gpt4Vision,
   'gpt-4': gpt4,
@@ -341,8 +355,7 @@ export function toOpenAiRequestBody(
   const model = SUPPORTED_GPT_MODELS[modelName];
   if (!model) throw new Error(`Unsupported model: ${modelName}`);
   const openAiMessages = toOpenAiMessages(request.messages);
-  const mappedModelName =
-    request.config?.version || API_NAME_MAP[modelName] || modelName;
+  const mappedModelName = request.config?.version || modelName;
   const body = {
     messages: openAiMessages,
     tools: request.tools?.map(toOpenAiTool),
