@@ -27,7 +27,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.20.9",
-    "@genkit-ai/ai": "0.5.0-rc.8",
+    "@genkit-ai/ai": "0.5.0",
     "@genkit-ai/core": "0.5.0-rc.8",
     "zod": "^3.22.4"
   },
