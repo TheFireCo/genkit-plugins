@@ -16,7 +16,7 @@
  */
 
 import { genkitPlugin, Plugin } from '@genkit-ai/core';
-import { SUPPORTED_MISTRAL_MODELS,mistralModel } from './gpt';
+import { SUPPORTED_MISTRAL_MODELS,mistralModel } from './mistral_llms';
 
 
 export interface PluginOptions {

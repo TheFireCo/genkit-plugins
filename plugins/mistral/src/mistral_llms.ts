@@ -48,6 +48,7 @@ info: {
         multiturn: true,
         tools: false,
         media: false,
+        systemRole: true,
         output: ['text','json'], 
     },
 },
@@ -63,6 +64,7 @@ info: {
         multiturn: true,
         tools: false,
         media: false,
+        systemRole: true,
         output: ['text','json'], 
     },
 }});
@@ -76,6 +78,7 @@ info: {
         multiturn: true,
         tools: true,
         media: false,
+        systemRole: true,
         output: ['text','json'], 
     },
 }});
