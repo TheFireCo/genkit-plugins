@@ -35,6 +35,7 @@ export const claude3Opus = modelRef({
       multiturn: true,
       tools: false,
       media: true,
+      systemRole: true,
       output: ['text'],
     },
   },
@@ -50,6 +51,7 @@ export const claude3Sonnet = modelRef({
       multiturn: true,
       tools: false,
       media: true,
+      systemRole: true,
       output: ['text'],
     },
   },
@@ -65,6 +67,7 @@ export const claude3Haiku = modelRef({
       multiturn: true,
       tools: false,
       media: true,
+      systemRole: true,
       output: ['text'],
     },
   },
@@ -73,7 +76,7 @@ export const claude3Haiku = modelRef({
 
 export const SUPPORTED_CLAUDE_MODELS: Record<
   string,
-  ModelReference<z.ZodTypeAny>
+  ModelReference<typeof AnthropicConfigSchema>
 > = {
   'claude-3-opus': claude3Opus,
   'claude-3-sonnet': claude3Sonnet,
