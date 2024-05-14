@@ -41,3 +41,4 @@ export const mistral: Plugin<[PluginOptions] | []> = genkitPlugin(
 
 export default mistral;
 
+// TODO: Add Mistral AI models as needed
