@@ -120,7 +120,7 @@ export function cohereEmbedder(name: string, options?: PluginOptions) {
     async (input, options) => {
       const embeddings = await client.embed({
         model: name,
-        texts: input.map((d) => {console.log(options?.inputType); return d.text()}),
+        texts: input.map((d) => {return d.text()}),
         inputType: options?.inputType ? options.inputType : 'search_document',
         embeddingTypes: options?.embeddingTypes ? [options.embeddingTypes] : undefined,
       });
