@@ -29,6 +29,7 @@ export const dallE3 = modelRef({
       media: false,
       output: ['media'],
       multiturn: false,
+      systemRole: false,
       tools: false,
     },
   },
