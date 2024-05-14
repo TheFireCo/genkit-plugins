@@ -48,11 +48,11 @@ export const GroqConfigSchema = z.object({
   topLogprobs: z.number().optional(),
   user: z.string().optional(),
   toolChoice: z.string().optional(),
-  //   responseFormat: z
-  //     .object({
-  //       type: z.literal("json_object"),
-  //     })
-  //     .optional(),
+//   responseFormat: z
+//     .object({
+//       type: z.literal("json_object"),
+//     })
+//     .optional(),
 });
 
 // Worst at JSON mode
@@ -65,6 +65,7 @@ export const llama_3_8b = modelRef({
       multiturn: true,
       tools: false,
       media: false,
+      systemRole: true,
       output: ["text", "json"], // JSON mode does not support streaming or stop sequences
     },
   },
@@ -82,6 +83,7 @@ export const llama_3_70b = modelRef({
       multiturn: true,
       tools: false,
       media: false,
+      systemRole: true,
       output: ["text", "json"], // JSON mode does not support streaming or stop sequences
     },
   },
@@ -98,6 +100,7 @@ export const mixtral_8_7b = modelRef({
       multiturn: true,
       tools: false,
       media: false,
+      systemRole: true,
       output: ["text", "json"], // JSON mode does not support streaming or stop sequences
     },
   },
@@ -114,6 +117,7 @@ export const gemma_7b = modelRef({
       multiturn: true,
       tools: false,
       media: false,
+      systemRole: true,
       output: ["text", "json"], // JSON mode does not support streaming or stop sequences
     },
   },
@@ -127,6 +131,14 @@ export const SUPPORTED_GROQ_MODELS = {
   "gemma-7b": gemma_7b,
 };
 
+export const DEFAULT_MODEL_VERSION = {
+  "llama-3-8b": "llama-3-8b-32768",
+  "llama-3-70b": "llama-3-70b-32768",
+  "mixtral-8-7b": "mixtral-8x7b-32768",
+  "gemma-7b": "gemma-7b-it",
+};
+
+
 /**
  * Converts a Genkit message role to a Groq role.
  *
@@ -139,6 +151,7 @@ export function toGroqRole(role: Role): "system" | "user" | "assistant" {
     case "user":
       return "user";
     case "model":
+    case "tool":
       return "assistant";
     case "system":
       return "system";
@@ -164,6 +177,13 @@ export function toGroqTool(tool: ToolDefinition): CompletionCreateParams.Tool {
   };
 }
 
+
+/**
+ * Transforms a Genkit part into a corresponding Groq part.
+ *
+ * @param part - The Genkit part to be transformed.
+ * @returns The equivalent Groq part.
+ */
 export function toGroqTextAndMedia(part: Part): string {
   if (part.text) {
     return part.text;
@@ -178,6 +198,12 @@ export function toGroqTextAndMedia(part: Part): string {
   );
 }
 
+/**
+ * Transforms a Genkit message into a corresponding Groq message.
+ *
+ * @param messages - The Genkit messages to be transformed.
+ * @returns The equivalent Groq messages.
+ */
 export function toGroqMessages(
   messages: MessageData[]
 ): CompletionCreateParams.Message[] {
@@ -262,6 +288,12 @@ const FINISH_REASON_MAP: Record<
   content_filter: "blocked",
 };
 
+/**
+ * Transforms a Groq tool call into a Genkit tool request part.
+ *
+ * @param toolCall - The Groq tool call to be transformed.
+ * @returns The equivalent Genkit tool request part.
+ */
 function fromGroqToolCall(
   toolCall:
     | ChatCompletion.Choice.Message.ToolCall
@@ -282,6 +314,13 @@ function fromGroqToolCall(
   };
 }
 
+/**
+ * Transforms a Groq choice into a Genkit candidate.
+ *
+ * @param choice - The Groq choice to be transformed.
+ * @param jsonMode - Whether the response is in JSON mode.
+ * @returns The equivalent Genkit candidate.
+ */
 function fromGroqChoice(
   choice: ChatCompletion.Choice,
   jsonMode = false
@@ -305,6 +344,12 @@ function fromGroqChoice(
   };
 }
 
+/**
+ * Transforms a Groq chunk choice into a Genkit candidate.
+ *
+ * @param choice - The Groq chunk choice to be transformed.
+ * @returns The equivalent Genkit candidate.
+ */
 function fromGroqChunkChoice(
   choice: ChatCompletionChunk.Choice
   // jsonMode = false // JSON mode does not support streaming or stop sequences
@@ -326,6 +371,13 @@ function fromGroqChunkChoice(
   };
 }
 
+/**
+ * Transforms a Genkit request into a corresponding Groq request.
+ *
+ * @param modelName - The name of the model to be transformed.
+ * @param request - The Genkit request to be transformed.
+ * @returns The equivalent Groq request.
+ */
 export function toGroqRequestBody(
   modelName: string,
   request: GenerateRequest
@@ -348,7 +400,7 @@ export function toGroqRequestBody(
   const body: ChatCompletionCreateParamsBase = {
     messages: toGroqMessages(request.messages),
     tools: request.tools?.map(toGroqTool),
-    model: request.config?.version || modelName,
+    model: request.config?.version || DEFAULT_MODEL_VERSION[modelName],
     temperature: request.config?.temperature,
     max_tokens: request.config?.maxTokens,
     top_p: request.config?.topP,
@@ -362,10 +414,9 @@ export function toGroqRequestBody(
     user: request.config?.user,
     tool_choice: request.config?.toolChoice,
     // response_format: request.config?.responseFormat, // Being set automatically
-    ...mapToSnakeCase(request.config?.custom || {}),
   };
 
-  const response_format = request.output?.format;
+  const response_format = request.output?.format || "text";
   if (
     response_format === "json" &&
     model.info.supports?.output?.includes("json")
@@ -393,6 +444,13 @@ export function toGroqRequestBody(
   return body;
 }
 
+/**
+ * Defines a Groq model.
+ *
+ * @param name - The name of the model.
+ * @param client - The Groq client.
+ * @returns The model.
+ */
 export function groqModel(name: string, client: Groq) {
   const model = SUPPORTED_GROQ_MODELS[name];
   if (!model) throw new Error(`Unsupported model: ${name}`);

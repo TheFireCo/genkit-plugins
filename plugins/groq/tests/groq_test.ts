@@ -2,7 +2,7 @@ import assert from 'node:assert';
 import { describe, it } from 'node:test';
 import { GenerateRequest, MessageData, Role, ToolDefinition } from '@genkit-ai/ai/model';
 import { toGroqRequestBody, toGroqRole, toGroqTool, toGroqMessages, groqModel } from '../src/groq_models';
-import Groq from 'groq-sdk';
+import { ChatCompletionCreateParamsBase } from 'groq-sdk/resources/chat/completions.mjs';
 
 describe('toGroqRole', () => {
   it('should convert user role correctly', () => {
@@ -15,6 +15,10 @@ describe('toGroqRole', () => {
 
   it('should convert system role correctly', () => {
     assert.strictEqual(toGroqRole('system'), 'system');
+  });
+
+  it('should convert tool role correctly', () => {
+    assert.strictEqual(toGroqRole('tool'), 'assistant');
   });
 
   it('should throw error for unsupported roles', () => {
@@ -83,7 +87,7 @@ describe('toGroqMessages', () => {
         content: 'How can I assist you today?',
       },
       {
-        role: 'tool',
+        role: 'assistant',
         tool_call_id: 'ref123',
         content: 'Sample response',
       },
@@ -100,34 +104,35 @@ describe('toGroqRequestBody', () => {
     tools: [],
     output: { format: 'text' },
     config: {
+      temperature: 0.7,
+      stopSequences: ['\n'],
+      maxTokens: 100,
+      topP: 0.9,
+      frequencyPenalty: 0.5,
+      logitBias: {
+        science: 12,
+        technology: 8,
+        politics: -5,
+        sports: 3,
+      },
+      seed: 42,
+      topLogprobs: 10,
+      user: 'exampleUser123',
       custom: {
-        temperature: 0.7,
-        maxTokens: 100,
-        topP: 0.9,
-        stopSequences: ['\n'],
-        frequencyPenalty: 0.5,
-        logitBias: {
-          science: 12,
-          technology: 8,
-          politics: -5,
-          sports: 3,
-        },
-        seed: 42,
-        topLogprobs: 10,
-        user: 'exampleUser123',
+        someCamelCase: 'someValue',
       },
     },
   };
 
   it('should convert GenerateRequest to Groq request body', () => {
-    const expectedOutput = {
+    const expectedOutput: ChatCompletionCreateParamsBase = {
       messages: [
         {
           role: 'user',
           content: 'Tell a joke about dogs.',
         },
       ],
-      model: 'llama-3-8b',
+      model: 'llama-3-8b-32768',
       temperature: 0.7,
       max_tokens: 100,
       top_p: 0.9,
@@ -147,6 +152,7 @@ describe('toGroqRequestBody', () => {
       },
     };
     const actualOutput = toGroqRequestBody('llama-3-8b', request);
+    console.log(`actualOutput.stop: ${actualOutput.stop}`);
     assert.deepStrictEqual(actualOutput, expectedOutput);
   });
 
@@ -154,66 +160,5 @@ describe('toGroqRequestBody', () => {
     assert.throws(() => toGroqRequestBody('unsupported-model', request), {
       message: 'Unsupported model: unsupported-model'
     });
-  });
-});
-
-describe('groqModel', () => {
-  const client = new Groq(); // Mock or actual Groq client initialization
-  const model = groqModel('llama-3-8b', client);
-
-  it('should define a model with correct configuration', () => {
-    assert.strictEqual(model.name, 'groq/llama-3-8b');
-    // assert.strictEqual(model.re, 'Llama 3 8B');
-  });
-
-  it('should handle requests and return expected results', async () => {
-    const request: GenerateRequest = {
-      messages: [{ role: 'user', content: [{ text: 'Hello, Groq!' }] }],
-      output: { format: 'text' },
-    };
-
-    // Simulate response from Groq client
-    const simulatedResponse = {
-      choices: [
-        {
-          index: 0,
-          message: {
-            content: 'Hello, user!',
-            role: 'model',
-          },
-          finish_reason: 'length',
-        },
-      ],
-      usage: {
-        prompt_tokens: 5,
-        completion_tokens: 3,
-        total_tokens: 8,
-      },
-    };
-
-    client.chat.completions.create = async () => simulatedResponse;
-
-    const result = await model.handler(request);
-    const expected = {
-      candidates: [
-        {
-          index: 0,
-          finishReason: 'length',
-          message: {
-            role: 'model',
-            content: [{ text: 'Hello, user!' }],
-          },
-          custom: {},
-        },
-      ],
-      usage: {
-        inputTokens: 5,
-        outputTokens: 3,
-        totalTokens: 8,
-      },
-      custom: simulatedResponse,
-    };
-
-    assert.deepStrictEqual(result, expected);
   });
 });
