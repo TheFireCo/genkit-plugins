@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/TheFireCo/genkit-plugins/assets/21220927/e9969277-a565-43eb-b195-e5a5cc566db9" width="20%">
+  <img src="https://github.com/TheFireCo/genkit-plugins/assets/109159237/ff3aa70e-9b1d-4085-8c25-28a6b1d04a20" width="20%">
 </p>
 <h1 align="center">
    Firebase Genkit Plugins
