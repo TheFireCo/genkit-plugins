@@ -1,3 +1,6 @@
+<p align="center">
+  <img src="https://github.com/TheFireCo/genkit-plugins/assets/21220927/e9969277-a565-43eb-b195-e5a5cc566db9" width="20%">
+</p>
 <h1 align="center">
    Firebase Genkit Plugins
 </h1>
