@@ -1,0 +1,52 @@
+{
+  "name": "genkitx-convex",
+  "description": "Genkit AI framework plugin for Convex Vector Stores.",
+  "keywords": [
+    "genkit",
+    "genkit-retriever",
+    "genkit-plugin",
+    "genkit-indexer",
+    "ai",
+    "genai",
+    "generative-ai"
+  ],
+  "version": "0.0.10",
+  "type": "commonjs",
+  "scripts": {
+    "check": "tsc",
+    "compile": "tsup-node",
+    "build:clean": "rm -rf ./lib",
+    "build": "npm-run-all build:clean check compile",
+    "build:watch": "tsup-node --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TheFireCo/genkit-plugins.git",
+    "directory": "plugins/convex"
+  },
+  "author": "The Fire Company",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "zod": "^3.22.4"
+  },
+  "peerDependencies": {
+    "@genkit-ai/ai": "^0.5.0",
+    "@genkit-ai/core": "^0.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.16",
+    "npm-run-all": "^4.1.5",
+    "tsup": "^8.0.2",
+    "tsx": "^4.7.0",
+    "typescript": "^4.9.0"
+  },
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./lib/index.js",
+      "import": "./lib/index.mjs",
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    }
+  }
+}
