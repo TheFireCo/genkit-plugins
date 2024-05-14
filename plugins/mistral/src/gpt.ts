@@ -54,7 +54,20 @@ info: {
 configSchema: MistralConfigSchema,
 });
 
-
+export const mistralembed = modelRef({
+    name: 'mistral/mistral-embed',
+    info: {
+        versions: ['mistral-embed'],
+        label: 'Mistral - Mistral Embed',
+        supports: {
+            multiturn: true,
+            tools: true,
+            media: false,
+            output: ['text','json'], 
+        },
+    },
+    configSchema: MistralConfigSchema,
+    });
     
 
 
@@ -88,59 +101,19 @@ return {
 
 export function toMistralMessages(
 messages: MessageData[]
-): ChatCompletionResponseChoice["message"][] {
-const mistralMsgs: ChatCompletionResponseChoice["message"][] = [];
+): ChatRequest["messages"] {
+const mistralMsgs: ChatRequest["messages"] = [];
 for (const message of messages) {
     const msg = new Message(message);
     const role = toMistralRole(message.role);
-    switch (role) {
-    case 'user':
-    case 'system':
-        mistralMsgs.push({
+
+    // In Mistral the Message comprises only role and content no need to differentiate between tool and message
+    mistralMsgs.push({
         role: role,
         content: msg.text(),
-        tool_calls: null,
-        });
-        break;
-    case 'assistant':
-        const toolCalls: ToolCalls[] = msg.content
-        .filter((part) => part.toolRequest)
-        .map((part) => {
-            if (!part.toolRequest) {
-            throw Error(
-                'Mapping genkit message to mistral tool call content part but message.toolRequest not provided.'
-            );
-            }
-            return {
-            id: part.toolRequest.ref || '',
-            type: 'function',
-            function: {
-                name: part.toolRequest.name,
-                arguments: JSON.stringify(part.toolRequest.input),
-            },
-            };
-        });
-        if (toolCalls?.length > 0) {
-        mistralMsgs.push({
-            role: role,
-            tool_calls: toolCalls,
-            content: msg.text(),
-        });
-        } else {
-        mistralMsgs.push({
-            role: role,
-            content: msg.text(),
-            tool_calls: null,
-        });
-        }
-        break;
-    
-    default:
-        throw new Error('unrecognized role');
-    }
-}
-return mistralMsgs;
-}
+    });}
+    return mistralMsgs;
+}   
 
 const finishReasonMap: Record< 
 NonNullable<string>, 
