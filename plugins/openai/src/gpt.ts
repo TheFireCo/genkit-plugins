@@ -30,7 +30,10 @@ const API_NAME_MAP = {
 };
 
 const MODELS_SUPPORTING_OPENAI_RESPONSE_FORMAT = [
+  'gpt-4-turbo',
+  'gpt-4-turbo-2024-04-09',
   'gpt-4-turbo-preview',
+  'gpt-4-0125-preview',
   'gpt-4-1106-preview',
   'gpt-3.5-turbo-0125',
   'gpt-3.5-turbo',
@@ -51,15 +54,17 @@ export const gpt4Turbo = modelRef({
   name: 'openai/gpt-4-turbo',
   info: {
     versions: [
+      'gpt-4-turbo',
+      'gpt-4-turbo-2024-04-09',
       'gpt-4-turbo-preview',
       'gpt-4-0125-preview',
-      'gpt-4-1106-prevew',
+      'gpt-4-1106-preview',
     ],
     label: 'OpenAI - GPT-4 Turbo',
     supports: {
       multiturn: true,
       tools: true,
-      media: false,
+      media: true,
       systemRole: true,
       output: ['text', 'json'],
     },
