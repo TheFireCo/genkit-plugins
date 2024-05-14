@@ -64,7 +64,7 @@ export const OpenAiConfigSchema = z.object({
   seed: z.number().int().optional(),
   topLogProbs: z.number().int().min(0).max(20).optional(),
   user: z.string().optional(),
-  visual_detail_level: z.string().optional(),
+  visualDetailLevel: z.string().optional(),
 });
 
 export const gpt4o = modelRef({
@@ -179,7 +179,7 @@ function toOpenAiTool(tool: ToolDefinition): ChatCompletionTool {
   };
 }
 
-export function toOpenAiTextAndMedia(part: Part, visual_detail_level: VisualDetailLevel): ChatCompletionContentPart {
+export function toOpenAiTextAndMedia(part: Part, visualDetailLevel: VisualDetailLevel): ChatCompletionContentPart {
   if (part.text) {
     return {
       type: 'text',
@@ -190,7 +190,7 @@ export function toOpenAiTextAndMedia(part: Part, visual_detail_level: VisualDeta
       type: 'image_url',
       image_url: {
         url: part.media.url,
-        detail: visual_detail_level
+        detail: visualDetailLevel
       },
     };
   }
@@ -369,7 +369,7 @@ export function toOpenAiRequestBody(
   };
   const model = SUPPORTED_GPT_MODELS[modelName];
   if (!model) throw new Error(`Unsupported model: ${modelName}`);
-  const openAiMessages = toOpenAiMessages(request.messages, request.config?.visual_detail_level);
+  const openAiMessages = toOpenAiMessages(request.messages, request.config?.visualDetailLevel);
   const mappedModelName =
     request.config?.version || API_NAME_MAP[modelName] || modelName;
   const body = {

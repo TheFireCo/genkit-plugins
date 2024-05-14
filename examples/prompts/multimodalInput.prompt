@@ -5,7 +5,7 @@ input:
     photoUrl: string
     object_type: string
 config:
-  visual_detail_level: low
+  visualDetailLevel: low
 ---
 
 What {{object_type}} is shown in the image? {{media url=photoUrl}}

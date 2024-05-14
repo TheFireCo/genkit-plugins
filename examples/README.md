@@ -15,15 +15,15 @@ Genkit is configured from the `index.ts`, where you can import and initialize th
 ```
 import { configureGenkit } from '@genkit-ai/core';
 import { openAI } from 'genkitx-openai-plugin';
-import {anthropicAI} from 'genkitx-anthropicai';
-import {Groq} from 'genkitx-groq';
+import {anthropic} from 'genkitx-anthropicai';
+import {groq} from 'genkitx-groq';
 // Here you can import other plugins, depending on your needs
 
 export default configureGenkit({
   plugins: [
     openAI(),
-    anthropicAI(),
-    Groq(),
+    anthropic(),
+    groq(),
     // Initialize other plugins if necessary
   ],
   logLevel: 'debug',
@@ -62,7 +62,7 @@ const response = await generate({
 });
 console.log(await response.text());
 ```
-or define a tool in Genkit,test in the dev UI and then use it in the code:
+or define a tool in Genkit, test in the dev UI and then use it in the code:
 ```
 import {defineTool } from '@genkit-ai/ai';
 
@@ -191,7 +191,7 @@ const codeDotPrompt = defineDotprompt(
       maxOutputTokens: 100,
       topK: 20,
       stopSequences: ['abc'],
-      visual_detail_level: 'high', //Only for OpenAI models
+      visualDetailLevel: 'high', // Only for OpenAI models
     },
   },
   `Does the object {{object_name}} exist in the given image {{media url=image_url}}? If it does, what color is it and what are some details about it?`

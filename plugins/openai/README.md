@@ -48,7 +48,7 @@ const response = await generate({
   config:{
     // control of the level of visual detail when processing image embeddings
     // Low detail level also decreases the token usage
-    visual_detail_level: 'low',
+    visualDetailLevel: 'low',
   }
 });
 console.log(await response.text());

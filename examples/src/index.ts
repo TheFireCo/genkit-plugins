@@ -4,12 +4,19 @@ import { defineDotprompt, dotprompt, prompt } from '@genkit-ai/dotprompt';
 import { generate, definePrompt, defineTool } from '@genkit-ai/ai';
 import { configureGenkit } from '@genkit-ai/core';
 import { defineFlow, startFlowsServer } from '@genkit-ai/flow';
-import { openAI, gpt4Turbo, gpt35Turbo } from 'genkitx-openai-plugin';
 import * as z from 'zod';
+
+import { openAI, gpt4Turbo, gpt35Turbo } from 'genkitx-openai-plugin';
+import groq from 'genkitx-groq';
+import cohere from 'genkitx-cohere';
+import anthropic from 'genkitx-anthropicai';
 
 export default configureGenkit({
   plugins: [
     openAI(),
+    groq(),
+    cohere(),
+    anthropic(),
     dotprompt(),
   ],
   logLevel: 'debug',
@@ -76,7 +83,7 @@ const codeDotPrompt = defineDotprompt(
       maxOutputTokens: 100,
       topK: 20,
       stopSequences: ['abc'],
-      visual_detail_level: 'high',
+      visualDetailLevel: 'high',
     },
   },
   `Does the object {{object_name}} exist in the given image {{media url=image_url}}? If it does, what color is it and what are some details about it?`

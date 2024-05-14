@@ -2,5 +2,3 @@ node_modules/
 .nx/
 lib/
 .env
-examples/node_modules/
-examples/lib/
