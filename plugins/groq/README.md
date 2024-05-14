@@ -1,3 +1,5 @@
+![groq_genkit](https://github.com/TheFireCo/genkit-plugins/assets/21220927/b56501c2-25c1-48aa-8da9-65486f0e982d)
+
 <h1 align="center">Firebase Genkit <> Groq Plugin</h1>
 
 <h4 align="center">Groq Community Plugin for Google Firebase Genkit</h4>
