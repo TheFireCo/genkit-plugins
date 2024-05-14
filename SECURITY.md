@@ -9,8 +9,7 @@ but they might be required in case of breaking changes in Genkit or in the respe
 official SDKs. In either case, a migration guide will be provided to ease the transition
 to the latest version.
 
-
 ## Reporting a Vulnerability
 
-If you find a vulnerability, please [open an issue](https://github.com/Dabolus/genkit-plugins/issues)
+If you find a vulnerability, please [open a bug report](https://github.com/Dabolus/genkit-plugins/issues/new?assignees=Dabolus&labels=bug&template=bug_report.md)
 so that we can keep track of it and fix it. Pull requests are also welcome.
