@@ -45,6 +45,10 @@ const config: Config = {
         theme: {
           customCss: './src/css/custom.css',
         },
+        gtag: {
+          trackingID: 'G-QGH5S84GT7',
+          anonymizeIP: true,
+        },
       } satisfies Preset.Options,
     ],
   ],
@@ -91,7 +95,7 @@ const config: Config = {
               label: 'GitHub',
               href: 'https://github.com/TheFireCo/genkit-plugins',
             },
-           
+
           ],
         },
         {
