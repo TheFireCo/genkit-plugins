@@ -450,7 +450,102 @@ describe('toOpenAiRequestBody', () => {
             },
           },
         ],
-        model: 'gpt-4-turbo-preview',
+        model: 'gpt-4-turbo',
+        response_format: { type: 'json_object' },
+      },
+    },
+    {
+      should: '(gpt-4o) sets response_format if output.format=json',
+      modelName: 'gpt-4o',
+      genkitRequest: {
+        messages: [
+          { role: 'user', content: [{ text: 'Tell a joke about dogs.' }] },
+          {
+            role: 'model',
+            content: [
+              {
+                toolRequest: {
+                  ref: 'call_yTnDw3xY3KH3pkvDvccCizn1',
+                  name: 'tellAFunnyJoke',
+                  input: { topic: 'dogs' },
+                },
+              },
+            ],
+          },
+          {
+            role: 'tool',
+            content: [
+              {
+                toolResponse: {
+                  ref: 'call_yTnDw3xY3KH3pkvDvccCizn1',
+                  name: 'tellAFunnyJoke',
+                  output: 'Why did the dogs cross the road?',
+                },
+              },
+            ],
+          },
+        ],
+        tools: [
+          {
+            name: 'tellAFunnyJoke',
+            description:
+              'Tells jokes about an input topic. Use this tool whenever user asks you to tell a joke.',
+            inputSchema: {
+              type: 'object',
+              properties: { topic: { type: 'string' } },
+              required: ['topic'],
+              additionalProperties: false,
+              $schema: 'http://json-schema.org/draft-07/schema#',
+            },
+            outputSchema: {
+              type: 'string',
+              $schema: 'http://json-schema.org/draft-07/schema#',
+            },
+          },
+        ],
+        output: { format: 'json' },
+      },
+      expectedOutput: {
+        messages: [
+          {
+            role: 'user',
+            content: [{ type: 'text', text: 'Tell a joke about dogs.' }],
+          },
+          {
+            role: 'assistant',
+            tool_calls: [
+              {
+                id: 'call_yTnDw3xY3KH3pkvDvccCizn1',
+                type: 'function',
+                function: {
+                  name: 'tellAFunnyJoke',
+                  arguments: '{"topic":"dogs"}',
+                },
+              },
+            ],
+          },
+          {
+            role: 'tool',
+            tool_call_id: 'call_yTnDw3xY3KH3pkvDvccCizn1',
+            content: 'Why did the dogs cross the road?',
+          },
+        ],
+        tools: [
+          {
+            type: 'function',
+            function: {
+              name: 'tellAFunnyJoke',
+              parameters: {
+                type: 'object',
+                properties: { topic: { type: 'string' } },
+                required: ['topic'],
+                additionalProperties: false,
+                $schema: 'http://json-schema.org/draft-07/schema#',
+              },
+            },
+          },
+        ],
+        model: 'gpt-4o',
         response_format: { type: 'json_object' },
       },
     },
@@ -756,7 +851,7 @@ describe('toOpenAiRequestBody', () => {
           },
         },
       ],
-      model: 'gpt-4-vision-preview',
+      model: 'gpt-4-vision',
     };
     const actualOutput1 = toOpenAiRequestBody(
       modelName,
