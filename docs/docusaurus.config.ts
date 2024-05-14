@@ -1,22 +1,24 @@
-import {themes as prismThemes} from 'prism-react-renderer';
-import type {Config} from '@docusaurus/types';
+import { themes as prismThemes } from 'prism-react-renderer';
+import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'Genkit Plugins',
   tagline: 'Community Plugins for Genkit (OpenAI, Groq, Anthropic, Cohere, etc.)',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/logo.png',
 
   // Set the production url of your site here
   url: 'https://docs.firecompany.co',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
+  baseUrl: '/genkit-plugins/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'TheFireCo', // Usually your GitHub org/user name.
   projectName: 'genkit-plugins', // Usually your repo name.
+  deploymentBranch: 'gh-pages',
+  trailingSlash: false,
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -43,6 +45,13 @@ const config: Config = {
         theme: {
           customCss: './src/css/custom.css',
         },
+        gtag: {
+          trackingID: 'G-QGH5S84GT7',
+          anonymizeIP: true,
+        },
+        googleTagManager: {
+          containerId: 'GTM-KS2LPDSZ',
+        },
       } satisfies Preset.Options,
     ],
   ],
@@ -54,14 +63,14 @@ const config: Config = {
       title: 'GenKit Plugins',
       logo: {
         alt: 'GenKit Plugins',
-        src: 'img/logo.svg',
+        src: 'img/logo.png',
       },
       items: [
         {
           type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Tutorial',
+          sidebarId: 'pluginsSidebar',
+          label: 'Plugins',
         },
         {
           href: 'https://github.com/TheFireCo/genkit-plugins',
@@ -77,24 +86,32 @@ const config: Config = {
           title: 'Docs',
           items: [
             {
-              label: 'Tutorial',
-              to: '/docs/intro',
+              label: 'Plugins',
+              to: '/docs/category/plugins',
             },
           ],
         },
         {
           title: 'Community',
           items: [
-           
-          ],
-        },
-        {
-          title: 'More',
-          items: [
             {
               label: 'GitHub',
               href: 'https://github.com/TheFireCo/genkit-plugins',
             },
+
+          ],
+        },
+        {
+          title: 'More from us',
+          items: [
+            {
+              label: 'Fireview',
+              href: 'https://fireview.dev',
+            },
+            {
+              label: 'Giftit',
+              href: 'https://giftit.social',
+            }
           ],
         },
       ],
