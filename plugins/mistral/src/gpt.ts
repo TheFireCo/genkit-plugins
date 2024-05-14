@@ -55,7 +55,7 @@ configSchema: MistralConfigSchema,
 });
 
 
-  
+    
 
 
 function toMistralRole(role: Role):  string  {

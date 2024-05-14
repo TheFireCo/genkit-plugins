@@ -16,6 +16,7 @@
  */
 
 import { genkitPlugin, Plugin } from '@genkit-ai/core';
+import { SUPPORTED_MISTRAL_MODELS,mistralModel } from './gpt';
 
 
 export interface PluginOptions {
@@ -36,10 +37,15 @@ export const mistral: Plugin<[PluginOptions] | []> = genkitPlugin(
     const client = new MistralClient(apiKey);
     return {
       models: [
-        // TODO2
-        //...Object.keys()
-        // TODO: Add Mistral AI models as needed
-      ],
+        ...Object.keys(SUPPORTED_MISTRAL_MODELS).map((name) => mistralModel(name,client))]
+
+        // TODO: Add Embedders
+        // embedders: [...Object.keys(SUPPORTED_MISTRAL_MODELS).map((name) => {
+        //   return {
+        //     name,
+        //     model: SUPPORTED_MISTRAL_MODELS[name],
+        //   };
+        // })],
     };
   }
 );
