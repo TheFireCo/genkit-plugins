@@ -343,23 +343,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@genkit-ai/ai@npm:0.5.0-rc.12":
-  version: 0.5.0-rc.12
-  resolution: "@genkit-ai/ai@npm:0.5.0-rc.12"
+"@genkit-ai/ai@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "@genkit-ai/ai@npm:0.5.0"
   dependencies:
-    "@genkit-ai/core": "npm:0.5.0-rc.12"
+    "@genkit-ai/core": "npm:0.5.0"
     "@opentelemetry/api": "npm:^1.7.0"
     "@types/node": "npm:^20.11.19"
     json5: "npm:^2.2.3"
     node-fetch: "npm:^3.3.2"
     zod: "npm:^3.22.4"
-  checksum: 10c0/473354cc1eadca2c0af1943d8c970e0f5049ec6105389ee9d833379c58778669f064f3d3fc31dfa123c9f8803f967b535726f237594415bde33d7ad5d560583e
+  checksum: 10c0/3bb1f28a9094dc2952261dae1ab3cab3ef69a50e28431acd4db189df4a8ad664f124d02e09e109d7eba5dcf33b0480c442f17620d1a12f9270b404fda6be4298
   languageName: node
   linkType: hard
 
-"@genkit-ai/core@npm:0.5.0-rc.12":
-  version: 0.5.0-rc.12
-  resolution: "@genkit-ai/core@npm:0.5.0-rc.12"
+"@genkit-ai/core@npm:0.5.0, @genkit-ai/core@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "@genkit-ai/core@npm:0.5.0"
   dependencies:
     "@opentelemetry/api": "npm:^1.7.0"
     "@opentelemetry/context-async-hooks": "npm:^1.20.0"
@@ -373,7 +373,7 @@ __metadata:
     json-schema: "npm:^0.4.0"
     zod: "npm:^3.22.4"
     zod-to-json-schema: "npm:^3.22.4"
-  checksum: 10c0/6bdf9b15047346cc37977a0d2cd5b5f9150e380d26b8b647608ea8b8a2c38f89814c270f947c8b2b2c941b2dde89c09bf54572c5a64eaf6c7f71f5c1ef01579b
+  checksum: 10c0/3a15a8f0ca8893a60d70bffd963ed0a5c2b7080a6a3bc4fe3da1a47f5991dfd976fb6d40584fddfc8d7e5e864f231a3301fdfd70e402b5f89f85bef502c8feff
   languageName: node
   linkType: hard
 
@@ -2342,8 +2342,8 @@ __metadata:
   resolution: "genkitx-anthropic@workspace:plugins/anthropic"
   dependencies:
     "@anthropic-ai/sdk": "npm:^0.20.9"
-    "@genkit-ai/ai": "npm:0.5.0-rc.12"
-    "@genkit-ai/core": "npm:0.5.0-rc.12"
+    "@genkit-ai/ai": "npm:^0.5.0"
+    "@genkit-ai/core": "npm:^0.5.0"
     "@types/node": "npm:^20.12.11"
     npm-run-all: "npm:^4.1.5"
     tsup: "npm:^8.0.2"
@@ -2351,8 +2351,8 @@ __metadata:
     typescript: "npm:^4.9.5"
     zod: "npm:^3.23.8"
   peerDependencies:
-    "@genkit-ai/ai": ">=0.5.0-rc.0"
-    "@genkit-ai/core": ">=0.5.0-rc.0"
+    "@genkit-ai/ai": ^0.5.0
+    "@genkit-ai/core": ^0.5.0
   languageName: unknown
   linkType: soft
 
@@ -2360,8 +2360,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "genkitx-openai@workspace:plugins/openai"
   dependencies:
-    "@genkit-ai/ai": "npm:0.5.0-rc.12"
-    "@genkit-ai/core": "npm:0.5.0-rc.12"
+    "@genkit-ai/ai": "npm:^0.5.0"
+    "@genkit-ai/core": "npm:^0.5.0"
     "@types/node": "npm:^20.12.11"
     npm-run-all: "npm:^4.1.5"
     openai: "npm:^4.43.0"
@@ -2370,8 +2370,8 @@ __metadata:
     typescript: "npm:^4.9.5"
     zod: "npm:^3.23.8"
   peerDependencies:
-    "@genkit-ai/ai": ">=0.5.0-rc.0"
-    "@genkit-ai/core": ">=0.5.0-rc.0"
+    "@genkit-ai/ai": ^0.5.0
+    "@genkit-ai/core": ^0.5.0
   languageName: unknown
   linkType: soft
 
