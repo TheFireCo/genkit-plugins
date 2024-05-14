@@ -18,7 +18,6 @@ export default configureGenkit({
     groq(),
     cohere(),
     anthropic(),
-    
     // mistral(),
     dotprompt(),
   ],
