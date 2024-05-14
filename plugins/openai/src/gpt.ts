@@ -21,7 +21,7 @@ import {
   type ChatCompletionRole,
   type ChatCompletionTool,
   type CompletionChoice,
-} from 'openai/resources/index';
+} from 'openai/resources/index.mjs';
 import z from 'zod';
 
 const API_NAME_MAP = {
