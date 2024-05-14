@@ -5,8 +5,19 @@
 <h4 align="center">OpenAI Community Plugin for Google Firebase Genkit</h4>
 
 <div align="center">
-    
+   <img alt="Github lerna version" src="https://img.shields.io/github/lerna-json/v/TheFireCo/genkit-plugins?label=version">
+   <img alt="NPM Downloads" src="https://img.shields.io/npm/dw/genkitx-openai-plugin">
+   <img alt="GitHub Org's stars" src="https://img.shields.io/github/stars/TheFireCo?style=social">
+   <img alt="GitHub License" src="https://img.shields.io/github/license/TheFireCo/genkit-plugins">
+   <img alt="Static Badge" src="https://img.shields.io/badge/yes-a?label=maintained">
 </div>
+
+<div align="center">
+   <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues/TheFireCo/genkit-plugins?color=blue">
+   <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues-pr/TheFireCo/genkit-plugins?color=blue">
+   <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/TheFireCo/genkit-plugins">
+</div>
+
       
 </br>
 
