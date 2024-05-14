@@ -1,26 +1,26 @@
 import { Message } from '@genkit-ai/ai';
 import {
-  CandidateData,
   defineModel,
-  GenerateRequest,
-  MessageData,
   modelRef,
-  Part,
-  Role,
-  ToolDefinition,
-  ToolRequestPart,
+  type CandidateData,
+  type GenerateRequest,
+  type MessageData,
+  type Part,
+  type Role,
+  type ToolDefinition,
+  type ToolRequestPart,
 } from '@genkit-ai/ai/model';
 import OpenAI from 'openai';
 import {
-  ChatCompletion,
-  ChatCompletionChunk,
-  ChatCompletionContentPart,
-  ChatCompletionCreateParamsNonStreaming,
-  ChatCompletionMessageParam,
-  ChatCompletionMessageToolCall,
-  ChatCompletionRole,
-  ChatCompletionTool,
-  CompletionChoice,
+  type ChatCompletion,
+  type ChatCompletionChunk,
+  type ChatCompletionContentPart,
+  type ChatCompletionCreateParamsNonStreaming,
+  type ChatCompletionMessageParam,
+  type ChatCompletionMessageToolCall,
+  type ChatCompletionRole,
+  type ChatCompletionTool,
+  type CompletionChoice,
 } from 'openai/resources/index';
 import z from 'zod';
 

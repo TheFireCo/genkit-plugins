@@ -1,7 +1,7 @@
 import { defineEmbedder, embedderRef } from '@genkit-ai/ai/embedder';
 import OpenAI from 'openai';
 import { z } from 'zod';
-import { PluginOptions } from '.';
+import { type PluginOptions } from './index.js';
 
 export const TextEmbeddingConfigSchema = z.object({
   dimensions: z.number().optional(),
@@ -60,7 +60,7 @@ export function openaiEmbedder(name: string, options?: PluginOptions) {
   let apiKey = options?.apiKey || process.env.OPENAI_API_KEY;
   if (!apiKey)
     throw new Error(
-      'please pass in the API key or set the OPENAI_API_KEY environment variable'
+      'please pass in the API key or set the OPENAI_API_KEY environment variable',
     );
   const model = SUPPORTED_EMBEDDING_MODELS[name];
   if (!model) throw new Error(`Unsupported model: ${name}`);
@@ -75,13 +75,13 @@ export function openaiEmbedder(name: string, options?: PluginOptions) {
     async (input, options) => {
       const embeddings = await client.embeddings.create({
         model: name,
-        input: input.map((d) => d.text()),
+        input: input.map(d => d.text()),
         dimensions: options?.dimensions,
         encoding_format: options?.encodingFormat,
       });
       return {
-        embeddings: embeddings.data.map((d) => ({ embedding: d.embedding })),
+        embeddings: embeddings.data.map(d => ({ embedding: d.embedding })),
       };
-    }
+    },
   );
 }

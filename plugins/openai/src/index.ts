@@ -1,4 +1,4 @@
-import { genkitPlugin, Plugin } from '@genkit-ai/core';
+import { genkitPlugin, type Plugin } from '@genkit-ai/core';
 import OpenAI from 'openai';
 import { dallE3, dallE3Model } from './dalle.js';
 import {

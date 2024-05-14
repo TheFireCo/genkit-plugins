@@ -1,4 +1,4 @@
-import { genkitPlugin, Plugin } from '@genkit-ai/core';
+import { genkitPlugin, type Plugin } from '@genkit-ai/core';
 import Anthropic from '@anthropic-ai/sdk';
 import {
   claude3Opus,

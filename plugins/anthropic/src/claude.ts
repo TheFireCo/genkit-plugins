@@ -1,13 +1,13 @@
 import { Message } from '@genkit-ai/ai';
 import {
-  CandidateData,
   defineModel,
-  GenerateRequest,
-  MessageData,
   modelRef,
-  ModelReference,
-  Part,
-  Role,
+  type CandidateData,
+  type GenerateRequest,
+  type MessageData,
+  type ModelReference,
+  type Part,
+  type Role,
 } from '@genkit-ai/ai/model';
 import Anthropic from '@anthropic-ai/sdk';
 import z from 'zod';
