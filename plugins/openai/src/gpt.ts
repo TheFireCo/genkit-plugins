@@ -96,6 +96,7 @@ export const gpt4Turbo = modelRef({
       multiturn: true,
       tools: true,
       media: true,
+      systemRole: true,
       output: ['text', 'json'],
     },
   },
@@ -111,6 +112,7 @@ export const gpt4Vision = modelRef({
       multiturn: true,
       tools: false,
       media: true,
+      systemRole: true,
       output: ['text'],
     },
   },
@@ -126,6 +128,7 @@ export const gpt4 = modelRef({
       multiturn: true,
       tools: true,
       media: false,
+      systemRole: true,
       output: ['text'],
     },
   },
@@ -141,6 +144,7 @@ export const gpt35Turbo = modelRef({
       multiturn: true,
       tools: true,
       media: false,
+      systemRole: true,
       output: ['json', 'text'],
     },
   },
@@ -431,10 +435,10 @@ export function gptModel(name: string, client: OpenAI) {
       configSchema: SUPPORTED_GPT_MODELS[name].configSchema,
     },
     async (request, streamingCallback) => {
-      let response;
+      let response: ChatCompletion;
       const body = toOpenAiRequestBody(name, request);
       if (streamingCallback) {
-        const stream = await client.beta.chat.completions.stream({
+        const stream = client.beta.chat.completions.stream({
           ...body,
           stream: true,
         });
