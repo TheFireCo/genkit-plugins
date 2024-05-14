@@ -76,6 +76,7 @@ export const gpt4o = modelRef({
       multiturn: true,
       tools: true,
       media: true,
+      systemRole: true,
       output: ['text', 'json'],
     },
   },

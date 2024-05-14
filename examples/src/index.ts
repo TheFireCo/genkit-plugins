@@ -18,7 +18,7 @@ export default configureGenkit({
     groq(),
     cohere(),
     anthropic(),
-    // mistral(),
+    mistral(),
     dotprompt(),
   ],
   logLevel: 'debug',
