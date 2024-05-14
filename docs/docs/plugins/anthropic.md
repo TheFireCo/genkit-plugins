@@ -66,7 +66,7 @@ console.log(await response.text());
 
 ## Contributing
 
-Want to contribute to the project? That's awesome! Head over to our [Contribution Guidelines](CONTRIBUTING.md).
+Want to contribute to the project? That's awesome! Head over to our [Contribution Guidelines](https://github.com/TheFireCo/genkit-plugins/blob/main/CONTRIBUTING.md).
 
 ## Need support?
 

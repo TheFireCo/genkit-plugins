@@ -72,7 +72,7 @@ console.log(await response.text());
 For more detailed examples and the explanation of other functionalities, refer to the examples in the [official Github repo of the plugin](https://github.com/TheFireCo/genkit-plugins/blob/main/examples/README.md) or in the [official Genkit documentation](https://firebase.google.com/docs/genkit/get-started).
 ## Contributing
 
-Want to contribute to the project? That's awesome! Head over to our [Contribution Guidelines](https://github.com/TheFireCo/genkit-plugins/blob/main/CONTRIBUTING.md).
+Want to contribute to the project? That's awesome! Head over to our [Contribution Guidelines](https://github.com/TheFireCo/genkit-plugins/blob/main/https://github.com/TheFireCo/genkit-plugins/blob/main/CONTRIBUTING.md).
 
 ## Need support?
 
