@@ -1,0 +1,8 @@
+{
+  "label": "Plugins",
+  "position": 1,
+  "link": {
+    "type": "generated-index",
+    "description": "Browse the list of available plugins."
+  }
+}
