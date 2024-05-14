@@ -46,7 +46,7 @@ info: {
     label: 'Mistral - Mistral 7B',
     supports: {
         multiturn: true,
-        tools: true,
+        tools: false,
         media: false,
         output: ['text','json'], 
     },
@@ -54,21 +54,32 @@ info: {
 configSchema: MistralConfigSchema,
 });
 
-export const mistralembed = modelRef({
-    name: 'mistral/mistral-embed',
-    info: {
-        versions: ['mistral-embed'],
-        label: 'Mistral - Mistral Embed',
-        supports: {
-            multiturn: true,
-            tools: true,
-            media: false,
-            output: ['text','json'], 
-        },
+export const openMistral8x7B = modelRef({
+name: 'mistral/open-mixtral-8x7b',
+info: {
+    versions: ['mistral-small-2312'],
+    label: 'Mistral - Mistral 8x7B',
+    supports: {
+        multiturn: true,
+        tools: false,
+        media: false,
+        output: ['text','json'], 
     },
-    configSchema: MistralConfigSchema,
-    });
+}});
     
+export const openMixtral8x22B = modelRef({
+name: 'mistral/open-mixtral-8x22b',
+info: {
+    versions: ['open-mixtral-8x22b-2404'],
+    label: 'Mistral - Mistral 8x22B',
+    supports: {
+        multiturn: true,
+        tools: true,
+        media: false,
+        output: ['text','json'], 
+    },
+}});
+
 
 
 function toMistralRole(role: Role):  string  {
@@ -127,12 +138,8 @@ content_filter: 'blocked',
 
 export const SUPPORTED_MISTRAL_MODELS = {
     'open-mistral-7b': openMistral7B,
-    // 'open-mixtral-8x7b': gpt4Vision,
-    // 'open-mixtral-8x22b': gpt4,
-    // 'mistral-small-latest': gpt35Turbo,
-    // 'mistral-medium-latest': gpt4o, 
-    // 'mistral-large-latest': gpt4Turbo,
-    // 'mistral-embed': mistralembed
+    'open-mixtral-8x7b': openMistral8x7B,
+    'open-mixtral-8x22b': openMixtral8x22B,
   };
 
 
@@ -214,6 +221,13 @@ if (!model) throw new Error(`Unsupported model: ${modelName}`);
 const mistralMessages = toMistralMessages(request.messages);
 const mappedModelName =
     request.config?.version || modelName;
+
+let responseFormat;
+if (request.config?.responseFormat !== 'json') {
+    responseFormat = { type: "json_object" };
+} else {
+    responseFormat = null;
+}
 const body = {
     messages: mistralMessages,
     tools: request.tools?.map(toMistralTool),
@@ -223,6 +237,7 @@ const body = {
     top_p: request.config?.topP,
     n: request.candidates,
     stop_sequences: request.config?.stopSequences,
+    responseFormat: responseFormat,
     ...mapToSnakeCase(request.config?.custom || {}),
 } as ChatRequest;
 
@@ -233,15 +248,6 @@ for (const key in body) {
 return body;
 }
 
-// async combineChunks(request: ChatRequest, options?: ChatRequestOptions): Promise<ChatCompletionResponse> {
-//     let fullResponse: ChatCompletionResponse = { text: "" };
-
-//     for await (const chunk of this.chatStream(request, options)) {
-//       fullResponse.text += chunk.text;
-//     }
-
-//     return fullResponse;
-//   }
 
 export function mistralModel(name: string, client: any) { //Ugly any type, should be MistralClient but cannot import it here
 const modelId = `mistral/${name}`;
