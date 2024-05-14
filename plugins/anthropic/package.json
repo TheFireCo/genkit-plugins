@@ -50,6 +50,10 @@
   "files": [
     "lib"
   ],
+  "publishConfig": {
+    "provenance": true,
+    "access": "public"
+  },
   "scripts": {
     "check": "tsc",
     "compile": "tsup-node",

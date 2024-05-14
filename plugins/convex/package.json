@@ -41,6 +41,10 @@
     "typescript": "^4.9.0"
   },
   "types": "./lib/index.d.ts",
+  "publishConfig": {
+    "provenance": true,
+    "access": "public"
+  },
   "exports": {
     ".": {
       "require": "./lib/index.js",
