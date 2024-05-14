@@ -26,13 +26,15 @@ Role,
 ToolDefinition,
 ToolRequestPart,
 } from '@genkit-ai/ai/model';
-import MistralClient from '@mistralai/mistralai';
+import MistralClient from './mistralai.mjs';
+import {Tool, Function, ChatRequest } from "@mistralai/mistralai";
 
 import z from 'zod';
 
-const API_NAME_MAP = {
-'mistral-7b-instruct': 'mistral-7b-instruct',
-};
+// const API_NAME_MAP = {
+// 'mistral-7b-instruct': 'mistral-7b-instruct',
+// };
+
 
 export const MistralConfigSchema = z.object({
 temperature: z.number().min(0).max(1).optional(),
@@ -42,34 +44,26 @@ stopSequences: z.array(z.string()).optional(),
 
 });
 
-export const mistral7bInstruct = modelRef({
-name: 'mistral/mistral-7b-instruct',
+export const openMistral7B = modelRef({
+name: 'mistral/open-mistral-7b',
 info: {
-    versions: ['mistral-7b-instruct'],
-    label: 'Mistral - Mistral 7B Instruct',
+    versions: ['mistral-tiny-2312'],
+    label: 'Mistral - Mistral 7B',
     supports: {
-    multiturn: true,
-    tools: true,
-    media: false,
-    systemRole: true,
-    output: ['text'], 
+        multiturn: true,
+        tools: true,
+        media: false,
+        output: ['text','json'], 
     },
 },
 configSchema: MistralConfigSchema,
 });
 
-export const SUPPORTED_MISTRAL_MODELS = {
-    'open-mistral-7b': gpt4Turbo,
-    // 'open-mixtral-8x7b': gpt4Vision,
-    // 'open-mixtral-8x22b': gpt4,
-    // 'mistral-small-latest': gpt35Turbo,
-    // 'mistral-medium-latest': gpt4o, 
-    // 'mistral-large-latest': gpt4Turbo,
-    // 'mistral-embed': mistralembed
-  };
+
   
 
-function toMistralRole(role: Role):  CompletionCreateParams['role']  {
+
+function toMistralRole(role: Role):  string  {
 switch (role) {
     case 'user':
     return 'user';
@@ -85,21 +79,22 @@ switch (role) {
 }
 
 
-function toMistralTool(tool: ToolDefinition): CompletionCreateParams.Tool {
+function toMistralTool(tool: ToolDefinition): Tool {
 return {
     type: 'function',
     function: {
     name: tool.name,
     parameters: tool.inputSchema,
-    },
+    description: tool.description,
+    } as Function,
 };
 }
 
 
 export function toMistralMessages(
 messages: MessageData[]
-): CompletionCreateParams.Message[] {
-const mistralMsgs: CompletionCreateParams.Message[] = [];
+): ChatRequest["messages"] {
+const mistralMsgs: ChatRequest["messages"] = [];
 for (const message of messages) {
     const msg = new Message(message);
     const role = toMistralRole(message.role);
@@ -158,6 +153,17 @@ stop: 'stop',
 tool_calls: 'stop',
 content_filter: 'blocked',
 };
+
+export const SUPPORTED_MISTRAL_MODELS = {
+    'open-mistral-7b': openMistral7B,
+    // 'open-mixtral-8x7b': gpt4Vision,
+    // 'open-mixtral-8x22b': gpt4,
+    // 'mistral-small-latest': gpt35Turbo,
+    // 'mistral-medium-latest': gpt4o, 
+    // 'mistral-large-latest': gpt4Turbo,
+    // 'mistral-embed': mistralembed
+  };
+
 
 function fromMistralToolCall(
 toolCall: CompletionCreateParams.Message.ToolCall

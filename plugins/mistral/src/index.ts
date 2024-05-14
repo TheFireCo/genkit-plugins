@@ -16,7 +16,7 @@
  */
 
 import { genkitPlugin, Plugin } from '@genkit-ai/core';
-import MistralClient from '@mistralai/mistralai';
+import MistralClient from './mistralai.mjs';
 
 export interface PluginOptions {
   apiKey?: string;
