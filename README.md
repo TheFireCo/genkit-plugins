@@ -1,12 +1,11 @@
 <h1 align="center">
-   Firebase Genkit <> OpenAI Plugin
+   Firebase Genkit Plugins
 </h1>
 
-<h4 align="center">OpenAI Community Plugin for Google Firebase Genkit</h4>
+<h4 align="center">Community Plugins for Google Firebase Genkit</h4>
 
 <div align="center">
    <img alt="Github lerna version" src="https://img.shields.io/github/lerna-json/v/TheFireCo/genkit-plugins?label=version">
-   <img alt="NPM Downloads" src="https://img.shields.io/npm/dw/genkitx-openai-plugin">
    <img alt="GitHub Org's stars" src="https://img.shields.io/github/stars/TheFireCo?style=social">
    <img alt="GitHub License" src="https://img.shields.io/github/license/TheFireCo/genkit-plugins">
    <img alt="Static Badge" src="https://img.shields.io/badge/yes-a?label=maintained">
@@ -17,17 +16,30 @@
    <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues-pr/TheFireCo/genkit-plugins?color=blue">
    <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/TheFireCo/genkit-plugins">
 </div>
-
       
 </br>
 
-**`genkitx-openai-plugin`** is a community plugin for using OpenAI APIs with 
+This repository contains community plugins for 
 [Firebase GenKit](https://github.com/firebase/genkit). Built by [**The Fire Company**](https://github.com/TheFireCo). 🔥
+
+## Available plugins
+
+### Model / Embedding Plugins
+
+- [`genkitx-anthropicai`](plugins/anthropic/README.md) - Plugin for Anthropic AI APIs
+- [`genkitx-cohere`](plugins/cohere/README.md) - Plugin for Cohere APIs
+- [`genkitx-groq`](plugins/groq/README.md) - Plugin for Groq APIs
+- [`genkitx-mistral`](plugins/mistral/README.md) - Plugin for Mistral AI APIs
+- [`genkitx-openai-plugin`](plugins/openai/README.md) - Plugin for OpenAI APIs
+
+### Vector Store Plugins
+
+- [`genkitx-convex`](plugins/convex/README.md) - Plugin for Convex Vector Stores
 
 
 ## Installation
 
-Install the plugin in your project with your favorite package manager:
+Install the plugin in your project with your favorite package manager. For example, for `genkitx-openai-plugin`:
 
 * `npm install genkitx-openai-plugin`
 * `yarn add genkitx-openai-plugin`
@@ -35,37 +47,10 @@ Install the plugin in your project with your favorite package manager:
 
 ## Usage
   
-### Basic examples
+Usage examples of the plugins are available [here](https://github.com/TheFireCo/genkit-plugins/blob/main/examples/README.md).
 
-The simplest way to call the text generation model is by using the helper function `generate`:
-```
-// Basic usage of an LLM
-const response = await generate({
-    model: gpt35Turbo,
-    prompt: 'Tell me a joke.',
-});
+For more detailed information on how to use GenKit plugins, please refer to the [official Genkit documentation](https://firebase.google.com/docs/genkit/get-started).
 
-console.log(await response.text());
-```
-
-Using the same interface, you can prompt a multimodal model:
-```
-const response = await generate({
-  model: gpt4Turbo,
-  prompt: [
-    { text: 'What animal is in the photo?' },
-    { media: { url: imageUrl} },
-  ],
-  config:{
-    // control of the level of visual detail when processing image embeddings
-    // Low detail level also decreases the token usage
-    visualDetailLevel: 'low',
-  }
-});
-console.log(await response.text());
-```
-
-For more detailed examples and the explanation of other functionalities, refer to the examples in the [official Github repo of the plugin](https://github.com/TheFireCo/genkit-plugins/blob/main/examples/README.md) or in the [official Genkit documentation](https://firebase.google.com/docs/genkit/get-started).
 ## Contributing
 
 Want to contribute to the project? That's awesome! Head over to our [Contribution Guidelines](https://github.com/TheFireCo/genkit-plugins/blob/main/CONTRIBUTING.md).
@@ -79,7 +64,7 @@ Reach out by opening a discussion on [Github Discussions](https://github.com/The
         
 ## Credits
 
-This plugin is proudly maintained by the team at [**The Fire Company**](https://github.com/TheFireCo). 🔥
+This repository is proudly maintained by the team at [**The Fire Company**](https://github.com/TheFireCo). 🔥
 
 ## License
 

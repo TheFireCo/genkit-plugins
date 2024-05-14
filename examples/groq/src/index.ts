@@ -4,7 +4,7 @@ import { generate } from '@genkit-ai/ai';
 import { configureGenkit } from '@genkit-ai/core';
 import { defineFlow, startFlowsServer } from '@genkit-ai/flow';
 
-import { gpt35Turbo, openAI } from 'genkitx-openai-plugin';
+import { llama_3_70b, llama_3_8b, gemma_7b, mixtral_8_7b, groq } from 'genkitx-groq';
 
 import * as z from 'zod';
 
@@ -12,7 +12,7 @@ import * as z from 'zod';
 configureGenkit({
   plugins: [
     /* Add your plugins here. */
-    openAI({ apiKey: process.env.OPENAI_API_KEY }),
+    groq({ apiKey: process.env.GROQ_API_KEY }),
   ],
   logLevel: 'debug',
   enableTracingAndMetrics: true,
@@ -27,7 +27,7 @@ export const menuSuggestionFlow = defineFlow(
   async (subject) => {
     const llmResponse = await generate({
       prompt: `Suggest an item for the menu of a ${subject} themed restaurant`,
-      model: 'openai/gpt-3.5-turbo',
+      model: llama_3_70b,
       config: {
         temperature: 1,
       },

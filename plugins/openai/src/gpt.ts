@@ -47,8 +47,6 @@ const API_NAME_MAP = {
 
 type VisualDetailLevel = 'low' | 'auto' | 'high';
 
-export const CHOSEN_VISUAL_DETAIL_LEVEL: VisualDetailLevel = "low"; 
-
 const MODELS_SUPPORTING_OPENAI_RESPONSE_FORMAT = [
   'gpt-4-turbo',
   'gpt-4-turbo-preview',
@@ -66,6 +64,22 @@ export const OpenAiConfigSchema = z.object({
   seed: z.number().int().optional(),
   topLogProbs: z.number().int().min(0).max(20).optional(),
   user: z.string().optional(),
+  visualDetailLevel: z.string().optional(),
+});
+
+export const gpt4o = modelRef({
+  name: 'openai/gpt-4o',
+  info: {
+    versions: ['gpt-4o-2024-05-13'],
+    label: 'OpenAI - GPT-4o',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: true,
+      output: ['text', 'json'],
+    },
+  },
+  configSchema: OpenAiConfigSchema,
 });
 
 export const gpt4Turbo = modelRef({
@@ -82,6 +96,7 @@ export const gpt4Turbo = modelRef({
       multiturn: true,
       tools: true,
       media: true,
+      systemRole: true,
       output: ['text', 'json'],
     },
   },
@@ -97,6 +112,7 @@ export const gpt4Vision = modelRef({
       multiturn: true,
       tools: false,
       media: true,
+      systemRole: true,
       output: ['text'],
     },
   },
@@ -112,6 +128,7 @@ export const gpt4 = modelRef({
       multiturn: true,
       tools: true,
       media: false,
+      systemRole: true,
       output: ['text'],
     },
   },
@@ -127,6 +144,7 @@ export const gpt35Turbo = modelRef({
       multiturn: true,
       tools: true,
       media: false,
+      systemRole: true,
       output: ['json', 'text'],
     },
   },
@@ -165,7 +183,7 @@ function toOpenAiTool(tool: ToolDefinition): ChatCompletionTool {
   };
 }
 
-export function toOpenAiTextAndMedia(part: Part): ChatCompletionContentPart {
+export function toOpenAiTextAndMedia(part: Part, visualDetailLevel: VisualDetailLevel): ChatCompletionContentPart {
   if (part.text) {
     return {
       type: 'text',
@@ -176,7 +194,7 @@ export function toOpenAiTextAndMedia(part: Part): ChatCompletionContentPart {
       type: 'image_url',
       image_url: {
         url: part.media.url,
-        detail: CHOSEN_VISUAL_DETAIL_LEVEL
+        detail: visualDetailLevel
       },
     };
   }
@@ -186,7 +204,8 @@ export function toOpenAiTextAndMedia(part: Part): ChatCompletionContentPart {
 }
 
 export function toOpenAiMessages(
-  messages: MessageData[]
+  messages: MessageData[],
+  visualDetailLevel: VisualDetailLevel = 'auto'
 ): ChatCompletionMessageParam[] {
   const openAiMsgs: ChatCompletionMessageParam[] = [];
   for (const message of messages) {
@@ -196,7 +215,7 @@ export function toOpenAiMessages(
       case 'user':
         openAiMsgs.push({
           role: role,
-          content: msg.content.map(toOpenAiTextAndMedia),
+          content: msg.content.map(part => toOpenAiTextAndMedia(part, visualDetailLevel)),
         });
         break;
       case 'system':
@@ -354,7 +373,7 @@ export function toOpenAiRequestBody(
   };
   const model = SUPPORTED_GPT_MODELS[modelName];
   if (!model) throw new Error(`Unsupported model: ${modelName}`);
-  const openAiMessages = toOpenAiMessages(request.messages);
+  const openAiMessages = toOpenAiMessages(request.messages, request.config?.visualDetailLevel);
   const mappedModelName =
     request.config?.version || API_NAME_MAP[modelName] || modelName;
   const body = {
@@ -416,10 +435,10 @@ export function gptModel(name: string, client: OpenAI) {
       configSchema: SUPPORTED_GPT_MODELS[name].configSchema,
     },
     async (request, streamingCallback) => {
-      let response;
+      let response: ChatCompletion;
       const body = toOpenAiRequestBody(name, request);
       if (streamingCallback) {
-        const stream = await client.beta.chat.completions.stream({
+        const stream = client.beta.chat.completions.stream({
           ...body,
           stream: true,
         });
