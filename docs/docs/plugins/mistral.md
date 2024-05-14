@@ -1,6 +1,6 @@
 ---
 id: genkitx-mistral
-title: 🚧 genkitx-mistral
+title: genkitx-mistral
 ---
 <h1 align="center">Firebase Genkit - Mistral AI Plugin</h1>
 
