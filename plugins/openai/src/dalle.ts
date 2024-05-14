@@ -46,6 +46,7 @@ export const dallE3 = modelRef({
       output: ['media'],
       multiturn: false,
       tools: false,
+      systemRole: false,
     },
   },
   configSchema: DallE3ConfigSchema,
