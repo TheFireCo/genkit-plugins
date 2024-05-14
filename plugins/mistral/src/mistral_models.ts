@@ -25,9 +25,10 @@ Part,
 Role,
 ToolDefinition,
 ToolRequestPart,
+
 } from '@genkit-ai/ai/model';
 import MistralClient from './mistralai.mjs';
-import {Tool, Function, ChatRequest } from "@mistralai/mistralai";
+import {Tool, Function, ChatCompletionResponseChoice, ToolCalls } from "@mistralai/mistralai";
 
 import z from 'zod';
 
@@ -93,8 +94,8 @@ return {
 
 export function toMistralMessages(
 messages: MessageData[]
-): ChatRequest["messages"] {
-const mistralMsgs: ChatRequest["messages"] = [];
+): ChatCompletionResponseChoice["message"][] {
+const mistralMsgs: ChatCompletionResponseChoice["message"][] = [];
 for (const message of messages) {
     const msg = new Message(message);
     const role = toMistralRole(message.role);
@@ -104,10 +105,11 @@ for (const message of messages) {
         mistralMsgs.push({
         role: role,
         content: msg.text(),
+        tool_calls: null,
         });
         break;
     case 'assistant':
-        const toolCalls: CompletionCreateParams.Message.ToolCall[] = msg.content
+        const toolCalls: ToolCalls[] = msg.content
         .filter((part) => part.toolRequest)
         .map((part) => {
             if (!part.toolRequest) {
@@ -128,11 +130,13 @@ for (const message of messages) {
         mistralMsgs.push({
             role: role,
             tool_calls: toolCalls,
+            content: msg.text(),
         });
         } else {
         mistralMsgs.push({
             role: role,
             content: msg.text(),
+            tool_calls: null,
         });
         }
         break;
@@ -144,9 +148,9 @@ for (const message of messages) {
 return mistralMsgs;
 }
 
-const finishReasonMap: Record<
-NonNullable<Completion.Choice['finish_reason']>,
-CandidateData['finishReason']
+const finishReasonMap: Record< // Might be a better way to do this
+NonNullable<string>,
+string
 > = {
 length: 'length',
 stop: 'stop',
@@ -166,7 +170,7 @@ export const SUPPORTED_MISTRAL_MODELS = {
 
 
 function fromMistralToolCall(
-toolCall: CompletionCreateParams.Message.ToolCall
+toolCall: ToolCalls
 ) {
 if (!toolCall.function) {
     throw Error(
@@ -184,7 +188,7 @@ return {
 }
 
 function fromMistralChoice(
-choice: Completion['choices'][0] 
+choice: ChatCompletionResponseChoice
 ): CandidateData {
 const toolRequestParts = choice.message.tool_calls?.map(fromMistralToolCall);
 return {
