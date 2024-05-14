@@ -49,6 +49,9 @@ const config: Config = {
           trackingID: 'G-QGH5S84GT7',
           anonymizeIP: true,
         },
+        googleTagManager: {
+          containerId: 'GTM-KS2LPDSZ',
+        },
       } satisfies Preset.Options,
     ],
   ],
