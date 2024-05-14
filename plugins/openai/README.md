@@ -23,6 +23,8 @@
 **`genkitx-openai-plugin`** is a community plugin for using OpenAI APIs with
 [Firebase GenKit](https://github.com/firebase/genkit). Built by [**The Fire Company**](https://github.com/TheFireCo). 🔥
 
+This Genkit plugin allows to use OpenAI models through their official APIs.
+
 ## Installation
 
 Install the plugin in your project with your favorite package manager:

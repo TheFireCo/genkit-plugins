@@ -18,6 +18,11 @@
 
 `genkitx-anthropicai` is a community plugin for using Anthropic AI and all its supported models with [Firebase GenKit](https://github.com/firebase/genkit).
 
+This Genkit plugin allows to use Anthropic AI models through their official APIs.
+
+If you want to use Anthropic AI models through Google Vertex AI, please refer
+to the [official Vertex AI plugin](https://www.npmjs.com/package/@genkit-ai/vertexai).
+
 ## Installation
 
 Install the plugin in your project with your favorite package manager:
