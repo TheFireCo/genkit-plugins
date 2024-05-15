@@ -74,9 +74,9 @@ const codeDotPrompt = defineDotprompt(
     },
     output: {
       schema: z.object({
-        exist: z.boolean(),
-        color: z.string(),
-        details: z.string(),
+        exist: z.boolean().describe('Whether the object exists in the image'),
+        color: z.string().describe('The color of the object'),
+        details: z.string().describe('Details about the object'),
       }),
     },
     config: {
