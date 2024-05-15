@@ -11,7 +11,7 @@
     "build:watch": "npx tsc --watch"
   },
   "name": "genkit-plugins-examples",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "",
   "keywords": [],
@@ -25,8 +25,8 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "genkitx-anthropicai": "^0.1.0",
-    "genkitx-cohere": "^0.1.0",
-    "genkitx-groq": "^0.1.0",
+    "genkitx-cohere": "^0.1.1",
+    "genkitx-groq": "^0.1.1",
     "genkitx-mistral": "^0.1.0",
     "genkitx-openai-plugin": "^0.1.0",
     "zod": "^3.23.8"
