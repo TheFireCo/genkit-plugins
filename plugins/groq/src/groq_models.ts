@@ -132,8 +132,8 @@ export const SUPPORTED_GROQ_MODELS = {
 };
 
 export const DEFAULT_MODEL_VERSION = {
-  "llama-3-8b": "llama-3-8b-32768",
-  "llama-3-70b": "llama-3-70b-32768",
+  "llama-3-8b": "llama3-8b-8192",
+  "llama-3-70b": "llama3-70b-8192",
   "mixtral-8-7b": "mixtral-8x7b-32768",
   "gemma-7b": "gemma-7b-it",
 };

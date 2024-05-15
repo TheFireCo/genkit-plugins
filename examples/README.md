@@ -16,7 +16,7 @@ NOTE: as you will see, you do not need to have a Firebase project to use Genkit 
 ## Set up Genkit packages and DevUI
 1. Rename .env.local to .env and add your API key to it, or specify it in the environment variable `{PLUGIN_NAME}_API_KEY` (e.g. `OPENAI_API_KEY`).
 
-2. Run `npm install` to install the dependencies.
+2. Run `npm run init` to install the dependencies.
 3. Run `npm run start:browser` to launch Genkit and the Dev UI.
 
 Genkit is configured from the `index.ts`, where you can import and initialize the plugin and define prompts, flows, models and other tools which could be accessed directly through Gekit Dev UI:

@@ -1,8 +1,10 @@
 {
   "main": "lib/index.js",
   "scripts": {
+    "init": "npm --prefix ../ install && npm --prefix ../ run build",
     "start": "npx genkit start",
     "start:browser": "npx genkit start -o",
+    "start:dev": "npm --prefix ../ run build && npx genkit start",
     "compile": "npx tsc",
     "build": "npm run build:clean && npm run compile",
     "build:clean": "rm -rf ./lib",

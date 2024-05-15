@@ -132,7 +132,7 @@ describe('toGroqRequestBody', () => {
           content: 'Tell a joke about dogs.',
         },
       ],
-      model: 'llama-3-8b-32768',
+      model: 'llama3-8b-8192',
       temperature: 0.7,
       max_tokens: 100,
       top_p: 0.9,
