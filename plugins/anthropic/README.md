@@ -16,7 +16,6 @@
    <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/TheFireCo/genkit-plugins">
 </div>
 
-
 `genkitx-anthropicai` is a community plugin for using Anthropic AI and all its supported models with [Firebase GenKit](https://github.com/firebase/genkit).
 
 ## Installation
@@ -31,6 +30,7 @@ Install the plugin in your project with your favorite package manager:
 ### Basic examples
 
 The simplest way to call the text generation model is by using the helper function `generate`:
+
 ```
 // Basic usage of an LLM
 const response = await generate({
@@ -42,6 +42,7 @@ console.log(await response.text());
 ```
 
 Using the same interface, you can prompt a multimodal model:
+
 ```
 const response = await generate({
   model: claude3Haiku,

@@ -16,19 +16,16 @@
    <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/TheFireCo/genkit-plugins">
 </div>
 
-
-**`genkitx-mistral`** is a community plugin for using OpenAI APIs with 
+**`genkitx-mistral`** is a community plugin for using OpenAI APIs with
 [Firebase GenKit](https://github.com/firebase/genkit). Built by [**The Fire Company**](https://github.com/TheFireCo). 🔥
-
 
 ## Installation
 
 Install the plugin in your project with your favorite package manager:
 
-* `npm install genkitx-mistral`
-* `yarn add genkitx-mistral`
-* `pnpm add genkitx-mistral`
-
+- `npm install genkitx-mistral`
+- `yarn add genkitx-mistral`
+- `pnpm add genkitx-mistral`
 
 ## Usage
 

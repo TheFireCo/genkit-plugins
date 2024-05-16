@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Message } from "@genkit-ai/ai";
+import { Message } from '@genkit-ai/ai';
 import {
   CandidateData,
   defineModel,
@@ -25,16 +25,16 @@ import {
   Role,
   ToolDefinition,
   ToolRequestPart,
-} from "@genkit-ai/ai/model";
-import Groq from "groq-sdk";
-import { ChatCompletionChunk } from "groq-sdk/lib/chat_completions_ext.mjs";
-import { ChatCompletionCreateParamsBase } from "groq-sdk/resources/chat/completions.mjs";
+} from '@genkit-ai/ai/model';
+import Groq from 'groq-sdk';
+import { ChatCompletionChunk } from 'groq-sdk/lib/chat_completions_ext.mjs';
+import { ChatCompletionCreateParamsBase } from 'groq-sdk/resources/chat/completions.mjs';
 import {
   ChatCompletion,
   CompletionCreateParams,
-} from "groq-sdk/resources/chat/index.mjs";
+} from 'groq-sdk/resources/chat/index.mjs';
 
-import z from "zod";
+import z from 'zod';
 
 export const GroqConfigSchema = z.object({
   temperature: z.number().min(0).max(1).optional(),
@@ -48,25 +48,25 @@ export const GroqConfigSchema = z.object({
   topLogprobs: z.number().optional(),
   user: z.string().optional(),
   toolChoice: z.string().optional(),
-//   responseFormat: z
-//     .object({
-//       type: z.literal("json_object"),
-//     })
-//     .optional(),
+  //   responseFormat: z
+  //     .object({
+  //       type: z.literal("json_object"),
+  //     })
+  //     .optional(),
 });
 
 // Worst at JSON mode
 export const llama_3_8b = modelRef({
-  name: "groq/llama-3-8b",
+  name: 'groq/llama-3-8b',
   info: {
-    versions: ["llama3-8b-8192"],
-    label: "Llama 3 8B",
+    versions: ['llama3-8b-8192'],
+    label: 'Llama 3 8B',
     supports: {
       multiturn: true,
       tools: false,
       media: false,
       systemRole: true,
-      output: ["text", "json"], // JSON mode does not support streaming or stop sequences
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
     },
   },
   configSchema: GroqConfigSchema,
@@ -75,16 +75,16 @@ export const llama_3_8b = modelRef({
 // Worst at JSON mode
 // Only model recommended for Tool Use
 export const llama_3_70b = modelRef({
-  name: "groq/llama-3-70b",
+  name: 'groq/llama-3-70b',
   info: {
-    versions: ["llama3-70b-8192"],
-    label: "Llama 3 70B",
+    versions: ['llama3-70b-8192'],
+    label: 'Llama 3 70B',
     supports: {
       multiturn: true,
       tools: false,
       media: false,
       systemRole: true,
-      output: ["text", "json"], // JSON mode does not support streaming or stop sequences
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
     },
   },
   configSchema: GroqConfigSchema,
@@ -92,16 +92,16 @@ export const llama_3_70b = modelRef({
 
 // Best at JSON mode
 export const mixtral_8_7b = modelRef({
-  name: "groq/mixtral-8x7b-32768",
+  name: 'groq/mixtral-8x7b-32768',
   info: {
-    versions: ["mixtral-8x7b-32768"],
-    label: "Mixtral 8 7B",
+    versions: ['mixtral-8x7b-32768'],
+    label: 'Mixtral 8 7B',
     supports: {
       multiturn: true,
       tools: false,
       media: false,
       systemRole: true,
-      output: ["text", "json"], // JSON mode does not support streaming or stop sequences
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
     },
   },
   configSchema: GroqConfigSchema,
@@ -109,35 +109,34 @@ export const mixtral_8_7b = modelRef({
 
 // Runner up at JSON mode
 export const gemma_7b = modelRef({
-  name: "groq/gemma-7b-it",
+  name: 'groq/gemma-7b-it',
   info: {
-    versions: ["gemma-7b-it"],
-    label: "Gemma 7B IT",
+    versions: ['gemma-7b-it'],
+    label: 'Gemma 7B IT',
     supports: {
       multiturn: true,
       tools: false,
       media: false,
       systemRole: true,
-      output: ["text", "json"], // JSON mode does not support streaming or stop sequences
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
     },
   },
   configSchema: GroqConfigSchema,
 });
 
 export const SUPPORTED_GROQ_MODELS = {
-  "llama-3-8b": llama_3_8b,
-  "llama-3-70b": llama_3_70b,
-  "mixtral-8-7b": mixtral_8_7b,
-  "gemma-7b": gemma_7b,
+  'llama-3-8b': llama_3_8b,
+  'llama-3-70b': llama_3_70b,
+  'mixtral-8-7b': mixtral_8_7b,
+  'gemma-7b': gemma_7b,
 };
 
 export const DEFAULT_MODEL_VERSION = {
-  "llama-3-8b": "llama3-8b-8192",
-  "llama-3-70b": "llama3-70b-8192",
-  "mixtral-8-7b": "mixtral-8x7b-32768",
-  "gemma-7b": "gemma-7b-it",
+  'llama-3-8b': 'llama3-8b-8192',
+  'llama-3-70b': 'llama3-70b-8192',
+  'mixtral-8-7b': 'mixtral-8x7b-32768',
+  'gemma-7b': 'gemma-7b-it',
 };
-
 
 /**
  * Converts a Genkit message role to a Groq role.
@@ -146,15 +145,15 @@ export const DEFAULT_MODEL_VERSION = {
  * @returns The converted Groq role. Note - the Groq SDK does not declare an explicit type for this.
  * @throws {Error} If the role doesn't map to a Groq role.
  */
-export function toGroqRole(role: Role): "system" | "user" | "assistant" {
+export function toGroqRole(role: Role): 'system' | 'user' | 'assistant' {
   switch (role) {
-    case "user":
-      return "user";
-    case "model":
-    case "tool":
-      return "assistant";
-    case "system":
-      return "system";
+    case 'user':
+      return 'user';
+    case 'model':
+    case 'tool':
+      return 'assistant';
+    case 'system':
+      return 'system';
     default:
       throw new Error(`role ${role} doesn't map to a Groq role.`);
   }
@@ -168,7 +167,7 @@ export function toGroqRole(role: Role): "system" | "user" | "assistant" {
  */
 export function toGroqTool(tool: ToolDefinition): CompletionCreateParams.Tool {
   return {
-    type: "function",
+    type: 'function',
     function: {
       name: tool.name,
       description: tool.description,
@@ -176,7 +175,6 @@ export function toGroqTool(tool: ToolDefinition): CompletionCreateParams.Tool {
     },
   };
 }
-
 
 /**
  * Transforms a Genkit part into a corresponding Groq part.
@@ -211,30 +209,30 @@ export function toGroqMessages(
   for (const message of messages) {
     const msg = new Message(message);
     switch (msg.role) {
-      case "user":
+      case 'user':
         groqMsgs.push({
           role: toGroqRole(message.role),
-          content: msg.content.map(toGroqTextAndMedia).join(""),
+          content: msg.content.map(toGroqTextAndMedia).join(''),
         });
         break;
-      case "system":
+      case 'system':
         groqMsgs.push({
           role: toGroqRole(message.role),
           content: msg.text(),
         });
         break;
-      case "model":
+      case 'model':
         const toolCalls: CompletionCreateParams.Message.ToolCall[] = msg.content
           .filter((part) => part.toolRequest)
           .map((part) => {
             if (!part.toolRequest) {
               throw Error(
-                "Mapping genkit message to Groq tool call content part but message.toolRequest not provided."
+                'Mapping genkit message to Groq tool call content part but message.toolRequest not provided.'
               );
             }
             return {
-              id: part.toolRequest.ref || "",
-              type: "function",
+              id: part.toolRequest.ref || '',
+              type: 'function',
               function: {
                 name: part.toolRequest.name,
                 arguments: JSON.stringify(part.toolRequest.input),
@@ -254,21 +252,21 @@ export function toGroqMessages(
           });
         }
         break;
-      case "tool":
+      case 'tool':
         const toolResponseParts = msg.toolResponseParts();
         toolResponseParts.map((part) => {
           groqMsgs.push({
             role: toGroqRole(message.role),
-            tool_call_id: part.toolResponse.ref || "",
+            tool_call_id: part.toolResponse.ref || '',
             content:
-              typeof part.toolResponse.output === "string"
+              typeof part.toolResponse.output === 'string'
                 ? part.toolResponse.output
                 : JSON.stringify(part.toolResponse.output),
           });
         });
         break;
       default:
-        throw new Error("unrecognized role");
+        throw new Error('unrecognized role');
     }
   }
   return groqMsgs;
@@ -276,16 +274,16 @@ export function toGroqMessages(
 
 const FINISH_REASON_MAP: Record<
   NonNullable<
-    | ChatCompletion.Choice["finish_reason"]
-    | ChatCompletionChunk.Choice["finish_reason"]
+    | ChatCompletion.Choice['finish_reason']
+    | ChatCompletionChunk.Choice['finish_reason']
   >,
-  CandidateData["finishReason"]
+  CandidateData['finishReason']
 > = {
-  stop: "stop",
-  length: "length",
-  tool_calls: "stop",
-  function_call: "stop",
-  content_filter: "blocked",
+  stop: 'stop',
+  length: 'length',
+  tool_calls: 'stop',
+  function_call: 'stop',
+  content_filter: 'blocked',
 };
 
 /**
@@ -329,9 +327,9 @@ function fromGroqChoice(
 
   return {
     index: choice.index,
-    finishReason: FINISH_REASON_MAP[choice.finish_reason] || "unknown",
+    finishReason: FINISH_REASON_MAP[choice.finish_reason] || 'unknown',
     message: {
-      role: "model",
+      role: 'model',
       content: toolRequestParts
         ? (toolRequestParts as ToolRequestPart[])
         : [
@@ -360,9 +358,9 @@ function fromGroqChunkChoice(
     finishReason:
       choice.finish_reason && choice.finish_reason != null
         ? FINISH_REASON_MAP[choice.finish_reason]
-        : "unknown",
+        : 'unknown',
     message: {
-      role: "model",
+      role: 'model',
       content: toolRequestParts
         ? (toolRequestParts as ToolRequestPart[])
         : [{ text: choice.delta.content! }],
@@ -416,20 +414,20 @@ export function toGroqRequestBody(
     // response_format: request.config?.responseFormat, // Being set automatically
   };
 
-  const response_format = request.output?.format || "text";
+  const response_format = request.output?.format || 'text';
   if (
-    response_format === "json" &&
-    model.info.supports?.output?.includes("json")
+    response_format === 'json' &&
+    model.info.supports?.output?.includes('json')
   ) {
     body.response_format = {
-      type: "json_object",
+      type: 'json_object',
     };
   } else if (
-    response_format === "text" &&
-    model.info.supports?.output?.includes("text")
+    response_format === 'text' &&
+    model.info.supports?.output?.includes('text')
   ) {
     body.response_format = {
-      type: "text",
+      type: 'text',
     };
   } else {
     throw new Error(
@@ -466,16 +464,16 @@ export function groqModel(name: string, client: Groq) {
       let response: ChatCompletion;
       const body = toGroqRequestBody(name, request);
       if (streamingCallback) {
-        if (request.output?.format === "json") {
+        if (request.output?.format === 'json') {
           throw new Error(
-            "JSON format is not supported for streaming responses."
+            'JSON format is not supported for streaming responses.'
           );
         }
         const stream = await client.chat.completions.create({
           ...body,
           stream: true,
         });
-        let fullContent: string = "";
+        let fullContent: string = '';
         let totalPromptTokens = 0;
         let totalCompletionTokens = 0;
         let choices: ChatCompletion.Choice[] = [];
@@ -501,18 +499,18 @@ export function groqModel(name: string, client: Groq) {
               index: choice.index,
               logprobs: choice.logprobs as ChatCompletion.Choice.Logprobs,
               message: {
-                content: choice.delta.content || "",
-                role: "model",
+                content: choice.delta.content || '',
+                role: 'model',
                 tool_calls: choice.delta.tool_calls,
               },
-              finish_reason: choice.finish_reason || "unknown",
+              finish_reason: choice.finish_reason || 'unknown',
             });
             const c = fromGroqChunkChoice(choice);
             streamingCallback({
               index: c.index,
               content: c.message.content,
             });
-            fullContent += choice.delta.content || "";
+            fullContent += choice.delta.content || '';
           });
         }
         response = {
@@ -534,7 +532,7 @@ export function groqModel(name: string, client: Groq) {
 
       return {
         candidates: response.choices.map((c) => {
-          return fromGroqChoice(c, request.output?.format === "json");
+          return fromGroqChoice(c, request.output?.format === 'json');
         }),
         usage: {
           inputTokens: response.usage?.prompt_tokens,

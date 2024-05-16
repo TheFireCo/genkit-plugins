@@ -22,7 +22,7 @@
       
 </br>
 
-This repository contains community plugins for 
+This repository contains community plugins for
 [Firebase GenKit](https://github.com/firebase/genkit). Built by [**The Fire Company**](https://github.com/TheFireCo). 🔥
 
 ## Available plugins
@@ -39,24 +39,23 @@ This repository contains community plugins for
 
 - [`genkitx-convex`](plugins/convex/README.md) - Plugin for Convex Vector Stores
 
-
 ## Installation
 
 Install the plugin in your project with your favorite package manager. For example, for `genkitx-openai-plugin`:
 
-* `npm install genkitx-openai-plugin`
-* `yarn add genkitx-openai-plugin`
-* `pnpm add genkitx-openai-plugin`
+- `npm install genkitx-openai-plugin`
+- `yarn add genkitx-openai-plugin`
+- `pnpm add genkitx-openai-plugin`
 
 ## Usage
-  
+
 Usage examples of the plugins are available [here](https://github.com/TheFireCo/genkit-plugins/blob/main/examples/README.md).
 
 For more detailed information on how to use GenKit plugins, please refer to the [official Genkit documentation](https://firebase.google.com/docs/genkit/get-started).
 
 ## Showcase
 
-Products built with `genkit-plugins`: 
+Products built with `genkit-plugins`:
 
 - 🔥 **[Fireview](https://fireview.dev)** - Notion for your Firestore data
 - 🎁 **[Giftit](https://giftit.social)** - an award-winning social gifting app (mobile)
@@ -71,7 +70,7 @@ Want to contribute to the project? That's awesome! Head over to our [Contributio
 > This repository depends on Google's Firebase Genkit. For issues and questions related to GenKit, please refer to instructions available in [GenKit's repository](https://github.com/firebase/genkit).
 
 Reach out by opening a discussion on [Github Discussions](https://github.com/TheFireCo/genkit-plugins/discussions).
-        
+
 ## Credits
 
 This repository is proudly maintained by the team at [**The Fire Company**](https://github.com/TheFireCo). 🔥

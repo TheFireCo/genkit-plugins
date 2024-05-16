@@ -11,20 +11,18 @@ Before reading further, please note that:
 
 ## Table of Contents
 
-
 1. [Code of Conduct](#code-of-conduct)
 2. [License](#license)
 3. [Questions](#questions)
 4. [Feature Requests](#feature-requests)
 5. [Reporting Bugs](#reporting-bugs)
 6. [Contributing with Code](#contributing-with-code)
-	1. [Getting Started](#getting-started)
-	2. [Finding an Issue](#finding-an-issue)
-	3. [Development Process](#development-process)
-	4. [Building the Project](#building-the-project)
-	5. [Testing](#testing)
+   1. [Getting Started](#getting-started)
+   2. [Finding an Issue](#finding-an-issue)
+   3. [Development Process](#development-process)
+   4. [Building the Project](#building-the-project)
+   5. [Testing](#testing)
 7. [About this document](#about-this-document)
-
 
 ## Code of Conduct
 
@@ -36,14 +34,13 @@ By participating in this project and submitting contributions, you agree to lice
 
 ## Questions
 
-If you have any support questions, please open a [GitHub discussion](https://github.com/TheFireCo/genkit-plugins/discussion). The GitHub issue tracker is not for support-related requests. 
+If you have any support questions, please open a [GitHub discussion](https://github.com/TheFireCo/genkit-plugins/discussion). The GitHub issue tracker is not for support-related requests.
 
 ## Feature Requests
 
 Major Changes that you wish to contribute to the project should be discussed first in an GitHub issue that clearly outlines the changes and benefits of the feature.
 
 Small Changes can directly be crafted and submitted to the GitHub Repository as a Pull Request.
-
 
 ## Reporting Bugs
 
@@ -57,18 +54,17 @@ If you find a bug in the source code, you can help us by submitting an issue or,
 
 Working on your first open source project or pull request? Here are some helpful tutorials:
 
-* [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github)
-* [Make a Pull Request](https://makeapullrequest.com/)
-* [First Timers Only](http://www.firsttimersonly.com)
+- [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github)
+- [Make a Pull Request](https://makeapullrequest.com/)
+- [First Timers Only](http://www.firsttimersonly.com)
 
 ### Getting Started
 
 #### Option 1: Dev Container
 
-We provide the configuration files for a VSCode Dev Container. When opening the repository within the container, VSCode will automatically install all the dependencies for you. 
+We provide the configuration files for a VSCode Dev Container. When opening the repository within the container, VSCode will automatically install all the dependencies for you.
 
 You can read more about Dev Containers [here](https://code.visualstudio.com/docs/devcontainers/containers).
-
 
 #### Option 2: Local install
 
@@ -79,11 +75,9 @@ You can set up the local development environment as follows:
 1. Run `npm run install` from the root directory of the project.
 2. You are good to go!
 
-
 ### Finding an Issue
 
 The list of open feature requests and bugs can be found on our on our [GitHub issue tracker](https://github.com/TheFireCo/genkit-plugins/issues). Pick an unassigned issue that you think you can accomplish and add a comment that you are attempting to do it.
-
 
 ### Development Process
 
@@ -107,7 +101,6 @@ If you add code you need to add tests! If your pull request reduces our test cov
 
 Tests can be added in the `tests` subfolder. As an example, please take a look at the tests which are already there.
 
-
 You can then run tests with npm:
 
 ```
@@ -116,7 +109,6 @@ npm run test
 
 Or with the `npm: test` VSCode task. More about VSCode tasks [here](https://code.visualstudio.com/Docs/editor/tasks).
 
+## About this document
 
-## About this document 
-
-These contribution guidelines are adapted by the [Embedded Artistry Templates](https://github.com/embeddedartistry/templates). Licensing information about the original information of this document can be found [here](https://github.com/embeddedartistry/templates/blob/master/LICENSE). 
+These contribution guidelines are adapted by the [Embedded Artistry Templates](https://github.com/embeddedartistry/templates). Licensing information about the original information of this document can be found [here](https://github.com/embeddedartistry/templates/blob/master/LICENSE).

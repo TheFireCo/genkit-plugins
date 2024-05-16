@@ -1,21 +1,29 @@
 import { GenerateRequest, MessageData } from '@genkit-ai/ai/model';
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
-import { fromAnthropicContentBlock, fromAnthropicContentBlockChunk, toAnthropicMessages, toAnthropicRequestBody } from '../src/claude.ts';
-import { ContentBlockStartEvent, TextBlock } from '@anthropic-ai/sdk/resources/messages';
+import {
+  fromAnthropicContentBlock,
+  fromAnthropicContentBlockChunk,
+  toAnthropicMessages,
+  toAnthropicRequestBody,
+} from '../src/claude.ts';
+import {
+  ContentBlockStartEvent,
+  TextBlock,
+} from '@anthropic-ai/sdk/resources/messages';
 
 describe('toAnthropicMessages', () => {
   it('should correctly convert simple text messages', () => {
     const inputMessages: MessageData[] = [
       { role: 'user', content: [{ text: 'Hello' }] },
-      { role: 'model', content: [{ text: 'Welcome!' }] }
+      { role: 'model', content: [{ text: 'Welcome!' }] },
     ];
     const expected = {
       messages: [
         { role: 'user', content: [{ type: 'text', text: 'Hello' }] },
-        { role: 'assistant', content: 'Welcome!' }
+        { role: 'assistant', content: 'Welcome!' },
       ],
-      system: undefined
+      system: undefined,
     };
     const result = toAnthropicMessages(inputMessages);
     assert.deepStrictEqual(result, expected);
@@ -24,13 +32,13 @@ describe('toAnthropicMessages', () => {
   it('should handle system messages and convert subsequent user message', () => {
     const inputMessages: MessageData[] = [
       { role: 'system', content: [{ text: 'System initialization' }] },
-      { role: 'user', content: [{ text: 'System test' }] }
+      { role: 'user', content: [{ text: 'System test' }] },
     ];
     const expected = {
       messages: [
-        { role: 'user', content: [{ type: 'text', text: 'System test' }] }
+        { role: 'user', content: [{ type: 'text', text: 'System test' }] },
       ],
-      system: 'System initialization'
+      system: 'System initialization',
     };
     const result = toAnthropicMessages(inputMessages);
     assert.deepStrictEqual(result, expected);
@@ -42,14 +50,14 @@ describe('toAnthropicRequestBody', () => {
     const modelName = 'claude-3-haiku';
     const genkitRequest: GenerateRequest = {
       messages: [{ role: 'user', content: [{ text: 'What is AI?' }] }],
-      output: { format: 'text' }
+      output: { format: 'text' },
     };
     const expected = {
       max_tokens: 4096,
       messages: [
-        { role: 'user', content: [{ type: 'text', text: 'What is AI?' }] }
+        { role: 'user', content: [{ type: 'text', text: 'What is AI?' }] },
       ],
-      model: 'claude-3-haiku-20240307'
+      model: 'claude-3-haiku-20240307',
     };
     const result = toAnthropicRequestBody(modelName, genkitRequest);
     assert.deepStrictEqual(result, expected);
@@ -58,20 +66,25 @@ describe('toAnthropicRequestBody', () => {
   it('should handle custom configuration and metadata', () => {
     const modelName = 'claude-3-opus';
     const genkitRequest: GenerateRequest = {
-      messages: [{ role: 'user', content: [{ text: 'Explain quantum computing.' }] }],
+      messages: [
+        { role: 'user', content: [{ text: 'Explain quantum computing.' }] },
+      ],
       output: { format: 'text' },
       config: {
         maxOutputTokens: 500,
-        custom: { metadata: { user_id: 'user123' } }
-      }
+        custom: { metadata: { user_id: 'user123' } },
+      },
     };
     const expected = {
       max_tokens: 500,
       messages: [
-        { role: 'user', content: [{ type: 'text', text: 'Explain quantum computing.' }] }
+        {
+          role: 'user',
+          content: [{ type: 'text', text: 'Explain quantum computing.' }],
+        },
       ],
       model: 'claude-3-opus-20240229',
-      metadata: { user_id: 'user123' }
+      metadata: { user_id: 'user123' },
     };
     const result = toAnthropicRequestBody(modelName, genkitRequest);
     assert.deepStrictEqual(result, expected);
@@ -84,16 +97,16 @@ it('should handle streaming requests correctly', () => {
     messages: [{ role: 'user', content: [{ text: 'Narrate a story.' }] }],
     output: { format: 'text' },
     config: {
-      maxOutputTokens: 1000
-    }
+      maxOutputTokens: 1000,
+    },
   };
   const expected = {
     max_tokens: 1000,
     messages: [
-      { role: 'user', content: [{ type: 'text', text: 'Narrate a story.' }] }
+      { role: 'user', content: [{ type: 'text', text: 'Narrate a story.' }] },
     ],
     model: 'claude-3-sonnet-20240229',
-    stream: true
+    stream: true,
   };
   const result = toAnthropicRequestBody(modelName, genkitRequest, true);
   assert.deepStrictEqual(result, expected);
@@ -103,7 +116,7 @@ it('should throw an error for unsupported model names', () => {
   const modelName = 'claude-3-unknown';
   const genkitRequest: GenerateRequest = {
     messages: [{ role: 'user', content: [{ text: 'Hello' }] }],
-    output: { format: 'text' }
+    output: { format: 'text' },
   };
   assert.throws(() => {
     toAnthropicRequestBody(modelName, genkitRequest);
@@ -121,10 +134,10 @@ describe('fromAnthropicContentBlock', () => {
       index: 0,
       message: {
         role: 'model',
-        content: [{ text: 'Sample response text' }]
-      }
+        content: [{ text: 'Sample response text' }],
+      },
     };
-    const result = fromAnthropicContentBlock(contentBlock, 0, "end_turn");
+    const result = fromAnthropicContentBlock(contentBlock, 0, 'end_turn');
     assert.deepStrictEqual(result, expected);
   });
 
@@ -138,11 +151,15 @@ describe('fromAnthropicContentBlock', () => {
       index: 1,
       message: {
         role: 'model',
-        content: [{ text: 'Another sample text' }]
-      }
+        content: [{ text: 'Another sample text' }],
+      },
     };
     const stopReason = undefined;
-    const result = fromAnthropicContentBlock(contentBlock, 1, stopReason as any);
+    const result = fromAnthropicContentBlock(
+      contentBlock,
+      1,
+      stopReason as any
+    );
     assert.deepStrictEqual(result, expected);
   });
 });
@@ -152,15 +169,15 @@ describe('fromAnthropicContentBlockChunk', () => {
     const event: ContentBlockStartEvent = {
       type: 'content_block_start',
       index: 0,
-      content_block: { text: 'Start of content block', type: 'text' }
+      content_block: { text: 'Start of content block', type: 'text' },
     };
     const expected = {
       finishReason: 'unknown',
       index: 0,
       message: {
         role: 'model',
-        content: [{ text: 'Start of content block' }]
-      }
+        content: [{ text: 'Start of content block' }],
+      },
     };
     const result = fromAnthropicContentBlockChunk(event);
     assert.deepStrictEqual(result, expected);
@@ -170,7 +187,7 @@ describe('fromAnthropicContentBlockChunk', () => {
     const event = {
       type: 'non_content_event',
       index: 0,
-      content_block: { text: 'Should not process' }
+      content_block: { text: 'Should not process' },
     };
     const result = fromAnthropicContentBlockChunk(event as any);
     assert.strictEqual(result, undefined);

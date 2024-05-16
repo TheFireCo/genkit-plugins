@@ -16,25 +16,23 @@
    <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/TheFireCo/genkit-plugins">
 </div>
 
-
-**`genkitx-cohere`** is a community plugin for using OpenAI APIs with 
+**`genkitx-cohere`** is a community plugin for using OpenAI APIs with
 [Firebase GenKit](https://github.com/firebase/genkit). Built by [**The Fire Company**](https://github.com/TheFireCo). 🔥
-
 
 ## Installation
 
 Install the plugin in your project with your favorite package manager:
 
-* `npm install genkitx-cohere`
-* `yarn add genkitx-cohere`
-* `pnpm add genkitx-cohere`
-
+- `npm install genkitx-cohere`
+- `yarn add genkitx-cohere`
+- `pnpm add genkitx-cohere`
 
 ## Usage
 
 ### Basic examples
 
 The simplest way to call the text generation model is by using the helper function `generate`:
+
 ```
 // Basic usage of an LLM
 const response = await generate({
@@ -46,6 +44,7 @@ console.log(await response.text());
 ```
 
 Using the same interface, you can prompt a multimodal model:
+
 ```
 const response = await generate({
   model: commandRPlus,
@@ -61,7 +60,6 @@ const response = await generate({
 });
 console.log(await response.text());
 ```
-
 
 ## Contributing
 

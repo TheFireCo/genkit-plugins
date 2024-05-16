@@ -3,7 +3,6 @@ id: genkitx-anthropicai
 title: genkitx-anthropicai
 ---
 
-
 <h1 align="center">Firebase Genkit - Anthropic AI Plugin</h1>
 
 <h4 align="center">Anthropic AI Community Plugin for Google Firebase Genkit</h4>
@@ -22,7 +21,6 @@ title: genkitx-anthropicai
    <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/TheFireCo/genkit-plugins"/>
 </div>
 
-
 `genkitx-anthropicai` is a community plugin for using Anthropic AI and all its supported models with [Firebase GenKit](https://github.com/firebase/genkit).
 
 ## Installation
@@ -37,6 +35,7 @@ Install the plugin in your project with your favorite package manager:
 ### Basic examples
 
 The simplest way to call the text generation model is by using the helper function `generate`:
+
 ```
 // Basic usage of an LLM
 const response = await generate({
@@ -48,6 +47,7 @@ console.log(await response.text());
 ```
 
 Using the same interface, you can prompt a multimodal model:
+
 ```
 const response = await generate({
   model: claude3Haiku,
@@ -71,7 +71,7 @@ Want to contribute to the project? That's awesome! Head over to our [Contributio
 ## Need support?
 
 :::info
- This repository depends on Google's Firebase Genkit. For issues and questions related to GenKit, please refer to instructions available in [GenKit's repository](https://github.com/firebase/genkit).
+This repository depends on Google's Firebase Genkit. For issues and questions related to GenKit, please refer to instructions available in [GenKit's repository](https://github.com/firebase/genkit).
 :::
 
 Reach out by opening a discussion on [Github Discussions](https://github.com/TheFireCo/genkitx-openai/discussions).

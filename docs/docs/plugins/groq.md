@@ -3,12 +3,9 @@ id: genkitx-groq
 title: genkitx-groq
 ---
 
-
 <h1 align="center">Firebase Genkit - Groq Plugin</h1>
 
 <h4 align="center">Groq Community Plugin for Google Firebase Genkit</h4>
-
-
 
 <div align="center">
    <img alt="Github lerna version" src="https://img.shields.io/github/lerna-json/v/TheFireCo/genkit-plugins?label=version"/>
@@ -24,24 +21,23 @@ title: genkitx-groq
    <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/TheFireCo/genkit-plugins"/>
 </div>
 
-**`genkitx-groq`** is a community plugin for using OpenAI APIs with 
+**`genkitx-groq`** is a community plugin for using OpenAI APIs with
 [Firebase GenKit](https://github.com/firebase/genkit). Built by [**The Fire Company**](https://github.com/TheFireCo). 🔥
-
 
 ## Installation
 
 Install the plugin in your project with your favorite package manager:
 
-* `npm install genkitx-groq`
-* `yarn add genkitx-groq`
-* `pnpm add genkitx-groq`
-
+- `npm install genkitx-groq`
+- `yarn add genkitx-groq`
+- `pnpm add genkitx-groq`
 
 ## Usage
 
 ### Basic examples
 
 The simplest way to call the text generation model is by using the helper function `generate`:
+
 ```
 // Basic usage of an LLM
 const response = await generate({
@@ -53,6 +49,7 @@ console.log(await response.text());
 ```
 
 Using the same interface, you can prompt a multimodal model:
+
 ```
 const response = await generate({
   model: llama_3_70b,

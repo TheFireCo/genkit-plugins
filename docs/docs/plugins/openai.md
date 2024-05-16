@@ -23,25 +23,23 @@ title: genkitx-openai-plugin
    <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/TheFireCo/genkit-plugins"/>
 </div>
 
-      
-
-**`genkitx-openai-plugin`** is a community plugin for using OpenAI APIs with 
+**`genkitx-openai-plugin`** is a community plugin for using OpenAI APIs with
 [Firebase GenKit](https://github.com/firebase/genkit). Built by [**The Fire Company**](https://github.com/TheFireCo). 🔥
-
 
 ## Installation
 
 Install the plugin in your project with your favorite package manager:
 
-* `npm install genkitx-openai-plugin`
-* `yarn add genkitx-openai-plugin`
-* `pnpm add genkitx-openai-plugin`
+- `npm install genkitx-openai-plugin`
+- `yarn add genkitx-openai-plugin`
+- `pnpm add genkitx-openai-plugin`
 
 ## Usage
-  
+
 ### Basic examples
 
 The simplest way to call the text generation model is by using the helper function `generate`:
+
 ```
 // Basic usage of an LLM
 const response = await generate({
@@ -53,6 +51,7 @@ console.log(await response.text());
 ```
 
 Using the same interface, you can prompt a multimodal model:
+
 ```
 const response = await generate({
   model: gpt4Turbo,
@@ -70,6 +69,7 @@ console.log(await response.text());
 ```
 
 For more detailed examples and the explanation of other functionalities, refer to the examples in the [official Github repo of the plugin](https://github.com/TheFireCo/genkit-plugins/blob/main/examples/README.md) or in the [official Genkit documentation](https://firebase.google.com/docs/genkit/get-started).
+
 ## Contributing
 
 Want to contribute to the project? That's awesome! Head over to our [Contribution Guidelines](https://github.com/TheFireCo/genkit-plugins/blob/main/https://github.com/TheFireCo/genkit-plugins/blob/main/CONTRIBUTING.md).
@@ -81,7 +81,7 @@ This repository depends on Google's Firebase Genkit. For issues and questions re
 :::
 
 Reach out by opening a discussion on [Github Discussions](https://github.com/TheFireCo/genkit-plugins/discussions).
-        
+
 ## Credits
 
 This plugin is proudly maintained by the team at [**The Fire Company**](https://github.com/TheFireCo). 🔥

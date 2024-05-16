@@ -1,4 +1,3 @@
-
 /**
  * Copyright 2024 The Fire Company
  *
@@ -16,8 +15,7 @@
  */
 
 import { genkitPlugin, Plugin } from '@genkit-ai/core';
-import { SUPPORTED_MISTRAL_MODELS,mistralModel } from './mistral_llms';
-
+import { SUPPORTED_MISTRAL_MODELS, mistralModel } from './mistral_llms';
 
 export interface PluginOptions {
   apiKey?: string;
@@ -32,20 +30,23 @@ export const mistral: Plugin<[PluginOptions] | []> = genkitPlugin(
         'Please pass in the API key or set the MISTRALAI_API_KEY environment variable'
       );
     // Dynamically import the MistralClient
-    const { default: MistralClient } = await import("@mistralai/mistralai");
+    const { default: MistralClient } = await import('@mistralai/mistralai');
 
     const client = new MistralClient(apiKey);
     return {
       models: [
-        ...Object.keys(SUPPORTED_MISTRAL_MODELS).map((name) => mistralModel(name,client))]
+        ...Object.keys(SUPPORTED_MISTRAL_MODELS).map((name) =>
+          mistralModel(name, client)
+        ),
+      ],
 
-        // TODO: Add Embedders
-        // embedders: [...Object.keys(SUPPORTED_MISTRAL_MODELS).map((name) => {
-        //   return {
-        //     name,
-        //     model: SUPPORTED_MISTRAL_MODELS[name],
-        //   };
-        // })],
+      // TODO: Add Embedders
+      // embedders: [...Object.keys(SUPPORTED_MISTRAL_MODELS).map((name) => {
+      //   return {
+      //     name,
+      //     model: SUPPORTED_MISTRAL_MODELS[name],
+      //   };
+      // })],
     };
   }
 );

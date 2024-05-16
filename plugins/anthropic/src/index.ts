@@ -16,19 +16,15 @@
 
 import { genkitPlugin, Plugin } from '@genkit-ai/core';
 import Anthropic from '@anthropic-ai/sdk';
-import { 
+import {
   claude3Haiku,
   claude3Sonnet,
   claude3Opus,
-  claudeModel, 
+  claudeModel,
   SUPPORTED_CLAUDE_MODELS,
 } from './claude';
 
-export {
-  claude3Haiku,
-  claude3Sonnet,
-  claude3Opus,
-};
+export { claude3Haiku, claude3Sonnet, claude3Opus };
 
 export interface PluginOptions {
   apiKey?: string;
@@ -37,23 +33,23 @@ export interface PluginOptions {
 /**
  * This module provides an interface to the Anthropic AI models through the Genkit plugin system.
  * It allows users to interact with various Claude models by providing an API key and optional configuration.
- * 
+ *
  * The main export is the `anthropic` plugin, which can be configured with an API key either directly or through
  * environment variables. It initializes the Anthropic client and makes available the Claude models for use.
- * 
+ *
  * Exports:
  * - claude3Haiku: Reference to the Claude 3 Haiku model.
  * - claude3Sonnet: Reference to the Claude 3 Sonnet model.
  * - claude3Opus: Reference to the Claude 3 Opus model.
  * - anthropic: The main plugin function to interact with the Anthropic AI.
- * 
+ *
  * Usage:
  * To use the Claude models, initialize the anthropic plugin inside `configureGenkit` and pass the configuration options. If no API key is provided in the options, the environment variable `ANTHROPIC_API_KEY` must be set.
- * 
+ *
  * Example:
  * ```
  * import anthropic from 'genkitx-anthropicai';
- * 
+ *
  * export default configureGenkit({
  *  plugins: [
  *    anthropic({ apiKey: 'your-api-key' })
@@ -62,7 +58,7 @@ export interface PluginOptions {
  * });
  * ```
  */
-// TODO: add support for voyage embeddings and tool use (both not documented well in docs.anthropic.com) 
+// TODO: add support for voyage embeddings and tool use (both not documented well in docs.anthropic.com)
 export const anthropic: Plugin<[PluginOptions] | []> = genkitPlugin(
   'anthropic',
   async (options?: PluginOptions) => {
@@ -71,7 +67,7 @@ export const anthropic: Plugin<[PluginOptions] | []> = genkitPlugin(
       throw new Error(
         'Please pass in the API key or set the ANTHROPIC_API_KEY environment variable'
       );
-    const client = new Anthropic({apiKey});
+    const client = new Anthropic({ apiKey });
     return {
       models: [
         ...Object.keys(SUPPORTED_CLAUDE_MODELS).map((name) =>
@@ -83,4 +79,3 @@ export const anthropic: Plugin<[PluginOptions] | []> = genkitPlugin(
 );
 
 export default anthropic;
-

@@ -24,19 +24,23 @@ export const TextEmbeddingConfigSchema = z.object({
   // embeddingTypes: z.array(
   //   z.enum(['float', 'int8', 'uint8', 'binary', 'ubinary'])
   // ).optional(),
-  embeddingTypes: z.union([
-    z.literal('float'),
-    z.literal('int8'),
-    z.literal('uint8'),
-    z.literal('binary'),
-    z.literal('ubinary'),
-  ]).optional(),
-  inputType: z.union([
-    z.literal('search_document'),
-    z.literal('search_query'),
-    z.literal('classification'),
-    z.literal('clustering'),
-  ]).optional(),
+  embeddingTypes: z
+    .union([
+      z.literal('float'),
+      z.literal('int8'),
+      z.literal('uint8'),
+      z.literal('binary'),
+      z.literal('ubinary'),
+    ])
+    .optional(),
+  inputType: z
+    .union([
+      z.literal('search_document'),
+      z.literal('search_query'),
+      z.literal('classification'),
+      z.literal('clustering'),
+    ])
+    .optional(),
 });
 
 export type TextEmbeddingGeckoConfig = z.infer<
@@ -93,7 +97,6 @@ export const embedMultilingualLight3 = embedderRef({
   },
 });
 
-
 export const SUPPORTED_EMBEDDING_MODELS = {
   'embed-english-v3.0': embedEnglish3,
   'embed-multilingual-v3.0': embedMultilingual3,
@@ -120,25 +123,40 @@ export function cohereEmbedder(name: string, options?: PluginOptions) {
     async (input, options) => {
       const embeddings = await client.embed({
         model: name,
-        texts: input.map((d) => {return d.text()}),
+        texts: input.map((d) => {
+          return d.text();
+        }),
         inputType: options?.inputType ? options.inputType : 'search_document',
-        embeddingTypes: options?.embeddingTypes ? [options.embeddingTypes] : undefined,
+        embeddingTypes: options?.embeddingTypes
+          ? [options.embeddingTypes]
+          : undefined,
       });
       try {
         return {
-          embeddings: (embeddings.embeddings as number[][]).map((e) => ({embedding: e})),
+          embeddings: (embeddings.embeddings as number[][]).map((e) => ({
+            embedding: e,
+          })),
         };
       } catch (e) {
         for (const property in embeddings.embeddings) {
-          if (Object.prototype.hasOwnProperty.call(embeddings.embeddings, property)) {
-            return { 
-              embeddings: (embeddings.embeddings[property] as number[][]).map((e) => ({embedding: e}))
+          if (
+            Object.prototype.hasOwnProperty.call(
+              embeddings.embeddings,
+              property
+            )
+          ) {
+            return {
+              embeddings: (embeddings.embeddings[property] as number[][]).map(
+                (e) => ({ embedding: e })
+              ),
             };
           }
         }
       }
       return {
-        embeddings: (embeddings.embeddings as number[][]).map((e) => ({embedding: e})),
+        embeddings: (embeddings.embeddings as number[][]).map((e) => ({
+          embedding: e,
+        })),
       };
     }
   );

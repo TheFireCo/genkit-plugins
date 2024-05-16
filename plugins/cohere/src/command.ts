@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Message } from "@genkit-ai/ai";
+import { Message } from '@genkit-ai/ai';
 import {
   CandidateData,
   defineModel,
@@ -25,11 +25,11 @@ import {
   Role,
   ToolDefinition,
   ToolRequestPart,
-} from "@genkit-ai/ai/model";
-import { Cohere, CohereClient } from "cohere-ai";
-import { ChatStreamEndEventFinishReason } from "cohere-ai/api";
+} from '@genkit-ai/ai/model';
+import { Cohere, CohereClient } from 'cohere-ai';
+import { ChatStreamEndEventFinishReason } from 'cohere-ai/api';
 
-import z from "zod";
+import z from 'zod';
 
 export const CohereConfigSchema = z.object({
   frequencyPenalty: z.number().min(-2).max(2).optional(),
@@ -61,86 +61,86 @@ export const CohereConfigSchema = z.object({
 });
 
 export const commandRPlus = modelRef({
-  name: "cohere/command-r-plus",
+  name: 'cohere/command-r-plus',
   info: {
-    versions: ["command-r-plus"],
-    label: "Cohere - Command R Plus",
+    versions: ['command-r-plus'],
+    label: 'Cohere - Command R Plus',
     supports: {
       multiturn: true,
       tools: true,
       media: false,
       systemRole: true,
-      output: ["text"],
+      output: ['text'],
     },
   },
   configSchema: CohereConfigSchema,
 });
 
 export const commandR = modelRef({
-  name: "cohere/command-r",
+  name: 'cohere/command-r',
   info: {
-    versions: ["command-r"],
-    label: "Cohere - Command R",
+    versions: ['command-r'],
+    label: 'Cohere - Command R',
     supports: {
       multiturn: true,
       tools: true,
       media: false,
       systemRole: true,
-      output: ["text"],
+      output: ['text'],
     },
   },
   configSchema: CohereConfigSchema,
 });
 
 export const command = modelRef({
-  name: "cohere/command",
+  name: 'cohere/command',
   info: {
-    versions: ["command", "command-nightly"],
-    label: "Cohere - Command",
+    versions: ['command', 'command-nightly'],
+    label: 'Cohere - Command',
     supports: {
       multiturn: true,
       tools: true,
       media: false,
       systemRole: true,
-      output: ["text"],
+      output: ['text'],
     },
   },
   configSchema: CohereConfigSchema,
 });
 
 export const commandLight = modelRef({
-  name: "cohere/command-light",
+  name: 'cohere/command-light',
   info: {
-    versions: ["command-light", "command-light-nightly"],
-    label: "Cohere - Command Light",
+    versions: ['command-light', 'command-light-nightly'],
+    label: 'Cohere - Command Light',
     supports: {
       multiturn: true,
       tools: true,
       media: false,
       systemRole: true,
-      output: ["text"],
+      output: ['text'],
     },
   },
   configSchema: CohereConfigSchema,
 });
 
 export const SUPPORTED_COMMAND_MODELS = {
-  "command-r-plus": commandRPlus,
-  "command-r": commandR,
+  'command-r-plus': commandRPlus,
+  'command-r': commandR,
   command: command,
-  "command-light": commandLight,
+  'command-light': commandLight,
 };
 
 function toCohereRole(role: Role): Cohere.ChatMessageRole {
   switch (role) {
-    case "user":
-      return "USER";
-    case "model":
-      return "CHATBOT";
-    case "system":
-      return "SYSTEM";
-    case "tool":
-      return "CHATBOT";
+    case 'user':
+      return 'USER';
+    case 'model':
+      return 'CHATBOT';
+    case 'system':
+      return 'SYSTEM';
+    case 'tool':
+      return 'CHATBOT';
     default:
       throw new Error(`role ${role} doesn't map to a Cohere role.`);
   }
@@ -148,15 +148,15 @@ function toCohereRole(role: Role): Cohere.ChatMessageRole {
 
 function zodTypeToPythonType(zodType: z.ZodTypeAny): string {
   if (zodType instanceof z.ZodString) {
-    return "str";
+    return 'str';
   } else if (zodType instanceof z.ZodNumber) {
-    return "float";
+    return 'float';
   } else if (zodType instanceof z.ZodBoolean) {
-    return "bool";
+    return 'bool';
   } else if (zodType instanceof z.ZodArray) {
-    return "list";
+    return 'list';
   } else if (zodType instanceof z.ZodObject) {
-    return "dict";
+    return 'dict';
   } else {
     throw new Error(`Unsupported Zod type: ${zodType.constructor.name}`);
   }
@@ -198,13 +198,13 @@ export function toCohereMessageHistory(
 
 const FINISH_REASON_MAP: Record<
   ChatStreamEndEventFinishReason,
-  CandidateData["finishReason"]
+  CandidateData['finishReason']
 > = {
-  MAX_TOKENS: "length",
-  ERROR_LIMIT: "length",
-  COMPLETE: "stop",
-  ERROR_TOXIC: "blocked",
-  ERROR: "other",
+  MAX_TOKENS: 'length',
+  ERROR_LIMIT: 'length',
+  COMPLETE: 'stop',
+  ERROR_TOXIC: 'blocked',
+  ERROR: 'other',
 };
 
 function fromCohereToolCall(toolCall: Cohere.ToolCall): ToolRequestPart {
@@ -226,9 +226,9 @@ function fromCohereChatResponse(
     index: index,
     finishReason:
       (response.finishReason && FINISH_REASON_MAP[response.finishReason]) ||
-      "other",
+      'other',
     message: {
-      role: "model",
+      role: 'model',
       content: toolRequestParts
         ? toolRequestParts
         : [
@@ -257,15 +257,15 @@ function fromCohereStreamEvent(
   index: number
 ): CandidateData {
   switch (event.eventType) {
-    case "stream-start":
+    case 'stream-start':
       return {
         index: index,
-        finishReason: "other", // Not sure if this is the appropriate finish reason
+        finishReason: 'other', // Not sure if this is the appropriate finish reason
         message: {
-          role: "model",
+          role: 'model',
           content: [
             {
-              text: "",
+              text: '',
             },
           ],
         },
@@ -274,12 +274,12 @@ function fromCohereStreamEvent(
           generation_id: event.generationId,
         },
       };
-    case "search-queries-generation":
+    case 'search-queries-generation':
       return {
         index: index,
-        finishReason: "other", // Not sure if this is the appropriate finish reason
+        finishReason: 'other', // Not sure if this is the appropriate finish reason
         message: {
-          role: "model",
+          role: 'model',
           content: event.searchQueries.map((query) => ({
             // text: query.text,
             data: query,
@@ -289,12 +289,12 @@ function fromCohereStreamEvent(
           event_type: event.eventType,
         },
       };
-    case "search-results":
+    case 'search-results':
       return {
         index: index,
-        finishReason: "other", // Not sure if this is the appropriate finish reason
+        finishReason: 'other', // Not sure if this is the appropriate finish reason
         message: {
-          role: "model",
+          role: 'model',
           content: [
             {
               data: {
@@ -308,12 +308,12 @@ function fromCohereStreamEvent(
           event_type: event.eventType,
         },
       };
-    case "citation-generation":
+    case 'citation-generation':
       return {
         index: index,
-        finishReason: "other", // Not sure if this is the appropriate finish reason
+        finishReason: 'other', // Not sure if this is the appropriate finish reason
         message: {
-          role: "model",
+          role: 'model',
           content: event.citations.map((citation) => ({
             // text: citation.text,
             data: citation,
@@ -323,12 +323,12 @@ function fromCohereStreamEvent(
           event_type: event.eventType,
         },
       };
-    case "tool-calls-generation":
+    case 'tool-calls-generation':
       return {
         index: index,
-        finishReason: "other", // Not sure if this is the appropriate finish reason
+        finishReason: 'other', // Not sure if this is the appropriate finish reason
         message: {
-          role: "model",
+          role: 'model',
           content: event.toolCalls.map((toolCall) =>
             fromCohereToolCall(toolCall)
           ),
@@ -337,12 +337,12 @@ function fromCohereStreamEvent(
           event_type: event.eventType,
         },
       };
-    case "text-generation":
+    case 'text-generation':
       return {
         index: index,
-        finishReason: "other", // Not sure if this is the appropriate finish reason
+        finishReason: 'other', // Not sure if this is the appropriate finish reason
         message: {
-          role: "model",
+          role: 'model',
           content: [
             {
               text: event.text,
@@ -353,7 +353,7 @@ function fromCohereStreamEvent(
           event_type: event.eventType,
         },
       };
-    case "stream-end":
+    case 'stream-end':
       return fromCohereChatResponse(
         event.response,
         {
@@ -473,7 +473,7 @@ export function commandModel(name: string, client: CohereClient) {
             custom: c.custom,
           });
           eventIndex++;
-          if (event.eventType === "stream-end") {
+          if (event.eventType === 'stream-end') {
             response = event.response;
             break;
           }
@@ -483,7 +483,7 @@ export function commandModel(name: string, client: CohereClient) {
       }
       if (response === undefined) {
         throw new Error(
-          "No response from Cohere API, or stream ended unexpectedly."
+          'No response from Cohere API, or stream ended unexpectedly.'
         );
       }
       return {

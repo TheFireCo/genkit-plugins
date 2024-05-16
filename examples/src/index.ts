@@ -13,18 +13,10 @@ import anthropic from 'genkitx-anthropicai';
 import mistral from 'genkitx-mistral';
 
 export default configureGenkit({
-  plugins: [
-    openAI(),
-    groq(),
-    cohere(),
-    anthropic(),
-    mistral(),
-    dotprompt(),
-  ],
+  plugins: [openAI(), groq(), cohere(), anthropic(), mistral(), dotprompt()],
   logLevel: 'debug',
   enableTracingAndMetrics: true,
 });
-
 
 // Define standard prompts
 const helloPrompt = definePrompt(
@@ -38,9 +30,8 @@ const helloPrompt = definePrompt(
 
     return {
       messages: [{ role: 'user', content: [{ text: promptText }] }],
-      config: { temperature: 0.3,
-       }
-    }
+      config: { temperature: 0.3 },
+    };
   }
 );
 
@@ -91,7 +82,6 @@ const codeDotPrompt = defineDotprompt(
   `Does the object {{object_name}} exist in the given image {{media url=image_url}}? If it does, what color is it and what are some details about it?`
 );
 
-
 // Define flows
 export const myFlow = defineFlow(
   {
@@ -109,4 +99,3 @@ export const myFlow = defineFlow(
   }
 );
 startFlowsServer();
-

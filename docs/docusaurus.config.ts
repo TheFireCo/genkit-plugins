@@ -4,7 +4,8 @@ import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
   title: 'Genkit Plugins',
-  tagline: 'Community Plugins for Genkit (OpenAI, Groq, Anthropic, Cohere, etc.)',
+  tagline:
+    'Community Plugins for Genkit (OpenAI, Groq, Anthropic, Cohere, etc.)',
   favicon: 'img/logo.png',
 
   // Set the production url of your site here
@@ -91,7 +92,6 @@ const config: Config = {
               label: 'GitHub',
               href: 'https://github.com/TheFireCo/genkit-plugins',
             },
-
           ],
         },
         {
@@ -104,7 +104,7 @@ const config: Config = {
             {
               label: 'Giftit',
               href: 'https://giftit.social',
-            }
+            },
           ],
         },
       ],
