@@ -18,10 +18,10 @@
   "type": "commonjs",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Dabolus/genkit-plugins.git",
+    "url": "https://github.com/firebase-community/genkit-plugins.git",
     "directory": "plugins/openai"
   },
-  "author": "Dabolus",
+  "author": "firebase-community",
   "license": "Apache-2.0",
   "dependencies": {
     "openai": "^4.46.1",

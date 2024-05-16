@@ -19,10 +19,10 @@
   "type": "commonjs",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Dabolus/genkit-plugins.git",
+    "url": "https://github.com/firebase-community/genkit-plugins.git",
     "directory": "plugins/anthropic"
   },
-  "author": "Dabolus",
+  "author": "firebase-community",
   "license": "Apache-2.0",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.20.9",

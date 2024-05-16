@@ -3,11 +3,10 @@ name: Bug report
 about: Create a bug report to help us improve
 title: ''
 labels: bug
-assignees: Dabolus
-
 ---
 
 **Affected plugin(s)**
+
 - [ ] Anthropic
 - [ ] OpenAI
 
@@ -16,6 +15,7 @@ A clear and concise description of what the bug is.
 
 **To Reproduce**
 Steps to reproduce the behavior:
+
 1. Use the model '...'
 2. Provide the option '....'
 3. See error
