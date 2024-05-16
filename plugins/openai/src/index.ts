@@ -17,6 +17,7 @@ import {
   SUPPORTED_GPT_MODELS,
 } from './gpt.js';
 import { SUPPORTED_TTS_MODELS, ttsModel, tts1, tts1Hd } from './tts.js';
+import { whisper1, whisper1Model } from './whisper.js';
 export {
   dallE3,
   gpt35Turbo,
@@ -26,6 +27,7 @@ export {
   gpt4o,
   tts1,
   tts1Hd,
+  whisper1,
   textEmbedding3Large,
   textEmbedding3Small,
 };
@@ -52,6 +54,7 @@ export const openAI: Plugin<[PluginOptions] | []> = genkitPlugin(
           ttsModel(name, client),
         ),
         dallE3Model(client),
+        whisper1Model(client),
       ],
       embedders: Object.keys(SUPPORTED_EMBEDDING_MODELS).map(name =>
         openaiEmbedder(name, options),
