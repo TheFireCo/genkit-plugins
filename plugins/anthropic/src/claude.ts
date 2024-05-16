@@ -247,7 +247,7 @@ export function claudeModel(name: string, client: Anthropic) {
     {
       name: modelId,
       ...model.info,
-      configSchema: SUPPORTED_CLAUDE_MODELS[name].configSchema,
+      configSchema: model.configSchema,
     },
     async (request, streamingCallback) => {
       let response: Anthropic.Message;

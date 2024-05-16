@@ -412,7 +412,7 @@ export function gptModel(name: string, client: OpenAI) {
     {
       name: modelId,
       ...model.info,
-      configSchema: SUPPORTED_GPT_MODELS[name].configSchema,
+      configSchema: model.configSchema,
     },
     async (request, streamingCallback) => {
       let response;
