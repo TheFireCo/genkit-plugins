@@ -16,6 +16,7 @@ import {
   gptModel,
   SUPPORTED_GPT_MODELS,
 } from './gpt.js';
+import { SUPPORTED_TTS_MODELS, ttsModel, tts1, tts1Hd } from './tts.js';
 export {
   dallE3,
   gpt35Turbo,
@@ -23,6 +24,8 @@ export {
   gpt4Turbo,
   gpt4Vision,
   gpt4o,
+  tts1,
+  tts1Hd,
   textEmbedding3Large,
   textEmbedding3Small,
 };
@@ -44,6 +47,9 @@ export const openAI: Plugin<[PluginOptions] | []> = genkitPlugin(
       models: [
         ...Object.keys(SUPPORTED_GPT_MODELS).map(name =>
           gptModel(name, client),
+        ),
+        ...Object.keys(SUPPORTED_TTS_MODELS).map(name =>
+          ttsModel(name, client),
         ),
         dallE3Model(client),
       ],
