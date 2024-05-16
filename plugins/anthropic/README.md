@@ -23,6 +23,11 @@ This Genkit plugin allows to use Anthropic AI models through their official APIs
 If you want to use Anthropic AI models through Google Vertex AI, please refer
 to the [official Vertex AI plugin](https://www.npmjs.com/package/@genkit-ai/vertexai).
 
+## Supported models
+
+The plugin supports the most recent Anthropic models:
+**Claude 3 Opus**, **Claude 3 Sonnet**, and **Claude 3 Haiku**.
+
 ## Installation
 
 Install the plugin in your project with your favorite package manager:
