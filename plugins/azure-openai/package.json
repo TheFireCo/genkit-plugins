@@ -60,8 +60,7 @@
     "compile": "tsup-node",
     "build:clean": "rm -rf ./lib",
     "build": "npm-run-all build:clean check compile",
-    "build:watch": "tsup-node --watch",
-    "test": "node --import tsx --test ./tests/*_test.ts"
+    "build:watch": "tsup-node --watch"
   },
   "gitHead": "4da11b05d2693c9f5dd0fd85b721afd1d2d8f381"
 }
