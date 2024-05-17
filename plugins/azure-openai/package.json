@@ -1,0 +1,67 @@
+{
+  "name": "genkitx-azure-openai",
+  "description": "Firebase Genkit AI framework plugin for Azure OpenAI APIs.",
+  "keywords": [
+    "genkit",
+    "genkit-plugin",
+    "genkit-embedder",
+    "genkit-model",
+    "openai",
+    "gpt-4",
+    "gpt",
+    "gpt-3.5",
+    "ai",
+    "genai",
+    "generative-ai"
+  ],
+  "version": "0.1.2",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheFireCo/genkit-plugins.git",
+    "directory": "plugins/azure-openai"
+  },
+  "author": "TheFireCo",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@azure/identity": "^4.2.0",
+    "@azure/openai": "^1.0.0-beta.12",
+    "zod": "^3.22.4"
+  },
+  "peerDependencies": {
+    "@genkit-ai/ai": "^0.5.0",
+    "@genkit-ai/core": "^0.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.16",
+    "npm-run-all": "^4.1.5",
+    "tsup": "^8.0.2",
+    "tsx": "^4.7.0",
+    "typescript": "^4.9.5"
+  },
+  "types": "./lib/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./lib/index.js",
+      "default": "./lib/index.js",
+      "import": "./lib/index.mjs",
+      "types": "./lib/index.d.ts"
+    }
+  },
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "provenance": true,
+    "access": "public"
+  },
+  "scripts": {
+    "check": "tsc",
+    "compile": "tsup-node",
+    "build:clean": "rm -rf ./lib",
+    "build": "npm-run-all build:clean check compile",
+    "build:watch": "tsup-node --watch",
+    "test": "node --import tsx --test ./tests/*_test.ts"
+  },
+  "gitHead": "4da11b05d2693c9f5dd0fd85b721afd1d2d8f381"
+}

@@ -29,6 +29,7 @@
     "genkitx-groq": "^0.1.2",
     "genkitx-mistral": "^0.1.2",
     "genkitx-openai-plugin": "^0.1.2",
+    "genkitx-azure-openai": "^0.1.2",
     "zod": "^3.23.8"
   },
   "devDependencies": {
