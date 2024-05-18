@@ -51,7 +51,8 @@ configureGenkit({
 The simplest way to call the text generation model is by using the helper function `generate`:
 
 ```typescript
-// Basic usage of an LLM
+// ...configure Genkit (as shown above)...
+
 const response = await generate({
   model: claude3Haiku, // model imported from genkitx-anthropicai
   prompt: 'Tell me a joke.',
@@ -63,6 +64,8 @@ console.log(await response.text());
 ### Multi-modal prompt
 
 ```typescript
+// ...configure Genkit (as shown above)...
+
 const response = await generate({
   model: claude3Haiku,
   prompt: [
@@ -92,7 +95,7 @@ export const myFlow = defineFlow(
   async (subject) => {
     const llmResponse = await generate({
       prompt: `Suggest an item for the menu of a ${subject} themed restaurant`,
-      model: claude3Open,
+      model: claude3Opus,
     });
 
     return llmResponse.text();
