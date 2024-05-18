@@ -1,22 +1,19 @@
 import 'dotenv/config';
 
-import { defineDotprompt, dotprompt, prompt } from '@genkit-ai/dotprompt';
+import { defineDotprompt, prompt } from '@genkit-ai/dotprompt';
 import { generate, definePrompt, defineTool } from '@genkit-ai/ai';
-import { configureGenkit } from '@genkit-ai/core';
+
 import { defineFlow, startFlowsServer } from '@genkit-ai/flow';
 import * as z from 'zod';
 
-import { openAI, gpt4Turbo, gpt35Turbo } from 'genkitx-openai-plugin';
-import groq from 'genkitx-groq';
-import cohere from 'genkitx-cohere';
-import anthropic from 'genkitx-anthropicai';
-import mistral from 'genkitx-mistral';
+import { gpt4o } from 'genkitx-openai-plugin';
+import { initializeGenkit } from '@genkit-ai/core';
+import config from './genkit.config';
+import { llama3x70b } from 'genkitx-groq';
 
-export default configureGenkit({
-  plugins: [openAI(), groq(), cohere(), anthropic(), mistral(), dotprompt()],
-  logLevel: 'debug',
-  enableTracingAndMetrics: true,
-});
+console.log(`Groq key: ${process.env.GROQ_API_KEY}`);
+
+initializeGenkit(config);
 
 // Define standard prompts
 const helloPrompt = definePrompt(
@@ -47,16 +44,16 @@ const tool = defineTool(
 );
 
 // define Dotprompts
-const greetingPrompt = prompt('basic');
-const multimodalPrompt = prompt('multimodalInput');
-const structuredOutputPrompt = prompt('structuredInputOutput');
-const customConfigPrompt = prompt('customConfig');
+// const greetingPrompt = prompt('basic');
+// const multimodalPrompt = prompt('multimodalInput');
+// const structuredOutputPrompt = prompt('structuredInputOutput');
+// const customConfigPrompt = prompt('customConfig');
 
 // Define a Dotprompt in code
 const codeDotPrompt = defineDotprompt(
   {
     name: 'exampleDotPrompt',
-    model: gpt4Turbo,
+    model: gpt4o,
     input: {
       schema: z.object({
         object_name: z.string(),
@@ -92,10 +89,39 @@ export const myFlow = defineFlow(
   async (subject) => {
     const llmResponse = await generate({
       prompt: `Suggest an item for the menu of a ${subject} themed restaurant`,
-      model: gpt4Turbo,
+      model: gpt4o,
     });
 
     return llmResponse.text();
   }
 );
 startFlowsServer();
+
+// Tool use
+const createReminder = defineTool(
+  {
+    name: 'createReminder',
+    description: 'Use this to create reminders for things in the future',
+    inputSchema: z.object({
+      time: z
+        .string()
+        .describe('ISO timestamp string, e.g. 2024-04-03T12:23:00Z'),
+      reminder: z.string().describe('the content of the reminder'),
+    }),
+    outputSchema: z.number().describe('the ID of the created reminder'),
+  },
+  (reminder) => Promise.resolve(3)
+);
+
+const result = generate({
+  model: llama3x70b,
+  tools: [createReminder],
+  prompt: `
+  You are a reminder assistant.
+  If you create a reminder, describe in text the reminder you created as a response.
+
+  Query: I have a meeting with Anna at 3 for dinner - can you set a reminder for the time?
+  `,
+});
+
+console.log(result.then((res) => res.text()));

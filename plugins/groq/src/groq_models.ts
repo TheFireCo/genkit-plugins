@@ -63,7 +63,7 @@ export const llama3x8b = modelRef({
     label: 'Llama 3 8B',
     supports: {
       multiturn: true,
-      tools: false,
+      tools: false, // Could be true but not recommended
       media: false,
       systemRole: true,
       output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
@@ -81,7 +81,7 @@ export const llama3x70b = modelRef({
     label: 'Llama 3 70B',
     supports: {
       multiturn: true,
-      tools: false,
+      tools: true,
       media: false,
       systemRole: true,
       output: ['text', 'json'], // JSON mode does not support streaming or stop sequences

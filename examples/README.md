@@ -344,4 +344,8 @@ In the [official Genkit documentation](https://firebase.google.com/docs/genkit/g
 
 ## Contributing
 
-If you want to contribute to the OpenAI plugin, you can link to a local instance of the plugin by running `npm link` in the plugin directory and `npm link genkitx-openai-plugin` in the examples directory.
+If you want to run these examples during development, you can use the following workflow:
+
+1. Update the plugin you're working on.
+2. Run `npm run build` on the top level of the repo to build the plugin.
+3. Run `ts-node examples/src/index.ts` to run the examples.
