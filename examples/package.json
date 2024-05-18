@@ -12,7 +12,7 @@
   },
   "name": "genkit-plugins-examples",
   "type": "commonjs",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "description": "",
   "keywords": [],
@@ -28,7 +28,7 @@
     "genkitx-anthropicai": "^0.2.0",
     "genkitx-azure-openai": "^0.2.0",
     "genkitx-cohere": "^0.2.0",
-    "genkitx-groq": "^0.2.0",
+    "genkitx-groq": "^0.2.1",
     "genkitx-mistral": "^0.2.0",
     "genkitx-openai-plugin": "^0.2.0",
     "zod": "^3.23.8"
