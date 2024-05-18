@@ -12,4 +12,5 @@ export default configureGenkit({
   plugins: [openAI(), groq(), cohere(), anthropic(), mistral(), dotprompt()],
   logLevel: 'debug',
   enableTracingAndMetrics: true,
+  promptDir: '../prompts',
 });

@@ -11,8 +11,6 @@ import { initializeGenkit } from '@genkit-ai/core';
 import config from './genkit.config';
 import { llama3x70b } from 'genkitx-groq';
 
-console.log(`Groq key: ${process.env.GROQ_API_KEY}`);
-
 initializeGenkit(config);
 
 // Define standard prompts
@@ -44,7 +42,7 @@ const tool = defineTool(
 );
 
 // define Dotprompts
-// const greetingPrompt = prompt('basic');
+// export const greetingPrompt = prompt('basic');
 // const multimodalPrompt = prompt('multimodalInput');
 // const structuredOutputPrompt = prompt('structuredInputOutput');
 // const customConfigPrompt = prompt('customConfig');
@@ -98,30 +96,30 @@ export const myFlow = defineFlow(
 startFlowsServer();
 
 // Tool use
-const createReminder = defineTool(
-  {
-    name: 'createReminder',
-    description: 'Use this to create reminders for things in the future',
-    inputSchema: z.object({
-      time: z
-        .string()
-        .describe('ISO timestamp string, e.g. 2024-04-03T12:23:00Z'),
-      reminder: z.string().describe('the content of the reminder'),
-    }),
-    outputSchema: z.number().describe('the ID of the created reminder'),
-  },
-  (reminder) => Promise.resolve(3)
-);
+// const createReminder = defineTool(
+//   {
+//     name: 'createReminder',
+//     description: 'Use this to create reminders for things in the future',
+//     inputSchema: z.object({
+//       time: z
+//         .string()
+//         .describe('ISO timestamp string, e.g. 2024-04-03T12:23:00Z'),
+//       reminder: z.string().describe('the content of the reminder'),
+//     }),
+//     outputSchema: z.number().describe('the ID of the created reminder'),
+//   },
+//   (reminder) => Promise.resolve(3)
+// );
 
-const result = generate({
-  model: llama3x70b,
-  tools: [createReminder],
-  prompt: `
-  You are a reminder assistant.
-  If you create a reminder, describe in text the reminder you created as a response.
+// const result = generate({
+//   model: llama3x70b,
+//   tools: [createReminder],
+//   prompt: `
+//   You are a reminder assistant.
+//   If you create a reminder, describe in text the reminder you created as a response.
 
-  Query: I have a meeting with Anna at 3 for dinner - can you set a reminder for the time?
-  `,
-});
+//   Query: I have a meeting with Anna at 3 for dinner - can you set a reminder for the time?
+//   `,
+// });
 
-console.log(result.then((res) => res.text()));
+// console.log(result.then((res) => res.text()));
