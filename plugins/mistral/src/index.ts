@@ -15,8 +15,15 @@
  */
 
 import { genkitPlugin, Plugin } from '@genkit-ai/core';
-import { SUPPORTED_MISTRAL_MODELS, mistralModel } from './mistral_llms';
+import {
+  openMistral7B,
+  openMistral8x7B,
+  openMixtral8x22B,
+  SUPPORTED_MISTRAL_MODELS,
+  mistralModel,
+} from './mistral_llms';
 
+export { openMistral7B, openMistral8x7B, openMixtral8x22B };
 export interface PluginOptions {
   apiKey?: string;
 }
@@ -27,7 +34,7 @@ export const mistral: Plugin<[PluginOptions] | []> = genkitPlugin(
     let apiKey = options?.apiKey || process.env.MISTRAL_API_KEY;
     if (!apiKey)
       throw new Error(
-        'Please pass in the API key or set the MISTRALAI_API_KEY environment variable'
+        'Please pass in the API key or set the MISTRAL_API_KEY environment variable'
       );
     // Dynamically import the MistralClient
     const { default: MistralClient } = await import('@mistralai/mistralai');

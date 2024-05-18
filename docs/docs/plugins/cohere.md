@@ -38,11 +38,11 @@ Install the plugin in your project with your favorite package manager:
 
 The simplest way to call the text generation model is by using the helper function `generate`:
 
-```
+```typescript
 // Basic usage of an LLM
 const response = await generate({
-    model: commandRPlus,
-    prompt: 'Tell me a joke.',
+  model: commandRPlus,
+  prompt: 'Tell me a joke.',
 });
 
 console.log(await response.text());
@@ -50,18 +50,18 @@ console.log(await response.text());
 
 Using the same interface, you can prompt a multimodal model:
 
-```
+```typescript
 const response = await generate({
   model: commandRPlus,
   prompt: [
     { text: 'What animal is in the photo?' },
-    { media: { url: imageUrl} },
+    { media: { url: imageUrl } },
   ],
-  config:{
+  config: {
     // control of the level of visual detail when processing image embeddings
     // Low detail level also decreases the token usage
     visualDetailLevel: 'low',
-  }
+  },
 });
 console.log(await response.text());
 ```

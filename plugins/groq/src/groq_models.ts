@@ -56,7 +56,7 @@ export const GroqConfigSchema = z.object({
 });
 
 // Worst at JSON mode
-export const llama_3_8b = modelRef({
+export const llama3x8b = modelRef({
   name: 'groq/llama-3-8b',
   info: {
     versions: ['llama3-8b-8192'],
@@ -74,7 +74,7 @@ export const llama_3_8b = modelRef({
 
 // Worst at JSON mode
 // Only model recommended for Tool Use
-export const llama_3_70b = modelRef({
+export const llama3x70b = modelRef({
   name: 'groq/llama-3-70b',
   info: {
     versions: ['llama3-70b-8192'],
@@ -91,7 +91,7 @@ export const llama_3_70b = modelRef({
 });
 
 // Best at JSON mode
-export const mixtral_8_7b = modelRef({
+export const mixtral8x7b = modelRef({
   name: 'groq/mixtral-8x7b-32768',
   info: {
     versions: ['mixtral-8x7b-32768'],
@@ -108,7 +108,7 @@ export const mixtral_8_7b = modelRef({
 });
 
 // Runner up at JSON mode
-export const gemma_7b = modelRef({
+export const gemma7b = modelRef({
   name: 'groq/gemma-7b-it',
   info: {
     versions: ['gemma-7b-it'],
@@ -125,10 +125,10 @@ export const gemma_7b = modelRef({
 });
 
 export const SUPPORTED_GROQ_MODELS = {
-  'llama-3-8b': llama_3_8b,
-  'llama-3-70b': llama_3_70b,
-  'mixtral-8-7b': mixtral_8_7b,
-  'gemma-7b': gemma_7b,
+  'llama-3-8b': llama3x8b,
+  'llama-3-70b': llama3x70b,
+  'mixtral-8-7b': mixtral8x7b,
+  'gemma-7b': gemma7b,
 };
 
 export const DEFAULT_MODEL_VERSION = {
