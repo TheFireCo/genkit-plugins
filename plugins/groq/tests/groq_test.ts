@@ -11,7 +11,6 @@ import {
   toGroqRole,
   toGroqTool,
   toGroqMessages,
-  groqModel,
 } from '../src/groq_models';
 import { ChatCompletionCreateParamsBase } from 'groq-sdk/resources/chat/completions.mjs';
 

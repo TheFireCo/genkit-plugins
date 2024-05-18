@@ -23,8 +23,8 @@ NOTE: as you will see, you do not need to have a Firebase project to use Genkit 
 
 Genkit is configured from the `index.ts`, where you can import and initialize the plugin and define prompts, flows, models and other tools which could be accessed directly through Gekit Dev UI:
 
-```
-import { configureGenkit } from '@genkit-ai/core';
+```typescript
+imort { configureGenkit } from '@genkit-ai/core';
 
 import { openAI } from 'genkitx-openai-plugin';
 import { anthropic } from 'genkitx-anthropicai';
@@ -51,14 +51,14 @@ List of all available models as well as their pricing, specification and capabil
 
 The simplest way to call the text generation model is by using the helper function `generate`:
 
-```
+```typescript
 import { generate } from '@genkit-ai/ai';
-import {claude3Haiku} from 'genkitx-anthropicai';
+import { claude3Haiku } from 'genkitx-anthropicai';
 
 // Basic usage of an LLM
 const response = await generate({
-    model: claude3Haiku,
-    prompt: 'Tell me a joke.',
+  model: claude3Haiku,
+  prompt: 'Tell me a joke.',
 });
 
 console.log(await response.text());
@@ -66,14 +66,14 @@ console.log(await response.text());
 
 Using the same interface, you can prompt a multimodal model:
 
-```
-import {gpt4Vision} from 'genkitx-openai-plugin';
+```typescript
+import { gpt4Vision } from 'genkitx-openai-plugin';
 
 const response = await generate({
   model: gpt4Vision,
   prompt: [
     { text: 'What animal is in the photo?' },
-    { media: { url: imageUrl} },
+    { media: { url: imageUrl } },
   ],
 });
 console.log(await response.text());
@@ -81,8 +81,8 @@ console.log(await response.text());
 
 or define a tool in Genkit, test in the dev UI and then use it in the code:
 
-```
-import {defineTool } from '@genkit-ai/ai';
+```typescript
+import { defineTool } from '@genkit-ai/ai';
 
 // defining the tool
 const tool = defineTool(
@@ -113,8 +113,8 @@ Genkit doesn't prevent you from using any of the available models from various a
 
 One of the main benefits of Genkit is the ability to define the prompt as code and register it with Genkit,and for that you can use `definePrompt` function:
 
-```
-import {definePrompt} from '@genkit-ai/ai';
+```typescript
+import { definePrompt } from '@genkit-ai/ai';
 
 const helloPrompt = definePrompt(
   {
@@ -127,9 +127,8 @@ const helloPrompt = definePrompt(
 
     return {
       messages: [{ role: 'user', content: [{ text: promptText }] }],
-      config: { temperature: 0.3,
-       }
-    }
+      config: { temperature: 0.3 },
+    };
   }
 );
 ```
@@ -137,16 +136,16 @@ const helloPrompt = definePrompt(
 In this way, you can test your prompts independently of the code or specific model in the Genkit Dev UI. This also enables the
 definition of input schemas, which enable you to customize each prompt call with a specific set of arguments, or specify the output format, as showcased a bit later below. To use this prompt in your development, you can use the `renderPrompt` function:
 
-```
+```typescript
 import { generate, renderPrompt } from '@genkit-ai/ai';
-import {gemma_7b} from 'genkitx-groq';
+import { gemma_7b } from 'genkitx-groq';
 
 const response = await generate(
-   renderPrompt({
-     prompt: helloPrompt,
-     input: { name: 'Fred' },
-     model: gemma_7b
-    })
+  renderPrompt({
+    prompt: helloPrompt,
+    input: { name: 'Fred' },
+    model: gemma_7b,
+  })
 );
 console.log(await response.text());
 ```
@@ -155,12 +154,10 @@ console.log(await response.text());
 
 Genkit introduced a concept of Dotprompt, which is a plugin that enables you to store prompts in dedicated files, track changes and organize them in a JSON format or as a code. To use it, you must enable the Dotprompt plugin first:
 
-```
-import {dotprompt} from '@genkit-ai/dotprompt';
+```typescript
+import { dotprompt } from '@genkit-ai/dotprompt';
 export default configureGenkit({
-  plugins: [
-    dotprompt(),
-  ],
+  plugins: [dotprompt()],
 });
 ```
 
@@ -184,8 +181,8 @@ Greet a guest named {{name}}.
 
 To register it with Genkit and use it in development, you could use a `prompt` helper function from Dotprompt plugin:
 
-```
-import {prompt} from '@genkit-ai/dotprompt';
+```typescript
+import { prompt } from '@genkit-ai/dotprompt';
 
 const greetingPrompt = await prompt('basic');
 ```
@@ -193,8 +190,8 @@ const greetingPrompt = await prompt('basic');
 where `basic` represents the name of the file, `/prompts/basic.prompt`, in which the Dotprompt is stored.
 This plugin also enables you to write prompts directly as a code:
 
-```
-import {defineDotprompt} from '@genkit-ai/dotprompt';
+```typescript
+import { defineDotprompt } from '@genkit-ai/dotprompt';
 
 const codeDotPrompt = defineDotprompt(
   {
@@ -228,19 +225,18 @@ const codeDotPrompt = defineDotprompt(
 
 Finally, you can use the same `generate` helper function to call the model with the given Dotprompt:
 
-```
+```typescript
 const response = await codeDotPrompt.generate({
- input:{
-      object_name: 'Ball',
-      image_url: 'https://example_url.jpg',
-    }
-  }
-);
+  input: {
+    object_name: 'Ball',
+    image_url: 'https://example_url.jpg',
+  },
+});
 ```
 
 In this case, to obtain the structured output which we specified in a prompt, we can run:
 
-```
+```typescript
 console.log(await response.output());
 ```
 
@@ -248,7 +244,7 @@ console.log(await response.output());
 
 Flows are the enhanced version of the standard functions, which are strongly typed, streamable, and locally and remotely callable. They can also be registered and later tested in Genkit Dev UI. To define and run a flow, one can use `defineFlow` and `runFlow` functions:
 
-```
+```typescript
 import { defineFlow, runFlow } from '@genkit-ai/flow';
 import {llama_3_70b} from 'genkitx-groq';
 \\define Flow
@@ -280,19 +276,19 @@ Apart from the text generation models, Genkit also features the access to the te
 implements retrievers which can retrieve documents, given a query. To use the text embedding models,
 you should utilize the `embed` method:
 
-```
+```typescript
 import { textEmbedding3Small } from 'genkitx-openai-plugin';
 import { embed } from '@genkit-ai/ai/embedder';
 
 const embedding = embed({
   embedder: textEmbedding3Small,
-  content: "Embed this text.",
+  content: 'Embed this text.',
 });
 ```
 
 Here, the variable `embedding` will be a vector of numbers, which is a latent space representation of the given text, which can find use in many downstream tasks. In this case, we can use the text embeddings in a retriever, to query similar documents from Firestore based on the extracted embeddings:
 
-```
+```typescript
 import { embed } from '@genkit-ai/ai/embedder';
 import { Document, defineRetriever } from '@genkit-ai/ai/retriever';
 import { textEmbedding3Small } from 'genkitx-openai-plugin';

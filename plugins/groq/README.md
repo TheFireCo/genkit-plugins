@@ -31,36 +31,95 @@ Install the plugin in your project with your favorite package manager:
 
 ## Usage
 
+### Initialize
+
+```typescript
+import 'dotenv/config';
+
+import { configureGenkit } from '@genkit-ai/core';
+import { defineFlow, startFlowsServer } from '@genkit-ai/flow';
+import { groq } from 'genkitx-groq';
+
+configureGenkit({
+  plugins: [
+    // Groq API key is required and defaults to the GROQ_API_KEY environment variable
+    groq({ apiKey: process.env.GROQ_API_KEY }),
+  ],
+  logLevel: 'debug',
+  enableTracingAndMetrics: true,
+});
+```
+
 ### Basic examples
 
 The simplest way to call the text generation model is by using the helper function `generate`:
 
-```
-// Basic usage of an LLM
+```typescript
+// ...configure Genkit (as shown above)...
+
 const response = await generate({
-    model: llama_3_70b,
-    prompt: 'Tell me a joke.',
+  model: llama3x70b, // model imported from genkitx-groq
+  prompt: 'Tell me a joke.',
 });
 
 console.log(await response.text());
 ```
 
-Using the same interface, you can prompt a multimodal model:
+### Within a flow
 
-```
-const response = await generate({
-  model: llama_3_70b,
-  prompt: [
-    { text: 'What animal is in the photo?' },
-    { media: { url: imageUrl} },
-  ],
-  config:{
-    // control of the level of visual detail when processing image embeddings
-    // Low detail level also decreases the token usage
-    visualDetailLevel: 'low',
+```typescript
+// ...configure Genkit (as shown above)...
+
+export const myFlow = defineFlow(
+  {
+    name: 'menuSuggestionFlow',
+    inputSchema: z.string(),
+    outputSchema: z.string(),
+  },
+  async (subject) => {
+    const llmResponse = await generate({
+      prompt: `Suggest an item for the menu of a ${subject} themed restaurant`,
+      model: openMixtral8x22B,
+    });
+
+    return llmResponse.text();
   }
+);
+startFlowsServer();
+```
+
+### Tool use
+
+```typescript
+// ...configure Genkit (as shown above)...
+
+const createReminder = defineTool(
+  {
+    name: 'createReminder',
+    description: 'Use this to create reminders for things in the future',
+    inputSchema: z.object({
+      time: z
+        .string()
+        .describe('ISO timestamp string, e.g. 2024-04-03T12:23:00Z'),
+      reminder: z.string().describe('the content of the reminder'),
+    }),
+    outputSchema: z.number().describe('the ID of the created reminder'),
+  },
+  (reminder) => Promise.resolve(3)
+);
+
+const result = generate({
+  model: llama3x70b,
+  tools: [createReminder],
+  prompt: `
+  You are a reminder assistant.
+  If you create a reminder, describe in text the reminder you created as a response.
+
+  Query: I have a meeting with Anna at 3 for dinner - can you set a reminder for the time?
+  `,
 });
-console.log(await response.text());
+
+console.log(result.then((res) => res.text()));
 ```
 
 ## Contributing

@@ -37,32 +37,89 @@ Install the plugin in your project with your favorite package manager:
 
 The simplest way to call the text generation model is by using the helper function `generate`:
 
-```
+```typescript
 // Basic usage of an LLM
 const response = await generate({
-    model: gpt35Turbo,
-    prompt: 'Tell me a joke.',
+  model: gpt4o, // model imported from genkitx-openai-plugin
+  prompt: 'Tell me a joke.',
 });
 
 console.log(await response.text());
 ```
 
-Using the same interface, you can prompt a multimodal model:
+### Multi-modal prompt
 
-```
+```typescript
 const response = await generate({
   model: gpt4o,
   prompt: [
     { text: 'What animal is in the photo?' },
-    { media: { url: imageUrl} },
+    { media: { url: imageUrl } },
   ],
-  config:{
+  config: {
     // control of the level of visual detail when processing image embeddings
     // Low detail level also decreases the token usage
     visualDetailLevel: 'low',
-  }
+  },
 });
 console.log(await response.text());
+```
+
+### Within a flow
+
+```typescript
+// ...configure Genkit (as shown above)...
+
+export const myFlow = defineFlow(
+  {
+    name: 'menuSuggestionFlow',
+    inputSchema: z.string(),
+    outputSchema: z.string(),
+  },
+  async (subject) => {
+    const llmResponse = await generate({
+      prompt: `Suggest an item for the menu of a ${subject} themed restaurant`,
+      model: gpt4o,
+    });
+
+    return llmResponse.text();
+  }
+);
+startFlowsServer();
+```
+
+### Tool use
+
+```typescript
+// ...configure Genkit (as shown above)...
+
+const createReminder = defineTool(
+  {
+    name: 'createReminder',
+    description: 'Use this to create reminders for things in the future',
+    inputSchema: z.object({
+      time: z
+        .string()
+        .describe('ISO timestamp string, e.g. 2024-04-03T12:23:00Z'),
+      reminder: z.string().describe('the content of the reminder'),
+    }),
+    outputSchema: z.number().describe('the ID of the created reminder'),
+  },
+  (reminder) => Promise.resolve(3)
+);
+
+const result = generate({
+  model: gpt4o,
+  tools: [createReminder],
+  prompt: `
+  You are a reminder assistant.
+  If you create a reminder, describe in text the reminder you created as a response.
+
+  Query: I have a meeting with Anna at 3 for dinner - can you set a reminder for the time?
+  `,
+});
+
+console.log(result.then((res) => res.text()));
 ```
 
 For more detailed examples and the explanation of other functionalities, refer to the examples in the [official Github repo of the plugin](https://github.com/TheFireCo/genkit-plugins/blob/main/examples/README.md) or in the [official Genkit documentation](https://firebase.google.com/docs/genkit/get-started).
