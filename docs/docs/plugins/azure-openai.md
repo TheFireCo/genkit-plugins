@@ -41,7 +41,7 @@ Install the plugin in your project with your favorite package manager:
 
 ## Usage
 
-> The interface to the models of this plugin is the same as for the [OpenAI plugin](../openai/).
+> The interface to the models of this plugin is the same as for the [OpenAI plugin](openai.md).
 
 ### Initialize
 
