@@ -8,6 +8,7 @@ import {
   type ModelReference,
   type Part,
   type Role,
+  type ToolDefinition,
 } from '@genkit-ai/ai/model';
 import Anthropic from '@anthropic-ai/sdk';
 import z from 'zod';
@@ -19,6 +20,18 @@ const API_NAME_MAP: Record<string, string> = {
 };
 
 const AnthropicConfigSchema = z.object({
+  tool_choice: z.union([
+    z.object({
+      type: z.literal('auto'),
+    }),
+    z.object({
+      type: z.literal('any'),
+    }),
+    z.object({
+      type: z.literal('tool'),
+      name: z.string(),
+    }),
+  ]),
   metadata: z
     .object({
       user_id: z.string().optional(),
@@ -33,7 +46,7 @@ export const claude3Opus = modelRef({
     label: 'Anthropic - Claude 3 Opus',
     supports: {
       multiturn: true,
-      tools: false,
+      tools: true,
       media: true,
       systemRole: true,
       output: ['text'],
@@ -49,7 +62,7 @@ export const claude3Sonnet = modelRef({
     label: 'Anthropic - Claude 3 Sonnet',
     supports: {
       multiturn: true,
-      tools: false,
+      tools: true,
       media: true,
       systemRole: true,
       output: ['text'],
@@ -65,7 +78,7 @@ export const claude3Haiku = modelRef({
     label: 'Anthropic - Claude 3 Haiku',
     supports: {
       multiturn: true,
-      tools: false,
+      tools: true,
       media: true,
       systemRole: true,
       output: ['text'],
@@ -83,26 +96,36 @@ export const SUPPORTED_CLAUDE_MODELS: Record<
   'claude-3-haiku': claude3Haiku,
 };
 
-function toAnthropicRole(role: Role): Anthropic.MessageParam['role'] {
+function toAnthropicRole(
+  role: Role,
+  toolMessageType?: 'tool_use' | 'tool_result',
+): Anthropic.Beta.Tools.ToolsBetaMessageParam['role'] {
   switch (role) {
     case 'user':
       return 'user';
     case 'model':
       return 'assistant';
+    case 'tool':
+      return toolMessageType === 'tool_use' ? 'assistant' : 'user';
     default:
       throw new Error(`role ${role} doesn't map to an Anthropic role.`);
   }
 }
 
-export function toAnthropicTextAndMedia(
+export function toAnthropicMessageContent(
   part: Part,
-): Anthropic.TextBlock | Anthropic.ImageBlockParam {
+):
+  | Anthropic.TextBlock
+  | Anthropic.ImageBlockParam
+  | Anthropic.Beta.Tools.ToolUseBlockParam
+  | Anthropic.Beta.Tools.ToolResultBlockParam {
   if (part.text) {
     return {
       type: 'text',
       text: part.text,
     };
-  } else if (part.media) {
+  }
+  if (part.media) {
     return {
       type: 'image',
       source: {
@@ -115,6 +138,26 @@ export function toAnthropicTextAndMedia(
       },
     };
   }
+  if (part.toolRequest) {
+    return {
+      type: 'tool_use',
+      id: part.toolRequest.ref!,
+      name: part.toolRequest.name,
+      input: part.toolRequest.input,
+    };
+  }
+  if (part.toolResponse) {
+    return {
+      type: 'tool_result',
+      tool_use_id: part.toolResponse.ref!,
+      content: [
+        {
+          type: 'text',
+          text: part.toolResponse.output as string,
+        },
+      ],
+    };
+  }
   throw Error(
     `Unsupported genkit part fields encountered for current message role: ${part}.`,
   );
@@ -122,61 +165,81 @@ export function toAnthropicTextAndMedia(
 
 export function toAnthropicMessages(messages: MessageData[]): {
   system?: string;
-  messages: Anthropic.Messages.MessageParam[];
+  messages: Anthropic.Beta.Tools.ToolsBetaMessageParam[];
 } {
   const system =
     messages[0]?.role === 'system' ? messages[0].content?.[0]?.text : undefined;
   const messagesToIterate = system ? messages.slice(1) : messages;
-  const anthropicMsgs: Anthropic.Messages.MessageParam[] = [];
+  const anthropicMsgs: Anthropic.Beta.Tools.ToolsBetaMessageParam[] = [];
   for (const message of messagesToIterate) {
     const msg = new Message(message);
-    const role = toAnthropicRole(message.role);
-    switch (role) {
-      case 'user':
-        anthropicMsgs.push({
-          role: role,
-          content: msg.content.map(toAnthropicTextAndMedia),
-        });
-        break;
-      case 'assistant':
-        anthropicMsgs.push({
-          role: role,
-          content: msg.text(),
-        });
-        break;
-      default:
-        throw new Error('unrecognized role');
-    }
+    const content = msg.content.map(toAnthropicMessageContent);
+    const toolMessageType = content.find(
+      c => c.type === 'tool_use' || c.type === 'tool_result',
+    ) as
+      | Anthropic.Beta.Tools.ToolUseBlockParam
+      | Anthropic.Beta.Tools.ToolResultBlockParam;
+    const role = toAnthropicRole(message.role, toolMessageType?.type);
+    anthropicMsgs.push({
+      role: role,
+      content,
+    });
   }
   return { system, messages: anthropicMsgs };
 }
 
+export function toAnthropicTool(
+  tool: ToolDefinition,
+): Anthropic.Beta.Tools.Tool {
+  return {
+    name: tool.name,
+    description: tool.description,
+    input_schema:
+      tool.inputSchema as Anthropic.Beta.Tools.Messages.Tool.InputSchema,
+  };
+}
+
 const finishReasonMap: Record<
-  NonNullable<Anthropic.Message['stop_reason']>,
+  NonNullable<Anthropic.Beta.Tools.ToolsBetaMessage['stop_reason']>,
   CandidateData['finishReason']
 > = {
   end_turn: 'stop',
   max_tokens: 'length',
   stop_sequence: 'stop',
+  tool_use: 'stop',
 };
 
 function fromAnthropicContentBlock(
-  choice: Anthropic.Messages.ContentBlock,
+  choice: Anthropic.Beta.Tools.Messages.ToolsBetaContentBlock,
   index: number,
-  stopReason: Anthropic.Message['stop_reason'],
+  stopReason: Anthropic.Beta.Tools.Messages.ToolsBetaMessage['stop_reason'],
 ): CandidateData {
   return {
     index,
     finishReason: (stopReason && finishReasonMap[stopReason]) || 'other',
-    message: {
-      role: 'model',
-      content: [{ text: choice.text }],
-    },
+    message:
+      choice.type === 'text'
+        ? {
+            role: 'model',
+            content: [{ text: choice.text }],
+          }
+        : {
+            role: 'tool',
+            content: [
+              {
+                toolRequest: {
+                  ref: choice.id,
+                  name: choice.name,
+                  input: choice.input,
+                },
+              },
+            ],
+          },
   };
 }
 
 function fromAnthropicContentBlockChunk(
-  choice: Anthropic.MessageStreamEvent,
+  choice: Anthropic.Beta.Tools.Messages.ToolsBetaMessageStreamEvent,
 ): CandidateData | undefined {
   if (
     choice.type !== 'content_block_start' &&
@@ -184,18 +247,25 @@ function fromAnthropicContentBlockChunk(
   ) {
     return;
   }
+  const choiceField =
+    choice.type === 'content_block_start' ? 'content_block' : 'delta';
   return {
     index: choice.index,
     finishReason: 'unknown',
     message: {
       role: 'model',
       content: [
-        {
-          text:
-            choice.type === 'content_block_start'
-              ? choice.content_block.text
-              : choice.delta.text,
-        },
+        choice[choiceField].type === 'text'
+          ? {
+              text: choice[choiceField].text,
+            }
+          : {
+              toolRequest: {
+                ref: choice[choiceField].id,
+                name: choice[choiceField].name,
+                input: choice[choiceField].input,
+              },
+            },
       ],
     },
   };
@@ -205,14 +275,15 @@ export function toAnthropicRequestBody(
   modelName: string,
   request: GenerateRequest,
   stream?: boolean,
-) {
+): Anthropic.Beta.Tools.Messages.MessageCreateParams {
   const model = SUPPORTED_CLAUDE_MODELS[modelName];
   if (!model) throw new Error(`Unsupported model: ${modelName}`);
   const { system, messages } = toAnthropicMessages(request.messages);
   const mappedModelName = API_NAME_MAP[modelName] || modelName;
-  const body: Anthropic.MessageCreateParams = {
+  const body: Anthropic.Beta.Tools.MessageCreateParams = {
     system,
     messages,
+    tools: request.tools?.map(toAnthropicTool),
     max_tokens: request.config?.maxOutputTokens ?? 4096,
     model: mappedModelName,
     top_k: request.config?.topK,
@@ -250,10 +321,10 @@ export function claudeModel(name: string, client: Anthropic) {
       configSchema: model.configSchema,
     },
     async (request, streamingCallback) => {
-      let response: Anthropic.Message;
+      let response: Anthropic.Beta.Tools.ToolsBetaMessage;
       const body = toAnthropicRequestBody(name, request, !!streamingCallback);
       if (streamingCallback) {
-        const stream = client.messages.stream(body);
+        const stream = client.beta.tools.messages.stream(body);
         for await (const chunk of stream) {
           const c = fromAnthropicContentBlockChunk(chunk);
           if (c) {
@@ -265,7 +336,9 @@ export function claudeModel(name: string, client: Anthropic) {
         }
         response = await stream.finalMessage();
       } else {
-        response = (await client.messages.create(body)) as Anthropic.Message;
+        response = (await client.beta.tools.messages.create(
+          body,
+        )) as Anthropic.Beta.Tools.ToolsBetaMessage;
       }
       return {
         candidates: response.content.map((content, index) =>

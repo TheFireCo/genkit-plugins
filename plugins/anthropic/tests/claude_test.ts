@@ -1,10 +1,88 @@
-import { GenerateRequest, MessageData } from '@genkit-ai/ai/model';
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
+import { type GenerateRequest, type MessageData } from '@genkit-ai/ai/model';
+import type Anthropic from '@anthropic-ai/sdk';
 import { toAnthropicMessages, toAnthropicRequestBody } from '../src/claude.js';
 
 describe('toAnthropicMessages', () => {
-  const testCases = [
+  const testCases: {
+    should: string;
+    inputMessages: MessageData[];
+    expectedOutput: {
+      messages: Anthropic.Beta.Tools.ToolsBetaMessageParam[];
+      system?: string;
+    };
+  }[] = [
+    {
+      should: 'should transform tool request content correctly',
+      inputMessages: [
+        {
+          role: 'model',
+          content: [
+            {
+              toolRequest: {
+                ref: 'toolu_01A09q90qw90lq917835lq9',
+                name: 'tellAFunnyJoke',
+                input: { topic: 'bob' },
+              },
+            },
+          ],
+        },
+      ],
+      expectedOutput: {
+        messages: [
+          {
+            role: 'assistant',
+            content: [
+              {
+                type: 'tool_use',
+                id: 'toolu_01A09q90qw90lq917835lq9',
+                name: 'tellAFunnyJoke',
+                input: { topic: 'bob' },
+              },
+            ],
+          },
+        ],
+        system: undefined,
+      },
+    },
+    {
+      should: 'should transform tool response content correctly',
+      inputMessages: [
+        {
+          role: 'tool',
+          content: [
+            {
+              toolResponse: {
+                ref: 'call_SVDpFV2l2fW88QRFtv85FWwM',
+                name: 'tellAFunnyJoke',
+                output: 'Why did the bob cross the road?',
+              },
+            },
+          ],
+        },
+      ],
+      expectedOutput: {
+        messages: [
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'tool_result',
+                tool_use_id: 'call_SVDpFV2l2fW88QRFtv85FWwM',
+                content: [
+                  {
+                    type: 'text',
+                    text: 'Why did the bob cross the road?',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+        system: undefined,
+      },
+    },
     {
       should: 'should transform text content correctly',
       inputMessages: [
@@ -24,7 +102,12 @@ describe('toAnthropicMessages', () => {
             role: 'user',
           },
           {
-            content: 'how can I help you?',
+            content: [
+              {
+                text: 'how can I help you?',
+                type: 'text',
+              },
+            ],
             role: 'assistant',
           },
           {
@@ -103,16 +186,19 @@ describe('toAnthropicMessages', () => {
   ];
   for (const test of testCases) {
     it(test.should, () => {
-      const actualOutput = toAnthropicMessages(
-        test.inputMessages as MessageData[],
-      );
+      const actualOutput = toAnthropicMessages(test.inputMessages);
       assert.deepStrictEqual(actualOutput, test.expectedOutput);
     });
   }
 });
 
 describe('toAnthropicRequestBody', () => {
-  const testCases = [
+  const testCases: {
+    should: string;
+    modelName: string;
+    genkitRequest: GenerateRequest;
+    expectedOutput: Anthropic.Beta.Tools.Messages.MessageCreateParams;
+  }[] = [
     {
       should: '(claude-3-opus) handles request with text messages',
       modelName: 'claude-3-opus',
@@ -223,7 +309,7 @@ describe('toAnthropicRequestBody', () => {
     it(test.should, () => {
       const actualOutput = toAnthropicRequestBody(
         test.modelName,
-        test.genkitRequest as GenerateRequest,
+        test.genkitRequest,
       );
       assert.deepStrictEqual(actualOutput, test.expectedOutput);
     });
