@@ -5,9 +5,9 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
-"@anthropic-ai/sdk@npm:^0.20.9":
-  version: 0.20.9
-  resolution: "@anthropic-ai/sdk@npm:0.20.9"
+"@anthropic-ai/sdk@npm:^0.21.0":
+  version: 0.21.0
+  resolution: "@anthropic-ai/sdk@npm:0.21.0"
   dependencies:
     "@types/node": "npm:^18.11.18"
     "@types/node-fetch": "npm:^2.6.4"
@@ -17,7 +17,7 @@ __metadata:
     formdata-node: "npm:^4.3.2"
     node-fetch: "npm:^2.6.7"
     web-streams-polyfill: "npm:^3.2.1"
-  checksum: 10c0/5a26f4e2506c2408c30b4a83cc6fcf670aa68c1e99676fa1086e5747c752840467f502cbbef247fcc1e316c5074de805a53ff53e239551cc0419f4c91a43fbf2
+  checksum: 10c0/84692d9f2b850fdc7dffb78e110716fbfe67ca81686017a7edfe61ea48db04f737ef23ada369ec4521db556d765247fda030a8969a60ba98f8e1dc7e38b94d42
   languageName: node
   linkType: hard
 
@@ -1073,7 +1073,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:>=13.7.0, @types/node@npm:^20.11.19, @types/node@npm:^20.12.11":
+"@types/node@npm:*, @types/node@npm:>=13.7.0, @types/node@npm:^20.11.19":
   version: 20.12.11
   resolution: "@types/node@npm:20.12.11"
   dependencies:
@@ -1088,6 +1088,15 @@ __metadata:
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: 10c0/0a17cf55c4e6ec90fdb47e73fde44a613ec0f6cd02619b156b1e8fd3f81f8b3346b06ca0757024ddff304d44c8ce5b99570eac8fa2d6baa0fc12e4b2146ac7c6
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^20.12.12":
+  version: 20.12.12
+  resolution: "@types/node@npm:20.12.12"
+  dependencies:
+    undici-types: "npm:~5.26.4"
+  checksum: 10c0/f374b763c744e8f16e4f38cf6e2c0eef31781ec9228c9e43a6f267880fea420fab0a238b59f10a7cb3444e49547c5e3785787e371fc242307310995b21988812
   languageName: node
   linkType: hard
 
@@ -2341,13 +2350,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "genkitx-anthropic@workspace:plugins/anthropic"
   dependencies:
-    "@anthropic-ai/sdk": "npm:^0.20.9"
+    "@anthropic-ai/sdk": "npm:^0.21.0"
     "@genkit-ai/ai": "npm:^0.5.0"
     "@genkit-ai/core": "npm:^0.5.0"
-    "@types/node": "npm:^20.12.11"
+    "@types/node": "npm:^20.12.12"
     npm-run-all: "npm:^4.1.5"
     tsup: "npm:^8.0.2"
-    tsx: "npm:^4.9.3"
+    tsx: "npm:^4.10.5"
     typescript: "npm:^4.9.5"
     zod: "npm:^3.23.8"
   peerDependencies:
@@ -2362,11 +2371,11 @@ __metadata:
   dependencies:
     "@genkit-ai/ai": "npm:^0.5.0"
     "@genkit-ai/core": "npm:^0.5.0"
-    "@types/node": "npm:^20.12.11"
+    "@types/node": "npm:^20.12.12"
     npm-run-all: "npm:^4.1.5"
-    openai: "npm:^4.46.1"
+    openai: "npm:^4.47.1"
     tsup: "npm:^8.0.2"
-    tsx: "npm:^4.9.3"
+    tsx: "npm:^4.10.5"
     typescript: "npm:^4.9.5"
     zod: "npm:^3.23.8"
   peerDependencies:
@@ -2413,12 +2422,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-tsconfig@npm:^4.7.3":
-  version: 4.7.4
-  resolution: "get-tsconfig@npm:4.7.4"
+"get-tsconfig@npm:^4.7.5":
+  version: 4.7.5
+  resolution: "get-tsconfig@npm:4.7.5"
   dependencies:
     resolve-pkg-maps: "npm:^1.0.0"
-  checksum: 10c0/4bd9ca36aa8b117d7d2ddd57d18fce94444cda9225c8444b2ffa9f19490a1ac77d99089deaf03012945a86e8daed73ec910b33f8830e66df64b44f6f0ebccff1
+  checksum: 10c0/a917dff2ba9ee187c41945736bf9bbab65de31ce5bc1effd76267be483a7340915cff232199406379f26517d2d0a4edcdbcda8cca599c2480a0f2cf1e1de3efa
   languageName: node
   linkType: hard
 
@@ -3461,9 +3470,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"openai@npm:^4.46.1":
-  version: 4.46.1
-  resolution: "openai@npm:4.46.1"
+"openai@npm:^4.47.1":
+  version: 4.47.1
+  resolution: "openai@npm:4.47.1"
   dependencies:
     "@types/node": "npm:^18.11.18"
     "@types/node-fetch": "npm:^2.6.4"
@@ -3475,7 +3484,7 @@ __metadata:
     web-streams-polyfill: "npm:^3.2.1"
   bin:
     openai: bin/cli
-  checksum: 10c0/a95f45adf85c499a231f4f5b20200674271c969ffb46cde387871d1751a85933e0cd7f18b69c0d35bb06392dda3dfd7ffc849c6ff3bedb8c88a24322ea62b133
+  checksum: 10c0/10f5c7cd388dca758a31ccfd572d0ff732324842bc41f8cda80db043ad59035dbb9f903d0273bc14d1565f680901b7d65993b5e4c27dcf5deee2235a544ac0e4
   languageName: node
   linkType: hard
 
@@ -4447,19 +4456,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsx@npm:^4.9.3":
-  version: 4.9.3
-  resolution: "tsx@npm:4.9.3"
+"tsx@npm:^4.10.5":
+  version: 4.10.5
+  resolution: "tsx@npm:4.10.5"
   dependencies:
     esbuild: "npm:~0.20.2"
     fsevents: "npm:~2.3.3"
-    get-tsconfig: "npm:^4.7.3"
+    get-tsconfig: "npm:^4.7.5"
   dependenciesMeta:
     fsevents:
       optional: true
   bin:
     tsx: dist/cli.mjs
-  checksum: 10c0/abc0d461885ef227959274de5e2f80961e860cc1524d090fc9161bf6450b732f9c3e88ec770ea8cbe49880c9fed7c65aa7853d060b83d9c56f70d935e9162d18
+  checksum: 10c0/a9ca576417c52010b12b7ab14023c1dfee458220bf4c11d528f9d462ce739c0a10aff967c5b28092032fc56a5639f043d798bfb00df469e3b263e93ab2c963b1
   languageName: node
   linkType: hard
 
