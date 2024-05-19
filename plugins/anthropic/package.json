@@ -15,7 +15,7 @@
     "genai",
     "generative-ai"
   ],
-  "version": "0.7.0",
+  "version": "0.7.1",
   "type": "commonjs",
   "repository": {
     "type": "git",
