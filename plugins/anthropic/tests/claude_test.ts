@@ -47,7 +47,7 @@ describe('toAnthropicMessages', () => {
       },
     },
     {
-      should: 'should transform tool response content correctly',
+      should: 'should transform tool response text content correctly',
       inputMessages: [
         {
           role: 'tool',
@@ -74,6 +74,92 @@ describe('toAnthropicMessages', () => {
                   {
                     type: 'text',
                     text: 'Why did the bob cross the road?',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+        system: undefined,
+      },
+    },
+    {
+      should: 'should transform tool response media content correctly',
+      inputMessages: [
+        {
+          role: 'tool',
+          content: [
+            {
+              toolResponse: {
+                ref: 'call_SVDpFV2l2fW88QRFtv85FWwM',
+                name: 'tellAFunnyJoke',
+                output: {
+                  url: 'data:image/gif;base64,R0lGODlhAQABAAAAACw=',
+                  contentType: 'image/gif',
+                },
+              },
+            },
+          ],
+        },
+      ],
+      expectedOutput: {
+        messages: [
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'tool_result',
+                tool_use_id: 'call_SVDpFV2l2fW88QRFtv85FWwM',
+                content: [
+                  {
+                    type: 'image',
+                    source: {
+                      type: 'base64',
+                      data: 'R0lGODlhAQABAAAAACw=',
+                      media_type: 'image/gif',
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+        system: undefined,
+      },
+    },
+    {
+      should:
+        'should transform tool response base64 image url content correctly',
+      inputMessages: [
+        {
+          role: 'tool',
+          content: [
+            {
+              toolResponse: {
+                ref: 'call_SVDpFV2l2fW88QRFtv85FWwM',
+                name: 'tellAFunnyJoke',
+                output: 'data:image/gif;base64,R0lGODlhAQABAAAAACw=',
+              },
+            },
+          ],
+        },
+      ],
+      expectedOutput: {
+        messages: [
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'tool_result',
+                tool_use_id: 'call_SVDpFV2l2fW88QRFtv85FWwM',
+                content: [
+                  {
+                    type: 'image',
+                    source: {
+                      type: 'base64',
+                      data: 'R0lGODlhAQABAAAAACw=',
+                      media_type: 'image/gif',
+                    },
                   },
                 ],
               },
@@ -153,8 +239,8 @@ describe('toAnthropicMessages', () => {
             { text: 'describe the following image:' },
             {
               media: {
-                contentType: 'image/jpeg',
-                url: 'https://img.freepik.com/free-photo/abstract-autumn-beauty-multi-colored-leaf-vein-pattern-generated-by-ai_188544-9871.jpg?size=626&ext=jpg&ga=GA1.1.735520172.1710720000&semt=ais',
+                url: 'data:image/gif;base64,R0lGODlhAQABAAAAACw=',
+                contentType: 'image/gif',
               },
             },
           ],
@@ -170,9 +256,9 @@ describe('toAnthropicMessages', () => {
               },
               {
                 source: {
-                  data: 'https://img.freepik.com/free-photo/abstract-autumn-beauty-multi-colored-leaf-vein-pattern-generated-by-ai_188544-9871.jpg?size=626&ext=jpg&ga=GA1.1.735520172.1710720000&semt=ais',
-                  media_type: 'image/jpeg',
                   type: 'base64',
+                  data: 'R0lGODlhAQABAAAAACw=',
+                  media_type: 'image/gif',
                 },
                 type: 'image',
               },

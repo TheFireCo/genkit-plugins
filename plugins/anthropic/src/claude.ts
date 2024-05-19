@@ -112,6 +112,62 @@ function toAnthropicRole(
   }
 }
 
+interface Media {
+  url: string;
+  contentType?: string;
+}
+
+const isMediaObject = (obj: unknown): obj is Media =>
+  typeof obj === 'object' &&
+  obj !== null &&
+  'url' in obj &&
+  typeof obj.url === 'string';
+
+const extractDataFromBase64Url = (
+  url: string,
+): { data: string; contentType: string } | null => {
+  const match = url.match(/^data:([^;]+);base64,(.+)$/);
+  return (
+    match && {
+      contentType: match[1],
+      data: match[2],
+    }
+  );
+};
+
+export function toAnthropicToolResponseContent(
+  part: Part,
+): Anthropic.TextBlockParam | Anthropic.ImageBlockParam {
+  const isMedia = isMediaObject(part.toolResponse?.output);
+  const isString = typeof part.toolResponse?.output === 'string';
+  if (!isMedia && !isString) {
+    throw Error(
+      `Invalid genkit part provided to toAnthropicToolResponseContent: ${part}.`,
+    );
+  }
+  const base64Data = extractDataFromBase64Url(
+    isMedia
+      ? (part.toolResponse?.output as Media).url
+      : (part.toolResponse?.output as string),
+  );
+  // @ts-expect-error TODO: improve these types
+  return base64Data
+    ? {
+        type: 'image',
+        source: {
+          type: 'base64',
+          data: base64Data.data,
+          media_type:
+            (part.toolResponse?.output as Media)?.contentType ??
+            base64Data.contentType,
+        },
+      }
+    : {
+        type: 'text',
+        text: part.toolResponse?.output as string,
+      };
+}
+
 export function toAnthropicMessageContent(
   part: Part,
 ):
@@ -126,15 +182,20 @@ export function toAnthropicMessageContent(
     };
   }
   if (part.media) {
+    const { data, contentType } =
+      extractDataFromBase64Url(part.media.url) || {};
+    if (!data) {
+      throw Error(
+        `Invalid genkit part media provided to toAnthropicMessageContent: ${part.media}.`,
+      );
+    }
     return {
       type: 'image',
       source: {
         type: 'base64',
-        data: part.media.url.slice(part.media.url.indexOf(',') + 1),
-        // @ts-expect-error
-        media_type:
-          part.media.contentType ??
-          part.media.url.slice('data:'.length, part.media.url.indexOf(';')),
+        data,
+        // @ts-expect-error TODO: improve these types
+        media_type: part.media.contentType ?? contentType,
       },
     };
   }
@@ -150,12 +211,7 @@ export function toAnthropicMessageContent(
     return {
       type: 'tool_result',
       tool_use_id: part.toolResponse.ref!,
-      content: [
-        {
-          type: 'text',
-          text: part.toolResponse.output as string,
-        },
-      ],
+      content: [toAnthropicToolResponseContent(part)],
     };
   }
   throw Error(
