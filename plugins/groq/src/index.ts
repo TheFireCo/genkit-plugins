@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-import { genkitPlugin, Plugin } from "@genkit-ai/core";
-import Groq from "groq-sdk";
+import { genkitPlugin, Plugin } from '@genkit-ai/core';
+import Groq from 'groq-sdk';
 import {
-  llama_3_70b,
-  llama_3_8b,
-  gemma_7b,
-  mixtral_8_7b,
+  llama3x70b,
+  llama3x8b,
+  gemma7b,
+  mixtral8x7b,
   groqModel,
   SUPPORTED_GROQ_MODELS,
-} from "./groq_models";
+} from './groq_models';
 
-export {
-  llama_3_70b,
-  llama_3_8b,
-  gemma_7b,
-  mixtral_8_7b,
-};
+export { llama3x70b, llama3x8b, gemma7b, mixtral8x7b };
 
 export interface PluginOptions {
   /**
@@ -66,7 +61,7 @@ export interface PluginOptions {
 }
 
 export const groq: Plugin<[PluginOptions] | []> = genkitPlugin(
-  "groq",
+  'groq',
   async (options?: PluginOptions) => {
     const client = new Groq({
       baseURL: options?.baseURL || process.env.GROQ_BASE_URL,

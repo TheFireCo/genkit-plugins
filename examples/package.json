@@ -1,15 +1,19 @@
 {
   "main": "lib/index.js",
   "scripts": {
+    "init": "npm --prefix ../ install && npm --prefix ../ run build",
     "start": "npx genkit start",
     "start:browser": "npx genkit start -o",
+    "start:dev": "npm --prefix ../ run build && npx genkit start",
     "compile": "npx tsc",
     "build": "npm run build:clean && npm run compile",
     "build:clean": "rm -rf ./lib",
     "build:watch": "npx tsc --watch"
   },
   "name": "genkit-plugins-examples",
-  "version": "1.0.0",
+  "type": "commonjs",
+  "version": "0.2.1",
+  "private": true,
   "description": "",
   "keywords": [],
   "author": "",
@@ -19,17 +23,19 @@
     "@genkit-ai/core": "0.5.0",
     "@genkit-ai/dotprompt": "0.5.0",
     "@genkit-ai/flow": "0.5.0",
-    "genkitx-openai-plugin": "0.0.11",
-    "genkitx-cohere": "0.0.11",
-    "genkitx-groq": "0.0.11",
-    "genkitx-mistral": "0.0.11",
-    "genkitx-anthropicai": "0.0.11",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "genkitx-anthropicai": "^0.2.0",
+    "genkitx-azure-openai": "^0.2.0",
+    "genkitx-cohere": "^0.2.0",
+    "genkitx-groq": "^0.2.1",
+    "genkitx-mistral": "^0.2.0",
+    "genkitx-openai-plugin": "^0.2.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "genkit": "^0.5.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   }
 }

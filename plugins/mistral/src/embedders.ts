@@ -14,26 +14,24 @@
  * limitations under the License.
  */
 
-
 import { defineEmbedder, embedderRef } from '@genkit-ai/ai/embedder';
 import { z } from 'zod';
 export const TextEmbeddingConfigSchema = z.object({
-    dimensions: z.number().optional(),
-    encodingFormat: z.union([z.literal('float'), z.literal('base64')]).optional(),
-  });
+  dimensions: z.number().optional(),
+  encodingFormat: z.union([z.literal('float'), z.literal('base64')]).optional(),
+});
 
-  
 export const mistralembed = embedderRef({
-    name: 'mistral/mistral-embed',
-    configSchema: TextEmbeddingConfigSchema,
-    info: {
-        dimensions: 1024,
-        label: 'Mistral - Mistral Embed',
-        supports: {
-        input: ['text'],
-        },
+  name: 'mistral/mistral-embed',
+  configSchema: TextEmbeddingConfigSchema,
+  info: {
+    dimensions: 1024,
+    label: 'Mistral - Mistral Embed',
+    supports: {
+      input: ['text'],
     },
-    });
+  },
+});
 export const SUPPORTED_EMBEDDING_MODELS = {
-    'mistral-embed': mistralembed
-}
+  'mistral-embed': mistralembed,
+};

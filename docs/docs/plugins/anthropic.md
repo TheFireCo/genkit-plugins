@@ -3,7 +3,6 @@ id: genkitx-anthropicai
 title: genkitx-anthropicai
 ---
 
-
 <h1 align="center">Firebase Genkit - Anthropic AI Plugin</h1>
 
 <h4 align="center">Anthropic AI Community Plugin for Google Firebase Genkit</h4>
@@ -22,7 +21,6 @@ title: genkitx-anthropicai
    <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/TheFireCo/genkit-plugins"/>
 </div>
 
-
 `genkitx-anthropicai` is a community plugin for using Anthropic AI and all its supported models with [Firebase GenKit](https://github.com/firebase/genkit).
 
 ## Installation
@@ -34,34 +32,81 @@ Install the plugin in your project with your favorite package manager:
 
 ## Usage
 
+### Initialize
+
+```typescript
+import 'dotenv/config';
+
+import { configureGenkit } from '@genkit-ai/core';
+import { defineFlow, startFlowsServer } from '@genkit-ai/flow';
+import { anthropic } from 'genkitx-anthropicai';
+
+configureGenkit({
+  plugins: [
+    // Anthropic API key is required and defaults to the ANTHROPIC_API_KEY environment variable
+    anthropic({ apiKey: process.env.ANTHROPIC_API_KEY }),
+  ],
+  logLevel: 'debug',
+  enableTracingAndMetrics: true,
+});
+```
+
 ### Basic examples
 
 The simplest way to call the text generation model is by using the helper function `generate`:
-```
-// Basic usage of an LLM
+
+```typescript
+// ...configure Genkit (as shown above)...
+
 const response = await generate({
-    model: claude3Haiku,
-    prompt: 'Tell me a joke.',
+  model: claude3Haiku, // model imported from genkitx-anthropicai
+  prompt: 'Tell me a joke.',
 });
 
 console.log(await response.text());
 ```
 
-Using the same interface, you can prompt a multimodal model:
-```
+### Multi-modal prompt
+
+```typescript
+// ...configure Genkit (as shown above)...
+
 const response = await generate({
   model: claude3Haiku,
   prompt: [
     { text: 'What animal is in the photo?' },
-    { media: { url: imageUrl} },
+    { media: { url: imageUrl } },
   ],
-  config:{
+  config: {
     // control of the level of visual detail when processing image embeddings
     // Low detail level also decreases the token usage
     visualDetailLevel: 'low',
-  }
+  },
 });
 console.log(await response.text());
+```
+
+### Within a flow
+
+```typescript
+// ...configure Genkit (as shown above)...
+
+export const myFlow = defineFlow(
+  {
+    name: 'menuSuggestionFlow',
+    inputSchema: z.string(),
+    outputSchema: z.string(),
+  },
+  async (subject) => {
+    const llmResponse = await generate({
+      prompt: `Suggest an item for the menu of a ${subject} themed restaurant`,
+      model: claude3Opus,
+    });
+
+    return llmResponse.text();
+  }
+);
+startFlowsServer();
 ```
 
 ## Contributing
@@ -71,7 +116,7 @@ Want to contribute to the project? That's awesome! Head over to our [Contributio
 ## Need support?
 
 :::info
- This repository depends on Google's Firebase Genkit. For issues and questions related to GenKit, please refer to instructions available in [GenKit's repository](https://github.com/firebase/genkit).
+This repository depends on Google's Firebase Genkit. For issues and questions related to GenKit, please refer to instructions available in [GenKit's repository](https://github.com/firebase/genkit).
 :::
 
 Reach out by opening a discussion on [Github Discussions](https://github.com/TheFireCo/genkitx-openai/discussions).

@@ -1,7 +1,17 @@
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
-import { GenerateRequest, MessageData, Role, ToolDefinition } from '@genkit-ai/ai/model';
-import { toGroqRequestBody, toGroqRole, toGroqTool, toGroqMessages, groqModel } from '../src/groq_models';
+import {
+  GenerateRequest,
+  MessageData,
+  Role,
+  ToolDefinition,
+} from '@genkit-ai/ai/model';
+import {
+  toGroqRequestBody,
+  toGroqRole,
+  toGroqTool,
+  toGroqMessages,
+} from '../src/groq_models';
 import { ChatCompletionCreateParamsBase } from 'groq-sdk/resources/chat/completions.mjs';
 
 describe('toGroqRole', () => {
@@ -23,7 +33,7 @@ describe('toGroqRole', () => {
 
   it('should throw error for unsupported roles', () => {
     assert.throws(() => toGroqRole('unknown' as Role), {
-      message: 'role unknown doesn\'t map to a Groq role.'
+      message: "role unknown doesn't map to a Groq role.",
     });
   });
 });
@@ -66,13 +76,15 @@ describe('toGroqMessages', () => {
     },
     {
       role: 'tool',
-      content: [{
-        toolResponse: {
-          ref: 'ref123',
-          name: 'getResponse',
-          output: 'Sample response',
+      content: [
+        {
+          toolResponse: {
+            ref: 'ref123',
+            name: 'getResponse',
+            output: 'Sample response',
+          },
         },
-      }],
+      ],
     },
   ];
 
@@ -132,7 +144,7 @@ describe('toGroqRequestBody', () => {
           content: 'Tell a joke about dogs.',
         },
       ],
-      model: 'llama-3-8b-32768',
+      model: 'llama3-8b-8192',
       temperature: 0.7,
       max_tokens: 100,
       top_p: 0.9,
@@ -158,7 +170,7 @@ describe('toGroqRequestBody', () => {
 
   it('should handle unsupported models', () => {
     assert.throws(() => toGroqRequestBody('unsupported-model', request), {
-      message: 'Unsupported model: unsupported-model'
+      message: 'Unsupported model: unsupported-model',
     });
   });
 });

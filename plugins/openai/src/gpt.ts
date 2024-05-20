@@ -87,10 +87,10 @@ export const gpt4Turbo = modelRef({
   name: 'openai/gpt-4-turbo',
   info: {
     versions: [
-     'gpt-4-turbo-preview',
-     'gpt-4-0125-preview',
-     'gpt-4-1106-prevew',
-     'gpt-4-turbo-2024-04-09'
+      'gpt-4-turbo-preview',
+      'gpt-4-0125-preview',
+      'gpt-4-1106-prevew',
+      'gpt-4-turbo-2024-04-09',
     ],
     label: 'OpenAI - GPT-4 Turbo',
     supports: {
@@ -184,7 +184,10 @@ function toOpenAiTool(tool: ToolDefinition): ChatCompletionTool {
   };
 }
 
-export function toOpenAiTextAndMedia(part: Part, visualDetailLevel: VisualDetailLevel): ChatCompletionContentPart {
+export function toOpenAiTextAndMedia(
+  part: Part,
+  visualDetailLevel: VisualDetailLevel
+): ChatCompletionContentPart {
   if (part.text) {
     return {
       type: 'text',
@@ -195,7 +198,7 @@ export function toOpenAiTextAndMedia(part: Part, visualDetailLevel: VisualDetail
       type: 'image_url',
       image_url: {
         url: part.media.url,
-        detail: visualDetailLevel
+        detail: visualDetailLevel,
       },
     };
   }
@@ -216,7 +219,9 @@ export function toOpenAiMessages(
       case 'user':
         openAiMsgs.push({
           role: role,
-          content: msg.content.map(part => toOpenAiTextAndMedia(part, visualDetailLevel)),
+          content: msg.content.map((part) =>
+            toOpenAiTextAndMedia(part, visualDetailLevel)
+          ),
         });
         break;
       case 'system':
@@ -374,7 +379,10 @@ export function toOpenAiRequestBody(
   };
   const model = SUPPORTED_GPT_MODELS[modelName];
   if (!model) throw new Error(`Unsupported model: ${modelName}`);
-  const openAiMessages = toOpenAiMessages(request.messages, request.config?.visualDetailLevel);
+  const openAiMessages = toOpenAiMessages(
+    request.messages,
+    request.config?.visualDetailLevel
+  );
   const mappedModelName =
     request.config?.version || API_NAME_MAP[modelName] || modelName;
   const body = {

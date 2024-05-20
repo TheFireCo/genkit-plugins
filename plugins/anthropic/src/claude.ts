@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Message } from "@genkit-ai/ai";
+import { Message } from '@genkit-ai/ai';
 import {
   CandidateData,
   defineModel,
@@ -24,14 +24,14 @@ import {
   ModelReference,
   Part,
   Role,
-} from "@genkit-ai/ai/model";
-import Anthropic from "@anthropic-ai/sdk";
-import z from "zod";
+} from '@genkit-ai/ai/model';
+import Anthropic from '@anthropic-ai/sdk';
+import z from 'zod';
 
 const MODEL_VERSION_MAP: Record<string, string> = {
-  "claude-3-opus": "claude-3-opus-20240229",
-  "claude-3-sonnet": "claude-3-sonnet-20240229",
-  "claude-3-haiku": "claude-3-haiku-20240307",
+  'claude-3-opus': 'claude-3-opus-20240229',
+  'claude-3-sonnet': 'claude-3-sonnet-20240229',
+  'claude-3-haiku': 'claude-3-haiku-20240307',
 };
 
 const AnthropicConfigSchema = z.object({
@@ -43,45 +43,45 @@ const AnthropicConfigSchema = z.object({
 });
 
 export const claude3Haiku = modelRef({
-  name: "anthropic/claude-3-haiku",
+  name: 'anthropic/claude-3-haiku',
   info: {
-    versions: ["claude-3-haiku-20240307"],
-    label: "Anthropic - Claude 3 Haiku",
+    versions: ['claude-3-haiku-20240307'],
+    label: 'Anthropic - Claude 3 Haiku',
     supports: {
       multiturn: true,
       tools: false,
       media: true,
-      output: ["text"],
+      output: ['text'],
     },
   },
   configSchema: AnthropicConfigSchema,
 });
 
 export const claude3Sonnet = modelRef({
-  name: "anthropic/claude-3-sonnet",
+  name: 'anthropic/claude-3-sonnet',
   info: {
-    versions: ["claude-3-sonnet-20240229"],
-    label: "Anthropic - Claude 3 Sonnet",
+    versions: ['claude-3-sonnet-20240229'],
+    label: 'Anthropic - Claude 3 Sonnet',
     supports: {
       multiturn: true,
       tools: false,
       media: true,
-      output: ["text"],
+      output: ['text'],
     },
   },
   configSchema: AnthropicConfigSchema,
 });
 
 export const claude3Opus = modelRef({
-  name: "anthropic/claude-3-opus",
+  name: 'anthropic/claude-3-opus',
   info: {
-    versions: ["claude-3-opus-20240229"],
-    label: "Anthropic - Claude 3 Opus",
+    versions: ['claude-3-opus-20240229'],
+    label: 'Anthropic - Claude 3 Opus',
     supports: {
       multiturn: true,
       tools: false,
       media: true,
-      output: ["text"],
+      output: ['text'],
     },
   },
   configSchema: AnthropicConfigSchema,
@@ -91,9 +91,9 @@ export const SUPPORTED_CLAUDE_MODELS: Record<
   string,
   ModelReference<z.ZodTypeAny>
 > = {
-  "claude-3-haiku": claude3Haiku,
-  "claude-3-sonnet": claude3Sonnet,
-  "claude-3-opus": claude3Opus,
+  'claude-3-haiku': claude3Haiku,
+  'claude-3-sonnet': claude3Sonnet,
+  'claude-3-opus': claude3Opus,
 };
 
 /**
@@ -102,12 +102,12 @@ export const SUPPORTED_CLAUDE_MODELS: Record<
  * @returns The corresponding Anthropic role.
  * @throws Error if the role doesn't map to an Anthropic role.
  */
-function toAnthropicRole(role: Role): Anthropic.MessageParam["role"] {
+function toAnthropicRole(role: Role): Anthropic.MessageParam['role'] {
   switch (role) {
-    case "user":
-      return "user";
-    case "model":
-      return "assistant";
+    case 'user':
+      return 'user';
+    case 'model':
+      return 'assistant';
     default:
       throw new Error(`Role ${role} doesn't map to an Anthropic role.`);
   }
@@ -124,18 +124,18 @@ export function toAnthropicTextAndMedia(
 ): Anthropic.TextBlock | Anthropic.ImageBlockParam {
   if (part.text) {
     return {
-      type: "text",
+      type: 'text',
       text: part.text,
     } as Anthropic.TextBlock;
   } else if (part.media) {
     return {
-      type: "image",
+      type: 'image',
       source: {
-        type: "base64",
-        data: part.media.url.substring(part.media.url.indexOf(",") + 1),
+        type: 'base64',
+        data: part.media.url.substring(part.media.url.indexOf(',') + 1),
         media_type:
           part.media.contentType ||
-          part.media.url.substring("data:".length, part.media.url.indexOf(";")),
+          part.media.url.substring('data:'.length, part.media.url.indexOf(';')),
       },
     } as Anthropic.ImageBlockParam;
   }
@@ -156,7 +156,7 @@ export function toAnthropicMessages(messages: MessageData[]): {
   messages: Anthropic.Messages.MessageParam[];
 } {
   let systemMessage: string | undefined;
-  if (messages[0]?.role === "system") {
+  if (messages[0]?.role === 'system') {
     systemMessage = messages[0].content?.[0]?.text;
   }
   const messagesToMap = systemMessage ? messages.slice(1) : messages;
@@ -165,13 +165,13 @@ export function toAnthropicMessages(messages: MessageData[]): {
     const msg = new Message(message);
     const role = toAnthropicRole(message.role);
     switch (role) {
-      case "assistant":
+      case 'assistant':
         mappedMessages.push({
           role: role,
           content: msg.text(),
         });
         break;
-      case "user":
+      case 'user':
         mappedMessages.push({
           role: role,
           content: msg.content.map(toAnthropicTextAndMedia),
@@ -185,12 +185,12 @@ export function toAnthropicMessages(messages: MessageData[]): {
 }
 
 const FINISH_REASON_MAP: Record<
-  NonNullable<Anthropic.Message["stop_reason"]>,
-  CandidateData["finishReason"]
+  NonNullable<Anthropic.Message['stop_reason']>,
+  CandidateData['finishReason']
 > = {
-  end_turn: "stop",
-  max_tokens: "length",
-  stop_sequence: "stop",
+  end_turn: 'stop',
+  max_tokens: 'length',
+  stop_sequence: 'stop',
 };
 
 /**
@@ -203,13 +203,13 @@ const FINISH_REASON_MAP: Record<
 export function fromAnthropicContentBlock(
   choice: Anthropic.Messages.ContentBlock,
   index: number,
-  stopReason: Anthropic.Message["stop_reason"]
+  stopReason: Anthropic.Message['stop_reason']
 ): CandidateData {
   return {
-    finishReason: (stopReason && FINISH_REASON_MAP[stopReason]) || "other",
+    finishReason: (stopReason && FINISH_REASON_MAP[stopReason]) || 'other',
     index,
     message: {
-      role: "model",
+      role: 'model',
       content: [{ text: choice.text }],
     },
   };
@@ -224,20 +224,20 @@ export function fromAnthropicContentBlockChunk(
   choice: Anthropic.MessageStreamEvent
 ): CandidateData | undefined {
   if (
-    choice.type !== "content_block_delta" &&
-    choice.type !== "content_block_start"
+    choice.type !== 'content_block_delta' &&
+    choice.type !== 'content_block_start'
   ) {
     return;
   }
   return {
-    finishReason: "unknown",
+    finishReason: 'unknown',
     index: choice.index,
     message: {
-      role: "model",
+      role: 'model',
       content: [
         {
           text:
-            choice.type === "content_block_start"
+            choice.type === 'content_block_start'
               ? choice.content_block.text
               : choice.delta.text,
         },
@@ -276,7 +276,7 @@ export function toAnthropicRequestBody(
     ...(request.config?.custom || {}),
   };
 
-  if (request.output?.format && request.output.format !== "text") {
+  if (request.output?.format && request.output.format !== 'text') {
     throw new Error(
       `Claude models currently support only the 'text' output format.`
     );

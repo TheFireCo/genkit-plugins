@@ -26,18 +26,16 @@ This plugin is currently a work in progress.
    <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/TheFireCo/genkit-plugins"/>
 </div>
 
-**`genkitx-convex`** is a community plugin for using Convex Vector Stores with 
+**`genkitx-convex`** is a community plugin for using Convex Vector Stores with
 [Firebase GenKit](https://github.com/firebase/genkit). Built by [**The Fire Company**](https://github.com/TheFireCo). 🔥
-
 
 ## Installation
 
 Install the plugin in your project with your favorite package manager:
 
-* `npm install genkitx-convex`
-* `yarn add genkitx-convex`
-* `pnpm add genkitx-convex`
-
+- `npm install genkitx-convex`
+- `yarn add genkitx-convex`
+- `pnpm add genkitx-convex`
 
 ## Usage
 

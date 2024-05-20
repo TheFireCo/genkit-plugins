@@ -1,7 +1,8 @@
 ---
 id: genkitx-mistral
-title: 🚧 genkitx-mistral
+title: genkitx-mistral
 ---
+
 <h1 align="center">Firebase Genkit - Mistral AI Plugin</h1>
 
 <h4 align="center">Mistral AI Community Plugin for Google Firebase Genkit</h4>
@@ -20,25 +21,72 @@ title: 🚧 genkitx-mistral
    <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/TheFireCo/genkit-plugins"/>
 </div>
 
-
-**`genkitx-mistral`** is a community plugin for using OpenAI APIs with 
+**`genkitx-mistral`** is a community plugin for using OpenAI APIs with
 [Firebase GenKit](https://github.com/firebase/genkit). Built by [**The Fire Company**](https://github.com/TheFireCo). 🔥
-
 
 ## Installation
 
 Install the plugin in your project with your favorite package manager:
 
-* `npm install genkitx-mistral`
-* `yarn add genkitx-mistral`
-* `pnpm add genkitx-mistral`
-
+- `npm install genkitx-mistral`
+- `yarn add genkitx-mistral`
+- `pnpm add genkitx-mistral`
 
 ## Usage
 
-:::warning
-Documentation is currently work in progress.
-:::
+### Initialize
+
+```typescript
+import 'dotenv/config';
+
+import { configureGenkit } from '@genkit-ai/core';
+import { defineFlow, startFlowsServer } from '@genkit-ai/flow';
+import { mistral } from 'genkitx-mistral';
+
+configureGenkit({
+  plugins: [
+    // Mistral API key is required and defaults to the MISTRAL_API_KEY environment variable
+    mistral({ apiKey: process.env.MISTRAL_API_KEY }),
+  ],
+  logLevel: 'debug',
+  enableTracingAndMetrics: true,
+});
+```
+
+### Basic examples
+
+The simplest way to call the text generation model is by using the helper function `generate`:
+
+```typescript
+// Basic usage of an LLM
+const response = await generate({
+  model: openMixtral8x22B, // model imported from genkitx-mistral
+  prompt: 'Tell me a joke.',
+});
+
+console.log(await response.text());
+```
+
+### Within a flow
+
+```typescript
+export const myFlow = defineFlow(
+  {
+    name: 'menuSuggestionFlow',
+    inputSchema: z.string(),
+    outputSchema: z.string(),
+  },
+  async (subject) => {
+    const llmResponse = await generate({
+      prompt: `Suggest an item for the menu of a ${subject} themed restaurant`,
+      model: openMixtral8x22B,
+    });
+
+    return llmResponse.text();
+  }
+);
+startFlowsServer();
+```
 
 ## Contributing
 
