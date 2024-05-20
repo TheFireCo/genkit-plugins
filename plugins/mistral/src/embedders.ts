@@ -16,10 +16,40 @@
 
 import { defineEmbedder, embedderRef } from '@genkit-ai/ai/embedder';
 import { z } from 'zod';
+import { PluginOptions } from '.';
+
 export const TextEmbeddingConfigSchema = z.object({
-  dimensions: z.number().optional(),
+  embeddingTypes: z.literal('float'),
   encodingFormat: z.union([z.literal('float'), z.literal('base64')]).optional(),
 });
+
+export function mistralEmbedder(name: string, client: any) {
+  const model = SUPPORTED_EMBEDDING_MODELS[name];
+  if (!model) throw new Error(`Unsupported model: ${name}`);
+
+  return defineEmbedder(
+    {
+      info: model.info!,
+      configSchema: TextEmbeddingConfigSchema,
+      name: model.name,
+    },
+    async (input, _) => {
+      const embeddings = await client.embeddings({
+        model: name,
+        input: input.map((d) => {
+          return d.text();
+        }),
+      });
+      return {
+        embeddings: embeddings.data.map((d) => ({ embedding: d.embedding })),
+      };
+    }
+  );
+}
+
+export type TextEmbeddingGeckoConfig = z.infer<
+  typeof TextEmbeddingConfigSchema
+>;
 
 export const mistralembed = embedderRef({
   name: 'mistral/mistral-embed',

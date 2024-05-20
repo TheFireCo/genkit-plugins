@@ -91,6 +91,54 @@ export const openMixtral8x22B = modelRef({
   },
 });
 
+export const openMistralSmall = modelRef({
+  name: 'mistral/mistral-small-latest',
+  info: {
+    versions: ['mistral-small-2402'],
+    label: 'Mistral - Mistral Small',
+    supports: {
+      multiturn: true,
+      tools: false,
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'],
+    },
+  },
+  configSchema: MistralConfigSchema,
+});
+
+export const openMistralMedium = modelRef({
+  name: 'mistral/mistral-medium-latest',
+  info: {
+    versions: ['istral-medium-231'],
+    label: 'Mistral - Mistral Medium',
+    supports: {
+      multiturn: true,
+      tools: false,
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'],
+    },
+  },
+  configSchema: MistralConfigSchema,
+});
+
+export const openMistralLarge = modelRef({
+  name: 'mistral/mistral-large-latest',
+  info: {
+    versions: ['mistral-large-2402'],
+    label: 'Mistral - Mistral Large',
+    supports: {
+      multiturn: true,
+      tools: false,
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'],
+    },
+  },
+  configSchema: MistralConfigSchema,
+});
+
 function toMistralRole(role: Role): string {
   switch (role) {
     case 'user':
@@ -148,6 +196,9 @@ export const SUPPORTED_MISTRAL_MODELS = {
   'open-mistral-7b': openMistral7B,
   'open-mixtral-8x7b': openMistral8x7B,
   'open-mixtral-8x22b': openMixtral8x22B,
+  'mistral-small': openMistralSmall,
+  'mistral-medium': openMistralMedium,
+  'mistral-large': openMistralLarge,
 };
 
 function fromMistralToolCall(toolCall: ToolCalls) {
