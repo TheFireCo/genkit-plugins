@@ -36,7 +36,6 @@ export default function Home(): JSX.Element {
       description="Community Plugins for Genkit (OpenAI, Groq, Anthropic, Cohere, etc.)">
       <HomepageHeader />
       <main>
-        {/* <HomepageFeatures /> */}
       </main>
     </Layout>
   );
