@@ -15,6 +15,7 @@
  */
 
 import { genkitPlugin, Plugin } from '@genkit-ai/core';
+import { mistralEmbedder, SUPPORTED_EMBEDDING_MODELS } from './embedders';
 import {
   openMistral7B,
   openMistral8x7B,
@@ -46,14 +47,11 @@ export const mistral: Plugin<[PluginOptions] | []> = genkitPlugin(
           mistralModel(name, client)
         ),
       ],
-
-      // TODO: Add Embedders
-      // embedders: [...Object.keys(SUPPORTED_MISTRAL_MODELS).map((name) => {
-      //   return {
-      //     name,
-      //     model: SUPPORTED_MISTRAL_MODELS[name],
-      //   };
-      // })],
+      embedders: [
+        ...Object.keys(SUPPORTED_EMBEDDING_MODELS).map((name) =>
+          mistralEmbedder(name, client)
+        ),
+      ],
     };
   }
 );
