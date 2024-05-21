@@ -84,7 +84,7 @@ This repository is proudly maintained by the team at [**The Fire Company**](http
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="http://david-alonso.com"><img src="https://avatars.githubusercontent.com/u/21220927?v=4?s=100" width="100px;" alt="David Oort Alonso"/><br /><sub><b>David Oort Alonso</b></sub></a><br /><a href="#code-davidoort" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://david-alonso.com"><img src="https://avatars.githubusercontent.com/u/21220927?v=4?s=100" width="100px;" alt="David Oort Alonso"/><br /><sub><b>David Oort Alonso</b></sub></a><br /><a href="#code-davidoort" title="Code">💻</a> <a href="#doc-davidoort" title="Documentation">📖</a> <a href="#maintenance-davidoort" title="Maintenance">🚧</a> <a href="#test-davidoort" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://epmatt.com"><img src="https://avatars.githubusercontent.com/u/30753195?v=4?s=100" width="100px;" alt="Matteo Agnoletto"/><br /><sub><b>Matteo Agnoletto</b></sub></a><br /><a href="#code-EPMatt" title="Code">💻</a></td>
     </tr>
   </tbody>
