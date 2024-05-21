@@ -70,6 +70,15 @@
         "doc",
         "test"
       ]
+    },
+    {
+      "login": "MichaelDoyle",
+      "name": "Michael Doyle",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2858322?v=4",
+      "profile": "http://michaeldoyle.dev",
+      "contributions": [
+        "code"
+      ]
     }
   ]
 }
