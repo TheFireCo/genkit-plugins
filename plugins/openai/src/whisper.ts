@@ -1,3 +1,19 @@
+/**
+ * Copyright 2024 The Fire Company
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Message } from '@genkit-ai/ai';
 import {
   defineModel,
@@ -39,7 +55,7 @@ export const whisper1 = modelRef({
 function toWhisper1Request(
   request: GenerateRequest & {
     config?: { custom?: z.infer<typeof Whisper1ConfigSchema> };
-  },
+  }
 ): TranscriptionCreateParams {
   const message = new Message(request.messages[0]);
   const media = message.media();
@@ -48,7 +64,7 @@ function toWhisper1Request(
   }
   const mediaBuffer = Buffer.from(
     media.url.slice(media.url.indexOf(',') + 1),
-    'base64',
+    'base64'
   );
   const mediaFile = new File([mediaBuffer], 'input', {
     type:
@@ -72,7 +88,7 @@ function toWhisper1Request(
       customFormat !== 'json_verbose'
     ) {
       throw new Error(
-        `Custom response format ${customFormat} is not compatible with output format ${outputFormat}`,
+        `Custom response format ${customFormat} is not compatible with output format ${outputFormat}`
       );
     }
   }
@@ -86,7 +102,7 @@ function toWhisper1Request(
 }
 
 function toGenerateResponse(
-  result: Transcription | string,
+  result: Transcription | string
 ): GenerateResponseData {
   return {
     candidates: [
@@ -107,7 +123,7 @@ function toGenerateResponse(
 }
 
 export function whisper1Model(
-  client: OpenAI,
+  client: OpenAI
 ): ModelAction<typeof Whisper1ConfigSchema> {
   return defineModel<typeof Whisper1ConfigSchema>(
     {
@@ -115,11 +131,11 @@ export function whisper1Model(
       ...whisper1.info,
       configSchema: whisper1.configSchema,
     },
-    async request => {
+    async (request) => {
       const result = await client.audio.transcriptions.create(
-        toWhisper1Request(request),
+        toWhisper1Request(request)
       );
       return toGenerateResponse(result);
-    },
+    }
   );
 }

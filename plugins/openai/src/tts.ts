@@ -1,3 +1,19 @@
+/**
+ * Copyright 2024 The Fire Company
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Message } from '@genkit-ai/ai';
 import {
   defineModel,
@@ -69,7 +85,7 @@ function toTTSRequest(
   modelName: string,
   request: GenerateRequest & {
     config?: { custom?: z.infer<typeof TTSConfigSchema> };
-  },
+  }
 ): SpeechCreateParams {
   const mappedModelName = request.config?.version || modelName;
   const options: SpeechCreateParams = {
@@ -89,7 +105,7 @@ function toTTSRequest(
 
 function toGenerateResponse(
   result: Buffer,
-  responseFormat: z.infer<typeof TTSConfigSchema>['response_format'] = 'mp3',
+  responseFormat: z.infer<typeof TTSConfigSchema>['response_format'] = 'mp3'
 ): GenerateResponseData {
   const mediaType = RESPONSE_FORMAT_MEDIA_TYPES[responseFormat];
   return {
@@ -115,7 +131,7 @@ function toGenerateResponse(
 
 export function ttsModel(
   name: string,
-  client: OpenAI,
+  client: OpenAI
 ): ModelAction<typeof TTSConfigSchema> {
   const modelId = `openai/${name}`;
   const model = SUPPORTED_TTS_MODELS[name];
@@ -127,12 +143,12 @@ export function ttsModel(
       ...model.info,
       configSchema: model.configSchema,
     },
-    async request => {
+    async (request) => {
       const ttsRequest = toTTSRequest(name, request);
       const result = await client.audio.speech.create(ttsRequest);
       const resultArrayBuffer = await result.arrayBuffer();
       const resultBuffer = Buffer.from(new Uint8Array(resultArrayBuffer));
       return toGenerateResponse(resultBuffer, ttsRequest.response_format);
-    },
+    }
   );
 }

@@ -1,3 +1,19 @@
+/**
+ * Copyright 2024 The Fire Company
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Message } from '@genkit-ai/ai';
 import {
   defineModel,
@@ -39,7 +55,7 @@ export const dallE3 = modelRef({
 function toDallE3Request(
   request: GenerateRequest & {
     config?: { custom?: z.infer<typeof DallE3ConfigSchema> };
-  },
+  }
 ): ImageGenerateParams {
   const options = {
     model: 'dall-e-3',
@@ -76,13 +92,13 @@ function toGenerateResponse(result: ImagesResponse): GenerateResponseData {
           },
         ],
       },
-    }),
+    })
   );
   return { candidates };
 }
 
 export function dallE3Model(
-  client: OpenAI,
+  client: OpenAI
 ): ModelAction<typeof DallE3ConfigSchema> {
   return defineModel<typeof DallE3ConfigSchema>(
     {
@@ -90,9 +106,9 @@ export function dallE3Model(
       ...dallE3.info,
       configSchema: dallE3.configSchema,
     },
-    async request => {
+    async (request) => {
       const result = await client.images.generate(toDallE3Request(request));
       return toGenerateResponse(result);
-    },
+    }
   );
 }

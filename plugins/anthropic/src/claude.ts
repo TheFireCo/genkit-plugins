@@ -1,3 +1,19 @@
+/**
+ * Copyright 2024 The Fire Company
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import { Message } from '@genkit-ai/ai';
 import {
   defineModel,
@@ -98,7 +114,7 @@ export const SUPPORTED_CLAUDE_MODELS: Record<
 
 function toAnthropicRole(
   role: Role,
-  toolMessageType?: 'tool_use' | 'tool_result',
+  toolMessageType?: 'tool_use' | 'tool_result'
 ): Anthropic.Beta.Tools.ToolsBetaMessageParam['role'] {
   switch (role) {
     case 'user':
@@ -124,7 +140,7 @@ const isMediaObject = (obj: unknown): obj is Media =>
   typeof obj.url === 'string';
 
 const extractDataFromBase64Url = (
-  url: string,
+  url: string
 ): { data: string; contentType: string } | null => {
   const match = url.match(/^data:([^;]+);base64,(.+)$/);
   return (
@@ -136,19 +152,19 @@ const extractDataFromBase64Url = (
 };
 
 export function toAnthropicToolResponseContent(
-  part: Part,
+  part: Part
 ): Anthropic.TextBlockParam | Anthropic.ImageBlockParam {
   const isMedia = isMediaObject(part.toolResponse?.output);
   const isString = typeof part.toolResponse?.output === 'string';
   if (!isMedia && !isString) {
     throw Error(
-      `Invalid genkit part provided to toAnthropicToolResponseContent: ${part}.`,
+      `Invalid genkit part provided to toAnthropicToolResponseContent: ${part}.`
     );
   }
   const base64Data = extractDataFromBase64Url(
     isMedia
       ? (part.toolResponse?.output as Media).url
-      : (part.toolResponse?.output as string),
+      : (part.toolResponse?.output as string)
   );
   // @ts-expect-error TODO: improve these types
   return base64Data
@@ -169,7 +185,7 @@ export function toAnthropicToolResponseContent(
 }
 
 export function toAnthropicMessageContent(
-  part: Part,
+  part: Part
 ):
   | Anthropic.TextBlock
   | Anthropic.ImageBlockParam
@@ -186,7 +202,7 @@ export function toAnthropicMessageContent(
       extractDataFromBase64Url(part.media.url) || {};
     if (!data) {
       throw Error(
-        `Invalid genkit part media provided to toAnthropicMessageContent: ${part.media}.`,
+        `Invalid genkit part media provided to toAnthropicMessageContent: ${part.media}.`
       );
     }
     return {
@@ -215,7 +231,7 @@ export function toAnthropicMessageContent(
     };
   }
   throw Error(
-    `Unsupported genkit part fields encountered for current message role: ${part}.`,
+    `Unsupported genkit part fields encountered for current message role: ${part}.`
   );
 }
 
@@ -231,7 +247,7 @@ export function toAnthropicMessages(messages: MessageData[]): {
     const msg = new Message(message);
     const content = msg.content.map(toAnthropicMessageContent);
     const toolMessageType = content.find(
-      c => c.type === 'tool_use' || c.type === 'tool_result',
+      (c) => c.type === 'tool_use' || c.type === 'tool_result'
     ) as
       | Anthropic.Beta.Tools.ToolUseBlockParam
       | Anthropic.Beta.Tools.ToolResultBlockParam;
@@ -245,7 +261,7 @@ export function toAnthropicMessages(messages: MessageData[]): {
 }
 
 export function toAnthropicTool(
-  tool: ToolDefinition,
+  tool: ToolDefinition
 ): Anthropic.Beta.Tools.Tool {
   return {
     name: tool.name,
@@ -268,7 +284,7 @@ const finishReasonMap: Record<
 function fromAnthropicContentBlock(
   choice: Anthropic.Beta.Tools.Messages.ToolsBetaContentBlock,
   index: number,
-  stopReason: Anthropic.Beta.Tools.Messages.ToolsBetaMessage['stop_reason'],
+  stopReason: Anthropic.Beta.Tools.Messages.ToolsBetaMessage['stop_reason']
 ): CandidateData {
   return {
     index,
@@ -295,7 +311,7 @@ function fromAnthropicContentBlock(
 }
 
 function fromAnthropicContentBlockChunk(
-  choice: Anthropic.Beta.Tools.Messages.ToolsBetaMessageStreamEvent,
+  choice: Anthropic.Beta.Tools.Messages.ToolsBetaMessageStreamEvent
 ): CandidateData | undefined {
   if (
     choice.type !== 'content_block_start' &&
@@ -330,7 +346,7 @@ function fromAnthropicContentBlockChunk(
 export function toAnthropicRequestBody(
   modelName: string,
   request: GenerateRequest,
-  stream?: boolean,
+  stream?: boolean
 ): Anthropic.Beta.Tools.Messages.MessageCreateParams {
   const model = SUPPORTED_CLAUDE_MODELS[modelName];
   if (!model) throw new Error(`Unsupported model: ${modelName}`);
@@ -352,7 +368,7 @@ export function toAnthropicRequestBody(
 
   if (request.output?.format && request.output.format !== 'text') {
     throw new Error(
-      `Only text output format is supported for Claude models currently`,
+      `Only text output format is supported for Claude models currently`
     );
   }
   for (const key in body) {
@@ -393,12 +409,12 @@ export function claudeModel(name: string, client: Anthropic) {
         response = await stream.finalMessage();
       } else {
         response = (await client.beta.tools.messages.create(
-          body,
+          body
         )) as Anthropic.Beta.Tools.ToolsBetaMessage;
       }
       return {
         candidates: response.content.map((content, index) =>
-          fromAnthropicContentBlock(content, index, response.stop_reason),
+          fromAnthropicContentBlock(content, index, response.stop_reason)
         ),
         usage: {
           inputTokens: response.usage.input_tokens,
@@ -406,6 +422,6 @@ export function claudeModel(name: string, client: Anthropic) {
         },
         custom: response,
       };
-    },
+    }
   );
 }
