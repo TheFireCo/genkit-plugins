@@ -6,7 +6,7 @@ import { generate, definePrompt, defineTool } from '@genkit-ai/ai';
 import { defineFlow, startFlowsServer } from '@genkit-ai/flow';
 import * as z from 'zod';
 
-import { gpt4o } from 'genkitx-openai-plugin';
+import { gpt4o } from 'genkitx-openai';
 import { initializeGenkit } from '@genkit-ai/core';
 import config from './genkit.config';
 import { llama3x70b } from 'genkitx-groq';
