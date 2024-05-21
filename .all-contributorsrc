@@ -14,7 +14,10 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/21220927?v=4",
       "profile": "http://david-alonso.com",
       "contributions": [
-        "code"
+        "code",
+        "doc",
+        "maintenance",
+        "test"
       ]
     },
     {
