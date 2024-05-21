@@ -1,6 +1,6 @@
 ---
-id: genkitx-openai-plugin
-title: genkitx-openai-plugin
+id: genkitx-openai
+title: genkitx-openai
 ---
 
 <h1 align="center">
@@ -11,7 +11,7 @@ title: genkitx-openai-plugin
 
 <div align="center">
    <img alt="Github lerna version" src="https://img.shields.io/github/lerna-json/v/TheFireCo/genkit-plugins?label=version"/>
-   <img alt="NPM Downloads" src="https://img.shields.io/npm/dw/genkitx-openai-plugin"/>
+   <img alt="NPM Downloads" src="https://img.shields.io/npm/dw/genkitx-openai"/>
    <img alt="GitHub Org's stars" src="https://img.shields.io/github/stars/TheFireCo?style=social"/>
    <img alt="GitHub License" src="https://img.shields.io/github/license/TheFireCo/genkit-plugins"/>
    <img alt="Static Badge" src="https://img.shields.io/badge/yes-a?label=maintained"/>
@@ -23,16 +23,16 @@ title: genkitx-openai-plugin
    <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/TheFireCo/genkit-plugins"/>
 </div>
 
-**`genkitx-openai-plugin`** is a community plugin for using OpenAI APIs with
+**`genkitx-openai`** is a community plugin for using OpenAI APIs with
 [Firebase GenKit](https://github.com/firebase/genkit). Built by [**The Fire Company**](https://github.com/TheFireCo). 🔥
 
 ## Installation
 
 Install the plugin in your project with your favorite package manager:
 
-- `npm install genkitx-openai-plugin`
-- `yarn add genkitx-openai-plugin`
-- `pnpm add genkitx-openai-plugin`
+- `npm install genkitx-openai`
+- `yarn add genkitx-openai`
+- `pnpm add genkitx-openai`
 
 ## Usage
 
@@ -43,7 +43,7 @@ The simplest way to call the text generation model is by using the helper functi
 ```typescript
 // Basic usage of an LLM
 const response = await generate({
-  model: gpt4o, // model imported from genkitx-openai-plugin
+  model: gpt4o, // model imported from genkitx-openai
   prompt: 'Tell me a joke.',
 });
 

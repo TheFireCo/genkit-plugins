@@ -30,11 +30,11 @@ This repository contains community plugins for
 
 ### Model / Embedding Plugins
 
-- [`genkitx-anthropicai`](plugins/anthropic/README.md) - Plugin for Anthropic AI APIs
+- [`genkitx-anthropic`](plugins/anthropic/README.md) - Plugin for Anthropic AI APIs
 - [`genkitx-cohere`](plugins/cohere/README.md) - Plugin for Cohere APIs
 - [`genkitx-groq`](plugins/groq/README.md) - Plugin for Groq APIs
 - [`genkitx-mistral`](plugins/mistral/README.md) - Plugin for Mistral AI APIs
-- [`genkitx-openai-plugin`](plugins/openai/README.md) - Plugin for OpenAI APIs
+- [`genkitx-openai`](plugins/openai/README.md) - Plugin for OpenAI APIs
 
 ### Vector Store Plugins
 
@@ -42,11 +42,11 @@ This repository contains community plugins for
 
 ## Installation
 
-Install the plugin in your project with your favorite package manager. For example, for `genkitx-openai-plugin`:
+Install the plugin in your project with your favorite package manager. For example, for `genkitx-openai`:
 
-- `npm install genkitx-openai-plugin`
-- `yarn add genkitx-openai-plugin`
-- `pnpm add genkitx-openai-plugin`
+- `npm install genkitx-openai`
+- `yarn add genkitx-openai`
+- `pnpm add genkitx-openai`
 
 ## Usage
 

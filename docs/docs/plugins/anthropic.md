@@ -1,6 +1,6 @@
 ---
-id: genkitx-anthropicai
-title: genkitx-anthropicai
+id: genkitx-anthropic
+title: genkitx-anthropic
 ---
 
 <h1 align="center">Firebase Genkit - Anthropic AI Plugin</h1>
@@ -21,14 +21,14 @@ title: genkitx-anthropicai
    <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/TheFireCo/genkit-plugins"/>
 </div>
 
-`genkitx-anthropicai` is a community plugin for using Anthropic AI and all its supported models with [Firebase GenKit](https://github.com/firebase/genkit).
+`genkitx-anthropic` is a community plugin for using Anthropic AI and all its supported models with [Firebase GenKit](https://github.com/firebase/genkit).
 
 ## Installation
 
 Install the plugin in your project with your favorite package manager:
 
-- `npm install genkitx-anthropicai`
-- `yarn add genkitx-anthropicai`
+- `npm install genkitx-anthropic`
+- `yarn add genkitx-anthropic`
 
 ## Usage
 
@@ -39,7 +39,7 @@ import 'dotenv/config';
 
 import { configureGenkit } from '@genkit-ai/core';
 import { defineFlow, startFlowsServer } from '@genkit-ai/flow';
-import { anthropic } from 'genkitx-anthropicai';
+import { anthropic } from 'genkitx-anthropic';
 
 configureGenkit({
   plugins: [
@@ -59,7 +59,7 @@ The simplest way to call the text generation model is by using the helper functi
 // ...configure Genkit (as shown above)...
 
 const response = await generate({
-  model: claude3Haiku, // model imported from genkitx-anthropicai
+  model: claude3Haiku, // model imported from genkitx-anthropic
   prompt: 'Tell me a joke.',
 });
 
