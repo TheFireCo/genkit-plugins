@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-import { genkitPlugin, Plugin } from '@genkit-ai/core';
+import { genkitPlugin, type Plugin } from '@genkit-ai/core';
 import Anthropic from '@anthropic-ai/sdk';
 import {
-  claude3Haiku,
-  claude3Sonnet,
   claude3Opus,
+  claude3Sonnet,
+  claude3Haiku,
   claudeModel,
   SUPPORTED_CLAUDE_MODELS,
-} from './claude';
-
-export { claude3Haiku, claude3Sonnet, claude3Opus };
+} from './claude.js';
+export { claude3Opus, claude3Sonnet, claude3Haiku };
 
 export interface PluginOptions {
   apiKey?: string;
@@ -48,7 +47,7 @@ export interface PluginOptions {
  *
  * Example:
  * ```
- * import anthropic from 'genkitx-anthropicai';
+ * import anthropic from 'genkitx-anthropic';
  *
  * export default configureGenkit({
  *  plugins: [

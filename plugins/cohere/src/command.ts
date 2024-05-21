@@ -131,7 +131,7 @@ export const SUPPORTED_COMMAND_MODELS = {
   'command-light': commandLight,
 };
 
-function toCohereRole(role: Role): Cohere.ChatMessageRole {
+function toCohereRole(role: Role): Exclude<Cohere.Message['role'], 'TOOL'> {
   switch (role) {
     case 'user':
       return 'USER';
@@ -184,8 +184,8 @@ function toCohereTool(tool: ToolDefinition): Cohere.Tool {
 
 export function toCohereMessageHistory(
   messages: MessageData[]
-): Cohere.ChatMessage[] {
-  const cohereMsgs: Cohere.ChatMessage[] = [];
+): Exclude<Cohere.Message, Cohere.Message.Tool>[] {
+  const cohereMsgs: Exclude<Cohere.Message, Cohere.Message.Tool>[] = [];
   for (const message of messages) {
     const msg = new Message(message);
     cohereMsgs.push({

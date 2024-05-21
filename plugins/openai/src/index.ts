@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { genkitPlugin, Plugin } from '@genkit-ai/core';
+import { genkitPlugin, type Plugin } from '@genkit-ai/core';
 import OpenAI from 'openai';
 import { dallE3, dallE3Model } from './dalle.js';
 import {
@@ -22,6 +22,7 @@ import {
   SUPPORTED_EMBEDDING_MODELS,
   textEmbedding3Large,
   textEmbedding3Small,
+  textEmbeddingAda002,
 } from './embedder.js';
 import {
   gpt35Turbo,
@@ -32,6 +33,8 @@ import {
   gptModel,
   SUPPORTED_GPT_MODELS,
 } from './gpt.js';
+import { SUPPORTED_TTS_MODELS, ttsModel, tts1, tts1Hd } from './tts.js';
+import { whisper1, whisper1Model } from './whisper.js';
 export {
   dallE3,
   gpt35Turbo,
@@ -39,14 +42,55 @@ export {
   gpt4Turbo,
   gpt4Vision,
   gpt4o,
+  tts1,
+  tts1Hd,
+  whisper1,
   textEmbedding3Large,
   textEmbedding3Small,
+  textEmbeddingAda002,
 };
 
 export interface PluginOptions {
   apiKey?: string;
 }
 
+/**
+ * This module provides an interface to the OpenAI models through the Genkit plugin system.
+ * It allows users to interact with various models by providing an API key and optional configuration.
+ *
+ * The main export is the `openai` plugin, which can be configured with an API key either directly or through
+ * environment variables. It initializes the OpenAI client and makes available the models for use.
+ *
+ * Exports:
+ * - gpt4o: Reference to the GPT-4o model.
+ * - gpt4Turbo: Reference to the GPT-4 Turbo model.
+ * - gpt4Vision: Reference to the GPT-4 Vision model.
+ * - gpt4: Reference to the GPT-4 model.
+ * - gpt35Turbo: Reference to the GPT-3.5 Turbo model.
+ * - dallE3: Reference to the DALL-E 3 model.
+ * - tts1: Reference to the Text-to-speech 1 model.
+ * - tts1Hd: Reference to the Text-to-speech 1 HD model.
+ * - whisper: Reference to the Whisper model.
+ * - textEmbedding3Large: Reference to the Text Embedding Large model.
+ * - textEmbedding3Small: Reference to the Text Embedding Small model.
+ * - textEmbeddingAda002: Reference to the Ada model.
+ * - openai: The main plugin function to interact with OpenAI.
+ *
+ * Usage:
+ * To use the models, initialize the openai plugin inside `configureGenkit` and pass the configuration options. If no API key is provided in the options, the environment variable `OPENAI_API_KEY` must be set.
+ *
+ * Example:
+ * ```
+ * import openai from 'genkitx-openai';
+ *
+ * export default configureGenkit({
+ *  plugins: [
+ *    openai({ apiKey: 'your-api-key' })
+ *    ... // other plugins
+ *  ]
+ * });
+ * ```
+ */
 export const openAI: Plugin<[PluginOptions] | []> = genkitPlugin(
   'openai',
   async (options?: PluginOptions) => {
@@ -61,7 +105,11 @@ export const openAI: Plugin<[PluginOptions] | []> = genkitPlugin(
         ...Object.keys(SUPPORTED_GPT_MODELS).map((name) =>
           gptModel(name, client)
         ),
+        ...Object.keys(SUPPORTED_TTS_MODELS).map((name) =>
+          ttsModel(name, client)
+        ),
         dallE3Model(client),
+        whisper1Model(client),
       ],
       embedders: Object.keys(SUPPORTED_EMBEDDING_MODELS).map((name) =>
         openaiEmbedder(name, options)

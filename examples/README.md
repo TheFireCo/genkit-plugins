@@ -26,8 +26,8 @@ Genkit is configured from the `index.ts`, where you can import and initialize th
 ```typescript
 imort { configureGenkit } from '@genkit-ai/core';
 
-import { openAI } from 'genkitx-openai-plugin';
-import { anthropic } from 'genkitx-anthropicai';
+import { openAI } from 'genkitx-openai';
+import { anthropic } from 'genkitx-anthropic';
 import { groq } from 'genkitx-groq';
 // Here you can import other plugins, depending on your needs
 
@@ -53,7 +53,7 @@ The simplest way to call the text generation model is by using the helper functi
 
 ```typescript
 import { generate } from '@genkit-ai/ai';
-import { claude3Haiku } from 'genkitx-anthropicai';
+import { claude3Haiku } from 'genkitx-anthropic';
 
 // Basic usage of an LLM
 const response = await generate({
@@ -67,7 +67,7 @@ console.log(await response.text());
 Using the same interface, you can prompt a multimodal model:
 
 ```typescript
-import { gpt4Vision } from 'genkitx-openai-plugin';
+import { gpt4Vision } from 'genkitx-openai';
 
 const response = await generate({
   model: gpt4Vision,
@@ -277,7 +277,7 @@ implements retrievers which can retrieve documents, given a query. To use the te
 you should utilize the `embed` method:
 
 ```typescript
-import { textEmbedding3Small } from 'genkitx-openai-plugin';
+import { textEmbedding3Small } from 'genkitx-openai';
 import { embed } from '@genkit-ai/ai/embedder';
 
 const embedding = embed({
@@ -291,7 +291,7 @@ Here, the variable `embedding` will be a vector of numbers, which is a latent sp
 ```typescript
 import { embed } from '@genkit-ai/ai/embedder';
 import { Document, defineRetriever } from '@genkit-ai/ai/retriever';
-import { textEmbedding3Small } from 'genkitx-openai-plugin';
+import { textEmbedding3Small } from 'genkitx-openai';
 import {
   FieldValue,
   VectorQuery,

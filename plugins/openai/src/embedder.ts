@@ -17,7 +17,7 @@
 import { defineEmbedder, embedderRef } from '@genkit-ai/ai/embedder';
 import OpenAI from 'openai';
 import { z } from 'zod';
-import { PluginOptions } from '.';
+import { type PluginOptions } from './index.js';
 
 export const TextEmbeddingConfigSchema = z.object({
   dimensions: z.number().optional(),

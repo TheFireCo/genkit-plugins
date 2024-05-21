@@ -16,25 +16,38 @@
 
 import { Message } from '@genkit-ai/ai';
 import {
-  CandidateData,
   defineModel,
-  GenerateRequest,
-  MessageData,
   modelRef,
-  ModelReference,
-  Part,
-  Role,
+  type CandidateData,
+  type GenerateRequest,
+  type MessageData,
+  type ModelReference,
+  type Part,
+  type Role,
+  type ToolDefinition,
 } from '@genkit-ai/ai/model';
 import Anthropic from '@anthropic-ai/sdk';
 import z from 'zod';
 
-const MODEL_VERSION_MAP: Record<string, string> = {
+const API_NAME_MAP: Record<string, string> = {
   'claude-3-opus': 'claude-3-opus-20240229',
   'claude-3-sonnet': 'claude-3-sonnet-20240229',
   'claude-3-haiku': 'claude-3-haiku-20240307',
 };
 
 const AnthropicConfigSchema = z.object({
+  tool_choice: z.union([
+    z.object({
+      type: z.literal('auto'),
+    }),
+    z.object({
+      type: z.literal('any'),
+    }),
+    z.object({
+      type: z.literal('tool'),
+      name: z.string(),
+    }),
+  ]),
   metadata: z
     .object({
       user_id: z.string().optional(),
@@ -42,15 +55,16 @@ const AnthropicConfigSchema = z.object({
     .optional(),
 });
 
-export const claude3Haiku = modelRef({
-  name: 'anthropic/claude-3-haiku',
+export const claude3Opus = modelRef({
+  name: 'anthropic/claude-3-opus',
   info: {
-    versions: ['claude-3-haiku-20240307'],
-    label: 'Anthropic - Claude 3 Haiku',
+    versions: ['claude-3-opus-20240229'],
+    label: 'Anthropic - Claude 3 Opus',
     supports: {
       multiturn: true,
-      tools: false,
+      tools: true,
       media: true,
+      systemRole: true,
       output: ['text'],
     },
   },
@@ -64,23 +78,25 @@ export const claude3Sonnet = modelRef({
     label: 'Anthropic - Claude 3 Sonnet',
     supports: {
       multiturn: true,
-      tools: false,
+      tools: true,
       media: true,
+      systemRole: true,
       output: ['text'],
     },
   },
   configSchema: AnthropicConfigSchema,
 });
 
-export const claude3Opus = modelRef({
-  name: 'anthropic/claude-3-opus',
+export const claude3Haiku = modelRef({
+  name: 'anthropic/claude-3-haiku',
   info: {
-    versions: ['claude-3-opus-20240229'],
-    label: 'Anthropic - Claude 3 Opus',
+    versions: ['claude-3-haiku-20240307'],
+    label: 'Anthropic - Claude 3 Haiku',
     supports: {
       multiturn: true,
-      tools: false,
+      tools: true,
       media: true,
+      systemRole: true,
       output: ['text'],
     },
   },
@@ -89,60 +105,152 @@ export const claude3Opus = modelRef({
 
 export const SUPPORTED_CLAUDE_MODELS: Record<
   string,
-  ModelReference<z.ZodTypeAny>
+  ModelReference<typeof AnthropicConfigSchema>
 > = {
-  'claude-3-haiku': claude3Haiku,
-  'claude-3-sonnet': claude3Sonnet,
   'claude-3-opus': claude3Opus,
+  'claude-3-sonnet': claude3Sonnet,
+  'claude-3-haiku': claude3Haiku,
 };
 
 /**
  * Converts a Genkit role to the corresponding Anthropic role.
  * @param role The Genkit role to convert.
+ * @param toolMessageType In case the message refers to the usage of a tool, the type of tool message (tool_use or tool_result).
  * @returns The corresponding Anthropic role.
  * @throws Error if the role doesn't map to an Anthropic role.
  */
-function toAnthropicRole(role: Role): Anthropic.MessageParam['role'] {
+function toAnthropicRole(
+  role: Role,
+  toolMessageType?: 'tool_use' | 'tool_result'
+): Anthropic.Beta.Tools.ToolsBetaMessageParam['role'] {
   switch (role) {
     case 'user':
       return 'user';
     case 'model':
       return 'assistant';
+    case 'tool':
+      return toolMessageType === 'tool_use' ? 'assistant' : 'user';
     default:
-      throw new Error(`Role ${role} doesn't map to an Anthropic role.`);
+      throw new Error(`role ${role} doesn't map to an Anthropic role.`);
   }
+}
+
+interface Media {
+  url: string;
+  contentType?: string;
+}
+
+const isMediaObject = (obj: unknown): obj is Media =>
+  typeof obj === 'object' &&
+  obj !== null &&
+  'url' in obj &&
+  typeof obj.url === 'string';
+
+const extractDataFromBase64Url = (
+  url: string
+): { data: string; contentType: string } | null => {
+  const match = url.match(/^data:([^;]+);base64,(.+)$/);
+  return (
+    match && {
+      contentType: match[1],
+      data: match[2],
+    }
+  );
+};
+
+/**
+ * Converts a Genkit message Part to the corresponding Anthropic TextBlockParam or ImageBlockParam.
+ * @param part The Genkit Part to convert.
+ * @returns The corresponding Anthropic TextBlockParam or ImageBlockParam.
+ * @throws Error if the part contains unsupported fields.
+ */
+export function toAnthropicToolResponseContent(
+  part: Part
+): Anthropic.TextBlockParam | Anthropic.ImageBlockParam {
+  const isMedia = isMediaObject(part.toolResponse?.output);
+  const isString = typeof part.toolResponse?.output === 'string';
+  if (!isMedia && !isString) {
+    throw Error(
+      `Invalid genkit part provided to toAnthropicToolResponseContent: ${part}.`
+    );
+  }
+  const base64Data = extractDataFromBase64Url(
+    isMedia
+      ? (part.toolResponse?.output as Media).url
+      : (part.toolResponse?.output as string)
+  );
+  // @ts-expect-error TODO: improve these types
+  return base64Data
+    ? {
+        type: 'image',
+        source: {
+          type: 'base64',
+          data: base64Data.data,
+          media_type:
+            (part.toolResponse?.output as Media)?.contentType ??
+            base64Data.contentType,
+        },
+      }
+    : {
+        type: 'text',
+        text: part.toolResponse?.output as string,
+      };
 }
 
 /**
  * Converts a Genkit Part to the corresponding Anthropic TextBlock or ImageBlockParam.
  * @param part The Genkit Part to convert.
- * @returns The corresponding Anthropic TextBlock or ImageBlockParam.
+ * @returns The corresponding Anthropic TextBlock, ImageBlockParam, ToolUseBlockParam, or ToolResultBlockParam.
  * @throws Error if the part contains unsupported fields for the current message role.
  */
-export function toAnthropicTextAndMedia(
+export function toAnthropicMessageContent(
   part: Part
-): Anthropic.TextBlock | Anthropic.ImageBlockParam {
+):
+  | Anthropic.TextBlock
+  | Anthropic.ImageBlockParam
+  | Anthropic.Beta.Tools.ToolUseBlockParam
+  | Anthropic.Beta.Tools.ToolResultBlockParam {
   if (part.text) {
     return {
       type: 'text',
       text: part.text,
-    } as Anthropic.TextBlock;
-  } else if (part.media) {
+    };
+  }
+  if (part.media) {
+    const { data, contentType } =
+      extractDataFromBase64Url(part.media.url) || {};
+    if (!data) {
+      throw Error(
+        `Invalid genkit part media provided to toAnthropicMessageContent: ${part.media}.`
+      );
+    }
     return {
       type: 'image',
       source: {
         type: 'base64',
-        data: part.media.url.substring(part.media.url.indexOf(',') + 1),
-        media_type:
-          part.media.contentType ||
-          part.media.url.substring('data:'.length, part.media.url.indexOf(';')),
+        data,
+        // @ts-expect-error TODO: improve these types
+        media_type: part.media.contentType ?? contentType,
       },
-    } as Anthropic.ImageBlockParam;
+    };
+  }
+  if (part.toolRequest) {
+    return {
+      type: 'tool_use',
+      id: part.toolRequest.ref!,
+      name: part.toolRequest.name,
+      input: part.toolRequest.input,
+    };
+  }
+  if (part.toolResponse) {
+    return {
+      type: 'tool_result',
+      tool_use_id: part.toolResponse.ref!,
+      content: [toAnthropicToolResponseContent(part)],
+    };
   }
   throw Error(
-    `Unsupported Genkit part fields encountered. Current message role does not support the provided part structure: ${JSON.stringify(
-      part
-    )}.`
+    `Unsupported genkit part fields encountered for current message role: ${part}.`
   );
 }
 
@@ -153,44 +261,53 @@ export function toAnthropicTextAndMedia(
  */
 export function toAnthropicMessages(messages: MessageData[]): {
   system?: string;
-  messages: Anthropic.Messages.MessageParam[];
+  messages: Anthropic.Beta.Tools.ToolsBetaMessageParam[];
 } {
-  let systemMessage: string | undefined;
-  if (messages[0]?.role === 'system') {
-    systemMessage = messages[0].content?.[0]?.text;
-  }
-  const messagesToMap = systemMessage ? messages.slice(1) : messages;
-  const mappedMessages: Anthropic.Messages.MessageParam[] = [];
-  messagesToMap.forEach((message) => {
+  const system =
+    messages[0]?.role === 'system' ? messages[0].content?.[0]?.text : undefined;
+  const messagesToIterate = system ? messages.slice(1) : messages;
+  const anthropicMsgs: Anthropic.Beta.Tools.ToolsBetaMessageParam[] = [];
+  for (const message of messagesToIterate) {
     const msg = new Message(message);
-    const role = toAnthropicRole(message.role);
-    switch (role) {
-      case 'assistant':
-        mappedMessages.push({
-          role: role,
-          content: msg.text(),
-        });
-        break;
-      case 'user':
-        mappedMessages.push({
-          role: role,
-          content: msg.content.map(toAnthropicTextAndMedia),
-        });
-        break;
-      default:
-        throw new Error(`Unrecognized role: ${role}`);
-    }
-  });
-  return { system: systemMessage, messages: mappedMessages };
+    const content = msg.content.map(toAnthropicMessageContent);
+    const toolMessageType = content.find(
+      (c) => c.type === 'tool_use' || c.type === 'tool_result'
+    ) as
+      | Anthropic.Beta.Tools.ToolUseBlockParam
+      | Anthropic.Beta.Tools.ToolResultBlockParam;
+    const role = toAnthropicRole(message.role, toolMessageType?.type);
+    anthropicMsgs.push({
+      role: role,
+      content,
+    });
+  }
+  return { system, messages: anthropicMsgs };
 }
 
-const FINISH_REASON_MAP: Record<
-  NonNullable<Anthropic.Message['stop_reason']>,
+/**
+ * Converts a Genkit ToolDefinition to an Anthropic Tool object.
+ * @param tool The Genkit ToolDefinition to convert.
+ * @returns The converted Anthropic Tool object.
+ */
+export function toAnthropicTool(
+  tool: ToolDefinition
+): Anthropic.Beta.Tools.Tool {
+  return {
+    name: tool.name,
+    description: tool.description,
+    input_schema:
+      tool.inputSchema as Anthropic.Beta.Tools.Messages.Tool.InputSchema,
+  };
+}
+
+const finishReasonMap: Record<
+  NonNullable<Anthropic.Beta.Tools.ToolsBetaMessage['stop_reason']>,
   CandidateData['finishReason']
 > = {
   end_turn: 'stop',
   max_tokens: 'length',
   stop_sequence: 'stop',
+  tool_use: 'stop',
 };
 
 /**
@@ -200,18 +317,32 @@ const FINISH_REASON_MAP: Record<
  * @param stopReason The reason the content block generation stopped.
  * @returns The converted Genkit CandidateData object.
  */
-export function fromAnthropicContentBlock(
-  choice: Anthropic.Messages.ContentBlock,
+function fromAnthropicContentBlock(
+  choice: Anthropic.Beta.Tools.Messages.ToolsBetaContentBlock,
   index: number,
-  stopReason: Anthropic.Message['stop_reason']
+  stopReason: Anthropic.Beta.Tools.Messages.ToolsBetaMessage['stop_reason']
 ): CandidateData {
   return {
-    finishReason: (stopReason && FINISH_REASON_MAP[stopReason]) || 'other',
     index,
-    message: {
-      role: 'model',
-      content: [{ text: choice.text }],
-    },
+    finishReason: (stopReason && finishReasonMap[stopReason]) || 'other',
+    message:
+      choice.type === 'text'
+        ? {
+            role: 'model',
+            content: [{ text: choice.text }],
+          }
+        : {
+            role: 'tool',
+            content: [
+              {
+                toolRequest: {
+                  ref: choice.id,
+                  name: choice.name,
+                  input: choice.input,
+                },
+              },
+            ],
+          },
   };
 }
 
@@ -220,27 +351,34 @@ export function fromAnthropicContentBlock(
  * @param choice The Anthropic message stream event to convert.
  * @returns The converted Genkit CandidateData object if the event is a content block start or delta, otherwise undefined.
  */
-export function fromAnthropicContentBlockChunk(
-  choice: Anthropic.MessageStreamEvent
+function fromAnthropicContentBlockChunk(
+  choice: Anthropic.Beta.Tools.Messages.ToolsBetaMessageStreamEvent
 ): CandidateData | undefined {
   if (
-    choice.type !== 'content_block_delta' &&
-    choice.type !== 'content_block_start'
+    choice.type !== 'content_block_start' &&
+    choice.type !== 'content_block_delta'
   ) {
     return;
   }
+  const choiceField =
+    choice.type === 'content_block_start' ? 'content_block' : 'delta';
   return {
-    finishReason: 'unknown',
     index: choice.index,
+    finishReason: 'unknown',
     message: {
       role: 'model',
       content: [
-        {
-          text:
-            choice.type === 'content_block_start'
-              ? choice.content_block.text
-              : choice.delta.text,
-        },
+        choice[choiceField].type === 'text'
+          ? {
+              text: choice[choiceField].text,
+            }
+          : {
+              toolRequest: {
+                ref: choice[choiceField].id,
+                name: choice[choiceField].name,
+                input: choice[choiceField].input,
+              },
+            },
       ],
     },
   };
@@ -258,14 +396,15 @@ export function toAnthropicRequestBody(
   modelName: string,
   request: GenerateRequest,
   stream?: boolean
-): Anthropic.Messages.MessageCreateParams {
+): Anthropic.Beta.Tools.Messages.MessageCreateParams {
   const model = SUPPORTED_CLAUDE_MODELS[modelName];
   if (!model) throw new Error(`Unsupported model: ${modelName}`);
-  const mappedModelName = MODEL_VERSION_MAP[modelName] || modelName;
   const { system, messages } = toAnthropicMessages(request.messages);
-  const body: Anthropic.MessageCreateParams = {
+  const mappedModelName = API_NAME_MAP[modelName] || modelName;
+  const body: Anthropic.Beta.Tools.MessageCreateParams = {
     system,
     messages,
+    tools: request.tools?.map(toAnthropicTool),
     max_tokens: request.config?.maxOutputTokens ?? 4096,
     model: mappedModelName,
     top_k: request.config?.topK,
@@ -278,7 +417,7 @@ export function toAnthropicRequestBody(
 
   if (request.output?.format && request.output.format !== 'text') {
     throw new Error(
-      `Claude models currently support only the 'text' output format.`
+      `Only text output format is supported for Claude models currently`
     );
   }
   for (const key in body) {
@@ -296,22 +435,21 @@ export function toAnthropicRequestBody(
  * @throws An error if the specified model is not supported.
  */
 export function claudeModel(name: string, client: Anthropic) {
+  const modelId = `anthropic/${name}`;
   const model = SUPPORTED_CLAUDE_MODELS[name];
   if (!model) throw new Error(`Unsupported model: ${name}`);
-
-  const modelId = `anthropic/${name}`;
 
   return defineModel(
     {
       name: modelId,
       ...model.info,
-      configSchema: SUPPORTED_CLAUDE_MODELS[name].configSchema,
+      configSchema: model.configSchema,
     },
     async (request, streamingCallback) => {
-      let response: Anthropic.Message;
+      let response: Anthropic.Beta.Tools.ToolsBetaMessage;
       const body = toAnthropicRequestBody(name, request, !!streamingCallback);
       if (streamingCallback) {
-        const stream = client.messages.stream(body);
+        const stream = client.beta.tools.messages.stream(body);
         for await (const chunk of stream) {
           const c = fromAnthropicContentBlockChunk(chunk);
           if (c) {
@@ -323,7 +461,9 @@ export function claudeModel(name: string, client: Anthropic) {
         }
         response = await stream.finalMessage();
       } else {
-        response = (await client.messages.create(body)) as Anthropic.Message;
+        response = (await client.beta.tools.messages.create(
+          body
+        )) as Anthropic.Beta.Tools.ToolsBetaMessage;
       }
       return {
         candidates: response.content.map((content, index) =>

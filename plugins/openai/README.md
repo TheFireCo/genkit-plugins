@@ -6,7 +6,7 @@
 
 <div align="center">
    <img alt="Github lerna version" src="https://img.shields.io/github/lerna-json/v/TheFireCo/genkit-plugins?label=version">
-   <img alt="NPM Downloads" src="https://img.shields.io/npm/dw/genkitx-openai-plugin">
+   <img alt="NPM Downloads" src="https://img.shields.io/npm/dw/genkitx-openai">
    <img alt="GitHub Org's stars" src="https://img.shields.io/github/stars/TheFireCo?style=social">
    <img alt="GitHub License" src="https://img.shields.io/github/license/TheFireCo/genkit-plugins">
    <img alt="Static Badge" src="https://img.shields.io/badge/yes-a?label=maintained">
@@ -20,16 +20,28 @@
 
 </br>
 
-**`genkitx-openai-plugin`** is a community plugin for using OpenAI APIs with
+**`genkitx-openai`** is a community plugin for using OpenAI APIs with
 [Firebase GenKit](https://github.com/firebase/genkit). Built by [**The Fire Company**](https://github.com/TheFireCo). 🔥
+
+This Genkit plugin allows to use OpenAI models through their official APIs.
+
+## Supported models
+
+The plugin supports several OpenAI models:
+
+- **GPT-4o**, **GPT-4** with all its variants (**Turbo**, **Vision**), and **GPT-3.5 Turbo** for text generation;
+- **DALL-E 3** for image generation;
+- **Text Embedding Small**, **Text Embedding Large**, and **Ada** for text embedding generation;
+- **Whisper** for speech recognition;
+- **Text-to-speech 1** and **Text-to-speech 1 HD** for speech synthesis.
 
 ## Installation
 
 Install the plugin in your project with your favorite package manager:
 
-- `npm install genkitx-openai-plugin`
-- `yarn add genkitx-openai-plugin`
-- `pnpm add genkitx-openai-plugin`
+- `npm install genkitx-openai`
+- `yarn add genkitx-openai`
+- `pnpm add genkitx-openai`
 
 ## Usage
 
@@ -40,7 +52,7 @@ The simplest way to call the text generation model is by using the helper functi
 ```typescript
 // Basic usage of an LLM
 const response = await generate({
-  model: gpt4o, // model imported from genkitx-openai-plugin
+  model: gpt4o, // model imported from genkitx-openai
   prompt: 'Tell me a joke.',
 });
 
