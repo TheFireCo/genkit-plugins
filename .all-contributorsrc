@@ -59,6 +59,17 @@
         "doc",
         "test"
       ]
+    },
+    {
+      "login": "calenwu",
+      "name": "Georg Ye",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23285716?v=4",
+      "profile": "https://calenwu.com",
+      "contributions": [
+        "code",
+        "doc",
+        "test"
+      ]
     }
   ]
 }
