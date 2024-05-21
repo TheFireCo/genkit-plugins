@@ -1,0 +1,87 @@
+{
+  "projectName": "genkit-plugins",
+  "projectOwner": "TheFireCo",
+  "files": [
+    "README.md"
+  ],
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributorsPerLine": 7,
+  "contributors": [
+    {
+      "login": "davidoort",
+      "name": "David Oort Alonso",
+      "avatar_url": "https://avatars.githubusercontent.com/u/21220927?v=4",
+      "profile": "http://david-alonso.com",
+      "contributions": [
+        "code",
+        "doc",
+        "maintenance",
+        "test"
+      ]
+    },
+    {
+      "login": "EPMatt",
+      "name": "Matteo Agnoletto",
+      "avatar_url": "https://avatars.githubusercontent.com/u/30753195?v=4",
+      "profile": "https://epmatt.com",
+      "contributions": [
+        "code",
+        "doc",
+        "test",
+        "maintenance"
+      ]
+    },
+    {
+      "login": "Dabolus",
+      "name": "Giorgio Garasto",
+      "avatar_url": "https://avatars.githubusercontent.com/u/28671340?v=4",
+      "profile": "https://giorgio.garasto.me",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "TommasoBendinelli",
+      "name": "Tommaso Bendinelli",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43389342?v=4",
+      "profile": "https://github.com/TommasoBendinelli",
+      "contributions": [
+        "code",
+        "doc",
+        "test"
+      ]
+    },
+    {
+      "login": "vulus98",
+      "name": "Vukasin Bozic",
+      "avatar_url": "https://avatars.githubusercontent.com/u/62475050?v=4",
+      "profile": "https://github.com/vulus98",
+      "contributions": [
+        "code",
+        "doc",
+        "test"
+      ]
+    },
+    {
+      "login": "calenwu",
+      "name": "Georg Ye",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23285716?v=4",
+      "profile": "https://calenwu.com",
+      "contributions": [
+        "code",
+        "doc",
+        "test"
+      ]
+    },
+    {
+      "login": "MichaelDoyle",
+      "name": "Michael Doyle",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2858322?v=4",
+      "profile": "http://michaeldoyle.dev",
+      "contributions": [
+        "code"
+      ]
+    }
+  ]
+}

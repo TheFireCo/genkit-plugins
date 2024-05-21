@@ -18,8 +18,9 @@
    <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues/TheFireCo/genkit-plugins?color=blue">
    <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues-pr/TheFireCo/genkit-plugins?color=blue">
    <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/TheFireCo/genkit-plugins">
+   <img alt="GitHub contributors from allcontributors.org (with branch)" src="https://img.shields.io/github/all-contributors/TheFireCo/genkit-plugins/main"/>
 </div>
-      
+
 </br>
 
 This repository contains community plugins for
@@ -74,6 +75,30 @@ Reach out by opening a discussion on [Github Discussions](https://github.com/The
 ## Credits
 
 This repository is proudly maintained by the team at [**The Fire Company**](https://github.com/TheFireCo). 🔥
+
+## Contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://david-alonso.com"><img src="https://avatars.githubusercontent.com/u/21220927?v=4?s=100" width="100px;" alt="David Oort Alonso"/><br /><sub><b>David Oort Alonso</b></sub></a><br /><a href="#code-davidoort" title="Code">💻</a> <a href="#doc-davidoort" title="Documentation">📖</a> <a href="#maintenance-davidoort" title="Maintenance">🚧</a> <a href="#test-davidoort" title="Tests">⚠️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://epmatt.com"><img src="https://avatars.githubusercontent.com/u/30753195?v=4?s=100" width="100px;" alt="Matteo Agnoletto"/><br /><sub><b>Matteo Agnoletto</b></sub></a><br /><a href="#code-EPMatt" title="Code">💻</a> <a href="#doc-EPMatt" title="Documentation">📖</a> <a href="#test-EPMatt" title="Tests">⚠️</a> <a href="#maintenance-EPMatt" title="Maintenance">🚧</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://giorgio.garasto.me"><img src="https://avatars.githubusercontent.com/u/28671340?v=4?s=100" width="100px;" alt="Giorgio Garasto"/><br /><sub><b>Giorgio Garasto</b></sub></a><br /><a href="#code-Dabolus" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/TommasoBendinelli"><img src="https://avatars.githubusercontent.com/u/43389342?v=4?s=100" width="100px;" alt="Tommaso Bendinelli"/><br /><sub><b>Tommaso Bendinelli</b></sub></a><br /><a href="#code-TommasoBendinelli" title="Code">💻</a> <a href="#doc-TommasoBendinelli" title="Documentation">📖</a> <a href="#test-TommasoBendinelli" title="Tests">⚠️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/vulus98"><img src="https://avatars.githubusercontent.com/u/62475050?v=4?s=100" width="100px;" alt="Vukasin Bozic"/><br /><sub><b>Vukasin Bozic</b></sub></a><br /><a href="#code-vulus98" title="Code">💻</a> <a href="#doc-vulus98" title="Documentation">📖</a> <a href="#test-vulus98" title="Tests">⚠️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://calenwu.com"><img src="https://avatars.githubusercontent.com/u/23285716?v=4?s=100" width="100px;" alt="Georg Ye"/><br /><sub><b>Georg Ye</b></sub></a><br /><a href="#code-calenwu" title="Code">💻</a> <a href="#doc-calenwu" title="Documentation">📖</a> <a href="#test-calenwu" title="Tests">⚠️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://michaeldoyle.dev"><img src="https://avatars.githubusercontent.com/u/2858322?v=4?s=100" width="100px;" alt="Michael Doyle"/><br /><sub><b>Michael Doyle</b></sub></a><br /><a href="#code-MichaelDoyle" title="Code">💻</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
 ## License
 
