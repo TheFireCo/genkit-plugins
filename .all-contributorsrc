@@ -82,6 +82,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "him",
+      "name": "HIM",
+      "avatar_url": "https://avatars.githubusercontent.com/u/56875404?v=4",
+      "profile": "https://github.com/HIM",
+      "contributions": [
+        "doc",
+        "test"
+      ]
     }
   ]
 }
