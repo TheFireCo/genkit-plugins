@@ -1,0 +1,8 @@
+# Global code owners
+*       @davidoort @EPMatt
+
+# Plugins owners
+/plugins/openai/ @Dabolus
+/plugins/anthropic @Dabolus
+
+
