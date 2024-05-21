@@ -81,6 +81,13 @@ This repository is proudly maintained by the team at [**The Fire Company**](http
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://david-alonso.com"><img src="https://avatars.githubusercontent.com/u/21220927?v=4?s=100" width="100px;" alt="David Oort Alonso"/><br /><sub><b>David Oort Alonso</b></sub></a><br /><a href="#code-davidoort" title="Code">💻</a></td>
+    </tr>
+  </tbody>
+</table>
 
 <!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
