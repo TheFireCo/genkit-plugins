@@ -8,6 +8,11 @@ labels: bug
 **Affected plugin(s)**
 
 - [ ] Anthropic
+- [ ] Azure OpenAI
+- [ ] Cohere
+- [ ] Convex
+- [ ] Groq
+- [ ] Mistral
 - [ ] OpenAI
 
 **Describe the bug**
