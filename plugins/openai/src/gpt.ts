@@ -61,7 +61,12 @@ export const OpenAiConfigSchema = z.object({
   seed: z.number().int().optional(),
   topLogProbs: z.number().int().min(0).max(20).optional(),
   user: z.string().optional(),
+  visualDetailLevel: z.enum(['auto', 'low', 'high']).optional(),
 });
+
+type VisualDetailLevel = z.infer<
+  typeof OpenAiConfigSchema
+>['visualDetailLevel'];
 
 export const gpt4o = modelRef({
   name: 'openai/gpt-4o',
@@ -182,7 +187,10 @@ function toOpenAiTool(tool: ToolDefinition): ChatCompletionTool {
   };
 }
 
-export function toOpenAiTextAndMedia(part: Part): ChatCompletionContentPart {
+export function toOpenAiTextAndMedia(
+  part: Part,
+  visualDetailLevel: VisualDetailLevel
+): ChatCompletionContentPart {
   if (part.text) {
     return {
       type: 'text',
@@ -193,6 +201,7 @@ export function toOpenAiTextAndMedia(part: Part): ChatCompletionContentPart {
       type: 'image_url',
       image_url: {
         url: part.media.url,
+        detail: visualDetailLevel,
       },
     };
   }
@@ -202,7 +211,8 @@ export function toOpenAiTextAndMedia(part: Part): ChatCompletionContentPart {
 }
 
 export function toOpenAiMessages(
-  messages: MessageData[]
+  messages: MessageData[],
+  visualDetailLevel: VisualDetailLevel = 'auto'
 ): ChatCompletionMessageParam[] {
   const openAiMsgs: ChatCompletionMessageParam[] = [];
   for (const message of messages) {
@@ -212,7 +222,9 @@ export function toOpenAiMessages(
       case 'user':
         openAiMsgs.push({
           role: role,
-          content: msg.content.map(toOpenAiTextAndMedia),
+          content: msg.content.map((part) =>
+            toOpenAiTextAndMedia(part, visualDetailLevel)
+          ),
         });
         break;
       case 'system':
@@ -370,7 +382,10 @@ export function toOpenAiRequestBody(
   };
   const model = SUPPORTED_GPT_MODELS[modelName];
   if (!model) throw new Error(`Unsupported model: ${modelName}`);
-  const openAiMessages = toOpenAiMessages(request.messages);
+  const openAiMessages = toOpenAiMessages(
+    request.messages,
+    request.config?.visualDetailLevel
+  );
   const mappedModelName = request.config?.version || modelName;
   const body = {
     messages: openAiMessages,
@@ -431,10 +446,10 @@ export function gptModel(name: string, client: OpenAI) {
       configSchema: model.configSchema,
     },
     async (request, streamingCallback) => {
-      let response;
+      let response: ChatCompletion;
       const body = toOpenAiRequestBody(name, request);
       if (streamingCallback) {
-        const stream = await client.beta.chat.completions.stream({
+        const stream = client.beta.chat.completions.stream({
           ...body,
           stream: true,
         });
