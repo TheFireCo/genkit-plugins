@@ -112,6 +112,13 @@ export const SUPPORTED_CLAUDE_MODELS: Record<
   'claude-3-haiku': claude3Haiku,
 };
 
+/**
+ * Converts a Genkit role to the corresponding Anthropic role.
+ * @param role The Genkit role to convert.
+ * @param toolMessageType In case the message refers to the usage of a tool, the type of tool message (tool_use or tool_result).
+ * @returns The corresponding Anthropic role.
+ * @throws Error if the role doesn't map to an Anthropic role.
+ */
 function toAnthropicRole(
   role: Role,
   toolMessageType?: 'tool_use' | 'tool_result'
@@ -151,6 +158,12 @@ const extractDataFromBase64Url = (
   );
 };
 
+/**
+ * Converts a Genkit message Part to the corresponding Anthropic TextBlockParam or ImageBlockParam.
+ * @param part The Genkit Part to convert.
+ * @returns The corresponding Anthropic TextBlockParam or ImageBlockParam.
+ * @throws Error if the part contains unsupported fields.
+ */
 export function toAnthropicToolResponseContent(
   part: Part
 ): Anthropic.TextBlockParam | Anthropic.ImageBlockParam {
@@ -184,6 +197,12 @@ export function toAnthropicToolResponseContent(
       };
 }
 
+/**
+ * Converts a Genkit Part to the corresponding Anthropic TextBlock or ImageBlockParam.
+ * @param part The Genkit Part to convert.
+ * @returns The corresponding Anthropic TextBlock, ImageBlockParam, ToolUseBlockParam, or ToolResultBlockParam.
+ * @throws Error if the part contains unsupported fields for the current message role.
+ */
 export function toAnthropicMessageContent(
   part: Part
 ):
@@ -235,6 +254,11 @@ export function toAnthropicMessageContent(
   );
 }
 
+/**
+ * Converts a Genkit MessageData array to an Anthropic system message and MessageParam array.
+ * @param messages The Genkit MessageData array to convert.
+ * @returns An object containing the optional Anthropic system message and the array of Anthropic MessageParam objects.
+ */
 export function toAnthropicMessages(messages: MessageData[]): {
   system?: string;
   messages: Anthropic.Beta.Tools.ToolsBetaMessageParam[];
@@ -260,6 +284,11 @@ export function toAnthropicMessages(messages: MessageData[]): {
   return { system, messages: anthropicMsgs };
 }
 
+/**
+ * Converts a Genkit ToolDefinition to an Anthropic Tool object.
+ * @param tool The Genkit ToolDefinition to convert.
+ * @returns The converted Anthropic Tool object.
+ */
 export function toAnthropicTool(
   tool: ToolDefinition
 ): Anthropic.Beta.Tools.Tool {
@@ -281,6 +310,13 @@ const finishReasonMap: Record<
   tool_use: 'stop',
 };
 
+/**
+ * Converts an Anthropic content block to a Genkit CandidateData object.
+ * @param choice The Anthropic content block to convert.
+ * @param index The index of the content block.
+ * @param stopReason The reason the content block generation stopped.
+ * @returns The converted Genkit CandidateData object.
+ */
 function fromAnthropicContentBlock(
   choice: Anthropic.Beta.Tools.Messages.ToolsBetaContentBlock,
   index: number,
@@ -310,6 +346,11 @@ function fromAnthropicContentBlock(
   };
 }
 
+/**
+ * Converts an Anthropic message stream event to a Genkit CandidateData object.
+ * @param choice The Anthropic message stream event to convert.
+ * @returns The converted Genkit CandidateData object if the event is a content block start or delta, otherwise undefined.
+ */
 function fromAnthropicContentBlockChunk(
   choice: Anthropic.Beta.Tools.Messages.ToolsBetaMessageStreamEvent
 ): CandidateData | undefined {
@@ -343,6 +384,14 @@ function fromAnthropicContentBlockChunk(
   };
 }
 
+/**
+ * Converts an Anthropic request to an Anthropic API request body.
+ * @param modelName The name of the Anthropic model to use.
+ * @param request The Genkit GenerateRequest to convert.
+ * @param stream Whether to stream the response.
+ * @returns The converted Anthropic API request body.
+ * @throws An error if the specified model is not supported or if an unsupported output format is requested.
+ */
 export function toAnthropicRequestBody(
   modelName: string,
   request: GenerateRequest,
@@ -379,7 +428,11 @@ export function toAnthropicRequestBody(
 }
 
 /**
- *
+ * Defines a Claude model with the given name and Anthropic client.
+ * @param name The name of the Claude model.
+ * @param client The Anthropic client instance.
+ * @returns The defined Claude model.
+ * @throws An error if the specified model is not supported.
  */
 export function claudeModel(name: string, client: Anthropic) {
   const modelId = `anthropic/${name}`;

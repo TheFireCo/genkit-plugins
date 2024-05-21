@@ -177,6 +177,11 @@ function toOpenAIRole(role: Role): ChatCompletionRole {
   }
 }
 
+/**
+ * Converts a Genkit ToolDefinition to an OpenAI ChatCompletionTool object.
+ * @param tool The Genkit ToolDefinition to convert.
+ * @returns The converted OpenAI ChatCompletionTool object.
+ */
 function toOpenAiTool(tool: ToolDefinition): ChatCompletionTool {
   return {
     type: 'function',
@@ -187,6 +192,13 @@ function toOpenAiTool(tool: ToolDefinition): ChatCompletionTool {
   };
 }
 
+/**
+ * Converts a Genkit Part to the corresponding OpenAI ChatCompletionContentPart.
+ * @param part The Genkit Part to convert.
+ * @param visualDetailLevel The visual detail level to use for media parts.
+ * @returns The corresponding OpenAI ChatCompletionContentPart.
+ * @throws Error if the part contains unsupported fields for the current message role.
+ */
 export function toOpenAiTextAndMedia(
   part: Part,
   visualDetailLevel: VisualDetailLevel
@@ -210,6 +222,12 @@ export function toOpenAiTextAndMedia(
   );
 }
 
+/**
+ * Converts a Genkit MessageData array to an OpenAI ChatCompletionMessageParam array.
+ * @param messages The Genkit MessageData array to convert.
+ * @param visualDetailLevel The visual detail level to use for media parts.
+ * @returns The converted OpenAI ChatCompletionMessageParam array.
+ */
 export function toOpenAiMessages(
   messages: MessageData[],
   visualDetailLevel: VisualDetailLevel = 'auto'
@@ -294,11 +312,16 @@ const finishReasonMap: Record<
   content_filter: 'blocked',
 };
 
+/**
+ * Converts an OpenAI tool call to a Genkit ToolRequestPart.
+ * @param toolCall The OpenAI tool call to convert.
+ * @returns The converted Genkit ToolRequestPart.
+ */
 function fromOpenAiToolCall(
   toolCall:
     | ChatCompletionMessageToolCall
     | ChatCompletionChunk.Choice.Delta.ToolCall
-) {
+): ToolRequestPart {
   if (!toolCall.function) {
     throw Error(
       `Unexpected openAI chunk choice. tool_calls was provided but one or more tool_calls is missing.`
@@ -307,13 +330,19 @@ function fromOpenAiToolCall(
   const f = toolCall.function;
   return {
     toolRequest: {
-      name: f.name,
+      name: f.name!,
       ref: toolCall.id,
       input: f.arguments ? JSON.parse(f.arguments) : f.arguments,
     },
   };
 }
 
+/**
+ * Converts an OpenAI message event to a Genkit CandidateData object.
+ * @param choice The OpenAI message event to convert.
+ * @param jsonMode Whether the event is a JSON response.
+ * @returns The converted Genkit CandidateData object.
+ */
 function fromOpenAiChoice(
   choice: ChatCompletion['choices'][0],
   jsonMode = false
@@ -338,6 +367,12 @@ function fromOpenAiChoice(
   };
 }
 
+/**
+ * Converts an OpenAI message stream event to a Genkit CandidateData object.
+ * @param choice The OpenAI message stream event to convert.
+ * @param jsonMode Whether the event is a JSON response.
+ * @returns The converted Genkit CandidateData object.
+ */
 function fromOpenAiChunkChoice(
   choice: ChatCompletionChunk['choices'][0],
   jsonMode = false
@@ -364,6 +399,13 @@ function fromOpenAiChunkChoice(
   };
 }
 
+/**
+ * Converts an OpenAI request to an OpenAI API request body.
+ * @param modelName The name of the OpenAI model to use.
+ * @param request The Genkit GenerateRequest to convert.
+ * @returns The converted OpenAI API request body.
+ * @throws An error if the specified model is not supported or if an unsupported output format is requested.
+ */
 export function toOpenAiRequestBody(
   modelName: string,
   request: GenerateRequest
@@ -432,7 +474,11 @@ export function toOpenAiRequestBody(
 }
 
 /**
- *
+ * Defines a GPT model with the given name and OpenAI client.
+ * @param name The name of the GPT model.
+ * @param client The OpenAI client instance.
+ * @returns The defined GPT model.
+ * @throws An error if the specified model is not supported.
  */
 export function gptModel(name: string, client: OpenAI) {
   const modelId = `openai/${name}`;
