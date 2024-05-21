@@ -34,6 +34,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "TommasoBendinelli",
+      "name": "Tommaso Bendinelli",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43389342?v=4",
+      "profile": "https://github.com/TommasoBendinelli",
+      "contributions": [
+        "code",
+        "doc",
+        "test"
+      ]
     }
   ]
 }
