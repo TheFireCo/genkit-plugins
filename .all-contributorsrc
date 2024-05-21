@@ -1,4 +1,21 @@
 {
-  "projectName": "TheFireCo",
-  "projectOwner": "genkit-plugins"
+  "projectName": "genkit-plugins",
+  "projectOwner": "TheFireCo",
+  "files": [
+    "README.md"
+  ],
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributorsPerLine": 7,
+  "contributors": [
+    {
+      "login": "calenwu",
+      "name": "Georg Ye",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23285716?v=4",
+      "profile": "https://calenwu.com",
+      "contributions": [
+        "code"
+      ]
+    }
+  ]
 }
