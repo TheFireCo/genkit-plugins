@@ -1,6 +1,6 @@
 {
   "name": "genkitx-openai",
-  "description": "Genkit AI framework plugin for OpenAI APIs.",
+  "description": "Firebase Genkit AI framework plugin for OpenAI APIs.",
   "keywords": [
     "genkit",
     "genkit-plugin",
@@ -18,10 +18,10 @@
   "type": "commonjs",
   "repository": {
     "type": "git",
-    "url": "https://github.com/firebase-community/genkit-plugins.git",
-    "directory": "plugins/openai"
+    "url": "git+https://github.com/TheFireCo/genkit-plugins.git",
+    "directory": "plugins/anthropic"
   },
-  "author": "firebase-community",
+  "author": "TheFireCo",
   "license": "Apache-2.0",
   "dependencies": {
     "openai": "^4.47.1",
@@ -52,6 +52,10 @@
   "files": [
     "lib"
   ],
+  "publishConfig": {
+    "provenance": true,
+    "access": "public"
+  },
   "scripts": {
     "check": "tsc",
     "compile": "tsup-node",

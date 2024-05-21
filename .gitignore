@@ -3,11 +3,3 @@ node_modules/
 lib/
 .env
 .vscode/launch.json
-.pnp.*
-.yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
-plugins/*/lib/

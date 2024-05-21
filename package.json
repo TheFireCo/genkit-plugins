@@ -6,7 +6,6 @@
     "docs",
     "examples"
   ],
-  "version": "0.7.1",
   "scripts": {
     "build": "lerna run build",
     "publish": "lerna publish --no-private -y from-package",

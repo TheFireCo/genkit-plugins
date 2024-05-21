@@ -1,6 +1,6 @@
 {
   "name": "genkitx-anthropic",
-  "description": "Genkit AI framework plugin for Anthropic APIs.",
+  "description": "Firebase Genkit AI framework plugin for Anthropic APIs.",
   "keywords": [
     "genkit",
     "genkit-plugin",
@@ -19,10 +19,10 @@
   "type": "commonjs",
   "repository": {
     "type": "git",
-    "url": "https://github.com/firebase-community/genkit-plugins.git",
+    "url": "git+https://github.com/TheFireCo/genkit-plugins.git",
     "directory": "plugins/anthropic"
   },
-  "author": "firebase-community",
+  "author": "TheFireCo",
   "license": "Apache-2.0",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.21.0",
@@ -53,6 +53,10 @@
   "files": [
     "lib"
   ],
+  "publishConfig": {
+    "provenance": true,
+    "access": "public"
+  },
   "scripts": {
     "check": "tsc",
     "compile": "tsup-node",
