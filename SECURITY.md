@@ -11,5 +11,5 @@ to the latest version.
 
 ## Reporting a Vulnerability
 
-If you find a vulnerability, please [open a bug report](https://github.com/TheFireCo/genkit-plugins/issues/new?labels=bug&template=bug_report.md)
-so that we can keep track of it and fix it. Pull requests are also welcome.
+**If you discover a security vulnerability, do NOT open an issue.
+Email [info@firecompany.co](mailto:info@firecompany.co) instead.**
