@@ -115,6 +115,7 @@ describe('toOpenAiMessages', () => {
               type: 'image_url',
               image_url: {
                 url: 'https://img.freepik.com/free-photo/abstract-autumn-beauty-multi-colored-leaf-vein-pattern-generated-by-ai_188544-9871.jpg?size=626&ext=jpg&ga=GA1.1.735520172.1710720000&semt=ais',
+                detail: 'auto',
               },
             },
           ],
