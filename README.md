@@ -18,8 +18,9 @@
    <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues/TheFireCo/genkit-plugins?color=blue">
    <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues-pr/TheFireCo/genkit-plugins?color=blue">
    <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/TheFireCo/genkit-plugins">
+   <img alt="GitHub contributors from allcontributors.org (with branch)" src="https://img.shields.io/github/all-contributors/TheFireCo/genkit-plugins/main"/>
 </div>
-      
+
 </br>
 
 This repository contains community plugins for
@@ -74,6 +75,17 @@ Reach out by opening a discussion on [Github Discussions](https://github.com/The
 ## Credits
 
 This repository is proudly maintained by the team at [**The Fire Company**](https://github.com/TheFireCo). 🔥
+
+## Contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
 ## License
 
