@@ -87,6 +87,7 @@ This repository is proudly maintained by the team at [**The Fire Company**](http
       <td align="center" valign="top" width="14.28%"><a href="http://david-alonso.com"><img src="https://avatars.githubusercontent.com/u/21220927?v=4?s=100" width="100px;" alt="David Oort Alonso"/><br /><sub><b>David Oort Alonso</b></sub></a><br /><a href="#code-davidoort" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://epmatt.com"><img src="https://avatars.githubusercontent.com/u/30753195?v=4?s=100" width="100px;" alt="Matteo Agnoletto"/><br /><sub><b>Matteo Agnoletto</b></sub></a><br /><a href="#code-EPMatt" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://giorgio.garasto.me"><img src="https://avatars.githubusercontent.com/u/28671340?v=4?s=100" width="100px;" alt="Giorgio Garasto"/><br /><sub><b>Giorgio Garasto</b></sub></a><br /><a href="#code-Dabolus" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/TommasoBendinelli"><img src="https://avatars.githubusercontent.com/u/43389342?v=4?s=100" width="100px;" alt="Tommaso Bendinelli"/><br /><sub><b>Tommaso Bendinelli</b></sub></a><br /><a href="#code-TommasoBendinelli" title="Code">💻</a> <a href="#doc-TommasoBendinelli" title="Documentation">📖</a> <a href="#test-TommasoBendinelli" title="Tests">⚠️</a></td>
     </tr>
   </tbody>
 </table>
