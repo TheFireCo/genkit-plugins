@@ -38,7 +38,9 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/28671340?v=4",
       "profile": "https://giorgio.garasto.me",
       "contributions": [
-        "code"
+        "code",
+        "doc",
+        "test"
       ]
     },
     {
