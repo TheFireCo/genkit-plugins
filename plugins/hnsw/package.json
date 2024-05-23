@@ -53,6 +53,10 @@
   "files": [
     "lib"
   ],
+  "publishConfig": {
+    "provenance": true,
+    "access": "public"
+  },
   "types": "./lib/index.d.ts",
   "repository": {
     "type": "git",
