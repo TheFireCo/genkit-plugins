@@ -1,0 +1,26 @@
+{
+  "compileOnSave": true,
+  "include": [
+    "indexer",
+    "retriever",
+    "config",
+    "types",
+    "actions",
+    "index.ts",
+    "constants",
+    "interfaces",
+    "utilities",
+    "*.test.ts",
+  ],
+  "compilerOptions": {
+    "module": "commonjs",
+    "noImplicitReturns": true,
+    "outDir": "lib",
+    "sourceMap": true,
+    "strict": true,
+    "target": "es2017",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "types": ["jest", "node"]
+  }
+}
