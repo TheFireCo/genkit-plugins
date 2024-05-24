@@ -1,6 +1,6 @@
 require("node-absolute-path");
 import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
-import glob from "glob";
+import { glob } from "glob";
 import fs from "fs";
 import { CharacterTextSplitter } from "langchain/text_splitter";
 import { HNSWLib } from "langchain/vectorstores";
@@ -25,11 +25,12 @@ const getFilesData = (files: string[]): string[] => {
 }
 
 const getFiles = async (input: string): Promise<string[]> => {
-  return await new Promise((resolve, reject) =>
-    glob(input, (error: any, files: any) =>
-      error ? reject(error) : resolve(files)
-    )
-  );
+  try {
+    return glob(input, { ignore: 'node_modules/**' });
+  } catch (error) {
+    console.error('Error fetching files:', error);
+    throw error;
+  }
 };
 
 const getSplitter = (

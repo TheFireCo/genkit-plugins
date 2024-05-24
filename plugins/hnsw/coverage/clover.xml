@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1716531340617" clover="3.2.0">
-  <project timestamp="1716531340617" name="All files">
-    <metrics statements="105" coveredstatements="102" conditionals="17" coveredconditionals="9" methods="17" coveredmethods="16" elements="139" coveredelements="127" complexity="0" loc="105" ncloc="105" packages="6" files="6" classes="6"/>
+<coverage generated="1716532017586" clover="3.2.0">
+  <project timestamp="1716532017586" name="All files">
+    <metrics statements="107" coveredstatements="102" conditionals="17" coveredconditionals="9" methods="17" coveredmethods="16" elements="141" coveredelements="127" complexity="0" loc="107" ncloc="107" packages="6" files="6" classes="6"/>
     <package name="actions">
       <metrics statements="10" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="1"/>
       <file name="index.ts" path="/Users/pradana/Documents/Firebase/global/genkit-plugins/plugins/hnsw/actions/index.ts">
@@ -49,50 +49,52 @@
       </file>
     </package>
     <package name="indexer">
-      <metrics statements="41" coveredstatements="41" conditionals="6" coveredconditionals="3" methods="7" coveredmethods="7"/>
+      <metrics statements="43" coveredstatements="41" conditionals="6" coveredconditionals="3" methods="7" coveredmethods="7"/>
       <file name="index.ts" path="/Users/pradana/Documents/Firebase/global/genkit-plugins/plugins/hnsw/indexer/index.ts">
-        <metrics statements="41" coveredstatements="41" conditionals="6" coveredconditionals="3" methods="7" coveredmethods="7"/>
+        <metrics statements="43" coveredstatements="41" conditionals="6" coveredconditionals="3" methods="7" coveredmethods="7"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
         <line num="4" count="1" type="stmt"/>
         <line num="5" count="1" type="stmt"/>
         <line num="6" count="1" type="stmt"/>
-        <line num="9" count="1" type="stmt"/>
-        <line num="15" count="1" type="stmt"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
         <line num="16" count="1" type="stmt"/>
-        <line num="19" count="1" type="stmt"/>
+        <line num="17" count="1" type="stmt"/>
         <line num="20" count="1" type="stmt"/>
-        <line num="21" count="2" type="stmt"/>
-        <line num="23" count="1" type="stmt"/>
-        <line num="26" count="1" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="22" count="2" type="stmt"/>
+        <line num="24" count="1" type="stmt"/>
         <line num="27" count="1" type="stmt"/>
         <line num="28" count="1" type="stmt"/>
-        <line num="31" count="1" type="stmt"/>
-        <line num="35" count="1" type="stmt"/>
-        <line num="41" count="1" type="stmt"/>
+        <line num="29" count="1" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="36" count="1" type="stmt"/>
+        <line num="40" count="1" type="stmt"/>
         <line num="46" count="1" type="stmt"/>
         <line num="47" count="1" type="stmt"/>
-        <line num="49" count="2" type="stmt"/>
-        <line num="58" count="1" type="stmt"/>
+        <line num="48" count="1" type="stmt"/>
+        <line num="50" count="2" type="stmt"/>
         <line num="59" count="1" type="stmt"/>
         <line num="60" count="1" type="stmt"/>
-        <line num="63" count="1" type="stmt"/>
-        <line num="67" count="1" type="stmt"/>
-        <line num="68" count="1" type="stmt"/>
-        <line num="69" count="2" type="stmt"/>
-        <line num="70" count="2" type="stmt"/>
-        <line num="72" count="1" type="stmt"/>
-        <line num="75" count="1" type="stmt"/>
-        <line num="79" count="1" type="stmt"/>
+        <line num="61" count="1" type="stmt"/>
+        <line num="64" count="1" type="stmt"/>
+        <line num="65" count="1" type="stmt"/>
+        <line num="66" count="1" type="stmt"/>
+        <line num="67" count="2" type="stmt"/>
+        <line num="68" count="2" type="stmt"/>
+        <line num="70" count="1" type="stmt"/>
+        <line num="73" count="1" type="stmt"/>
+        <line num="77" count="1" type="stmt"/>
+        <line num="78" count="1" type="stmt"/>
         <line num="80" count="1" type="stmt"/>
+        <line num="81" count="1" type="stmt"/>
         <line num="82" count="1" type="stmt"/>
         <line num="83" count="1" type="stmt"/>
-        <line num="84" count="1" type="stmt"/>
         <line num="85" count="1" type="stmt"/>
-        <line num="86" count="1" type="stmt"/>
         <line num="88" count="1" type="stmt"/>
-        <line num="91" count="1" type="stmt"/>
       </file>
     </package>
     <package name="retriever">

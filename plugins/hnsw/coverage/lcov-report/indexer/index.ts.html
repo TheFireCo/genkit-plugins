@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">95.34% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>41/41</span>
+                <span class='fraction'>41/43</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">95.34% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>41/41</span>
+                <span class='fraction'>41/43</span>
             </div>
         
             
@@ -151,10 +151,8 @@
 <a name='L86'></a><a href='#L86'>86</a>
 <a name='L87'></a><a href='#L87'>87</a>
 <a name='L88'></a><a href='#L88'>88</a>
-<a name='L89'></a><a href='#L89'>89</a>
-<a name='L90'></a><a href='#L90'>90</a>
-<a name='L91'></a><a href='#L91'>91</a>
-<a name='L92'></a><a href='#L92'>92</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L89'></a><a href='#L89'>89</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -183,14 +181,8 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -198,7 +190,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -217,9 +215,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">2x</span>
@@ -239,25 +234,25 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { GoogleGenerativeAIEmbeddings } from '@langchain/google-genai';
-import { glob } from 'glob';
-import fs from 'fs';
-import { CharacterTextSplitter } from 'langchain/text_splitter';
-import { HNSWLib } from 'langchain/vectorstores';
-import { TaskType } from '@google/generative-ai';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">require("node-absolute-path");
+import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
+import { glob } from "glob";
+import fs from "fs";
+import { CharacterTextSplitter } from "langchain/text_splitter";
+import { HNSWLib } from "langchain/vectorstores";
+import { TaskType } from "@google/generative-ai";
 &nbsp;
-import { IndexerFlowOptions, PluginOptions } from '../interfaces';
+import { IndexerFlowOptions, PluginOptions } from "../interfaces";
 import {
   EMBEDDING_MODEL_NAME,
   EMBEDDING_MODEL,
   EMBEDDING_TITLE,
-} from '../constants';
+} from "../constants";
 &nbsp;
 const getFilesData = (files: string[]): string[] =&gt; {
   console.log(
@@ -265,14 +260,18 @@ const getFilesData = (files: string[]): string[] =&gt; {
   );
   const filesData = [];
   for (const file of files) {
-    filesData.push(fs.readFileSync(file, 'utf-8'));
+    filesData.push(fs.readFileSync(file, "utf-8"));
   }
   return filesData;
-};
+}
 &nbsp;
 const getFiles = async (input: string): Promise&lt;string[]&gt; =&gt; {
-  const files = await glob(input, { ignore: 'node_modules/**' });
-  return files;
+  try {
+    return glob(input, { ignore: 'node_modules/**' });
+  } catch (error) {
+<span class="cstat-no" title="statement not covered" >    console.error('Error fetching files:', error);</span>
+<span class="cstat-no" title="statement not covered" >    throw error;</span>
+  }
 };
 &nbsp;
 const getSplitter = (
@@ -281,16 +280,12 @@ const getSplitter = (
 ) =&gt; {
   return new CharacterTextSplitter({
     chunkSize: chunkSize || <span class="branch-1 cbranch-no" title="branch not covered" >12720,</span>
-    separator: separator || <span class="branch-1 cbranch-no" title="branch not covered" >'\n',</span>
+    separator: separator || <span class="branch-1 cbranch-no" title="branch not covered" >"\n",</span>
   });
 };
 &nbsp;
-const saveVectorStore = async (
-  docs: string[],
-  apiKey: string | undefined,
-  output: string
-) =&gt; {
-  console.log('Initializing Store...');
+const saveVectorStore = async (docs: string[], apiKey: string | undefined, output: string) =&gt; {
+  console.log("Initializing Store...");
   const store = await HNSWLib.fromTexts(
     docs,
     docs.map((_: any, i: any) =&gt; ({ id: i })),
@@ -302,22 +297,19 @@ const saveVectorStore = async (
       title: EMBEDDING_TITLE,
     })
   );
-  console.log('Saving Vectorstore');
+  console.log("Saving Vectorstore");
   await store.save(output);
   return `VectorStore saved to ${output}`;
 };
 &nbsp;
-const getVectorDocument = (
-  filesData: string[],
-  textSplitter: { splitText: (arg0: any) =&gt; any }
-) =&gt; {
+const getVectorDocument = (filesData: string[], textSplitter: { splitText: (arg0: any) =&gt; any; }) =&gt; {
   let docs: string[] = [];
   for (const d of filesData) {
     const docOutput = textSplitter.splitText(d);
     docs = [...docs, ...docOutput];
   }
   return docs.splice(docs.length - 4, 4);
-};
+}
 &nbsp;
 const saveVectorIndexer = async (
   flowOptions: IndexerFlowOptions,
@@ -328,7 +320,6 @@ const saveVectorIndexer = async (
 &nbsp;
   const files: string[] = await getFiles(dataPath);
   const filesData = getFilesData(files);
-  console.log(filesData);
   const textSplitter = getSplitter(chunkSize, separator);
   const vectorDocument = getVectorDocument(filesData, textSplitter);
 &nbsp;
@@ -343,7 +334,7 @@ export { saveVectorIndexer };
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-05-24T06:15:40.598Z
+                at 2024-05-24T06:26:57.574Z
             </div>
         <script src="../prettify.js"></script>
         <script>

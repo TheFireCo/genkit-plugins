@@ -1,7 +1,7 @@
 export {}
 // saveVectorIndexer.test.js
 const fs = require('fs');
-const glob = require('glob');
+const { glob } = require('glob');
 const { CharacterTextSplitter } = require('langchain/text_splitter');
 const { HNSWLib } = require('langchain/vectorstores');
 const { GoogleGenerativeAIEmbeddings } = require('@langchain/google-genai');
@@ -26,16 +26,14 @@ describe('saveVectorIndexer', () => {
     const mockApiKey = 'test-api-key';
     const mockOutputPath = 'output/path';
     const mockFlowOptions = {
-      dataPath: 'some/path',
+      dataPath: './*',
       indexOutputPath: mockOutputPath,
       chunkSize: 1024,
       separator: '\n'
     };
     const mockPluginOptions = { apiKey: mockApiKey };
 
-    glob.mockImplementation((_pattern: any, callback: (arg0: null, arg1: string[]) => void) => {
-      callback(null, mockFiles);
-    });
+    glob.mockImplementation(() => mockFiles);
 
     fs.readFileSync.mockImplementation((path: string) => {
       return mockFileData[mockFiles.indexOf(path)];
@@ -54,8 +52,9 @@ describe('saveVectorIndexer', () => {
       });
 
     const result = await saveVectorIndexer(mockFlowOptions, mockPluginOptions);
+    const options = { ignore: "node_modules/**" }
 
-    expect(glob).toHaveBeenCalledWith(mockFlowOptions.dataPath, expect.any(Function));
+    expect(glob).toHaveBeenCalledWith(mockFlowOptions.dataPath, options);
     expect(fs.readFileSync).toHaveBeenCalledTimes(mockFiles.length);
     expect(CharacterTextSplitter).toHaveBeenCalledWith({
       chunkSize: mockFlowOptions.chunkSize,
