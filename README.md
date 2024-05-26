@@ -1,9 +1,4 @@
-<p align="center">
-  <img src="https://github.com/TheFireCo/genkit-plugins/assets/109159237/ff3aa70e-9b1d-4085-8c25-28a6b1d04a20" width="20%">
-</p>
-<h1 align="center">
-   Firebase Genkit Plugins
-</h1>
+![Firebase Genkit Community Plugins](https://github.com/TheFireCo/genkit-plugins/blob/main/assets/genkit-plugins.png?raw=true)
 
 <h4 align="center">Community Plugins for Google Firebase Genkit</h4>
 

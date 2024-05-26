@@ -1,3 +1,5 @@
+![Firebase Genkit + Convex](https://github.com/TheFireCo/genkit-plugins/blob/main/assets/genkit-convex.png?raw=true)
+
 <h1 align="center"> [WIP] Firebase Genkit <> Convex Plugin</h1>
 
 <h4 align="center">Convex Community Plugin for Google Firebase Genkit </h4>
