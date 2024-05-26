@@ -1,20 +1,20 @@
-import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
-import { HNSWLib } from "langchain/vectorstores";
-import { generate } from "@genkit-ai/ai";
-import { geminiPro as geminiProModel } from "@genkit-ai/googleai";
+import { GoogleGenerativeAIEmbeddings } from '@langchain/google-genai';
+import { HNSWLib } from 'langchain/vectorstores';
+import { generate } from '@genkit-ai/ai';
+import { geminiPro as geminiProModel } from '@genkit-ai/googleai';
 
-import { RetrieverFlowOptions, PluginOptions } from "../interfaces";
+import { RetrieverFlowOptions, PluginOptions } from '../interfaces';
 
 const generateHistories = (contexts: any[]) => {
   const histories: any[] = [];
   contexts.forEach((context: string) => {
     histories.push({
-      role: "user",
+      role: 'user',
       content: [{ text: context }],
     });
     histories.push({
-      role: "model",
-      content: [{ text: "Understood" }],
+      role: 'model',
+      content: [{ text: 'Understood' }],
     });
   });
   return histories;

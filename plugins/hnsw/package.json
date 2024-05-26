@@ -1,5 +1,6 @@
 {
   "name": "genkitx-hnsw",
+  "description": "Firebase Genkit AI framework plugin for HNSW vector database. Get AI response enriched with additional context and knowledge with HNSW Vector Database using RAG Implementation",
   "keywords": [
     "genkit-plugin",
     "genkit-indexer",
@@ -15,21 +16,15 @@
     "genai"
   ],
   "version": "0.1.5-rc.1",
-  "description": "Genkit AI framework plugin for HNSW vector database. get AI response enriched with additional context and knowledge with HNSW Vector Database using RAG Implementation",
-  "main": "lib/index.js",
-  "scripts": {
-    "test": "jest --coverage",
-    "start": "genkit start",
-    "compile": "tsc --declaration",
-    "build": "npm run test && npm run build:clean && npm run compile",
-    "build:clean": "rm -rf ./lib",
-    "build:watch": "tsc --watch"
+  "type": "commonjs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheFireCo/genkit-plugins.git",
+    "directory": "plugins/hnsw"
   },
-  "author": "surahutomo.aziz@gmail.com",
+  "author": "TheFireCo",
   "license": "Apache-2.0",
   "dependencies": {
-    "@genkit-ai/ai": "^0.5.0",
-    "@genkit-ai/core": "^0.5.0",
     "@genkit-ai/flow": "^0.5.0",
     "@genkit-ai/googleai": "^0.5.0",
     "@langchain/google-genai": "^0.0.11",
@@ -39,25 +34,42 @@
     "glob": "^10.4.1",
     "hnswlib-node": "^1.3.0",
     "langchain": "^0.0.11",
-    "node-absolute-path": "^1.0.6",
     "node-fetch": "^3.2.6",
     "redis": "^4.6.13",
     "zod": "^3.22.4"
+  },
+  "peerDependencies": {
+    "@genkit-ai/ai": "^0.5.0",
+    "@genkit-ai/core": "^0.5.0"
   },
   "devDependencies": {
     "jest": "^29.7.0",
     "ts-jest": "^29.1.2",
     "typescript": "^5.4.5"
   },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./lib/index.js",
+      "default": "./lib/index.js",
+      "import": "./lib/index.mjs",
+      "types": "./lib/index.d.ts"
+    }
+  },
   "files": [
     "lib"
   ],
-  "resolutions": {
-    "glob": "8.1.0"
+  "publishConfig": {
+    "provenance": true,
+    "access": "public"
   },
-  "types": "./lib/index.d.ts",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/retzd-tech/genkitx-hnsw.git"
+  "scripts": {
+    "check": "tsc",
+    "compile": "tsup-node",
+    "build:clean": "rm -rf ./lib",
+    "build:watch": "tsup-node --watch",
+    "test": "jest --coverage",
+    "build": "npm run test && npm run build:clean && npm run compile"
   }
 }

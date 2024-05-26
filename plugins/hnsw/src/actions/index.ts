@@ -1,10 +1,10 @@
-import { saveVectorIndexer } from "./../indexer";
-import { retrieveResponseWithVector } from "./../retriever";
+import { saveVectorIndexer } from './../indexer';
+import { retrieveResponseWithVector } from './../retriever';
 import {
   RetrieverFlowOptions,
   PluginOptions,
   IndexerFlowOptions,
-} from "./../interfaces";
+} from './../interfaces';
 
 export const hnswIndexerAction = async (
   flowOptions: IndexerFlowOptions,

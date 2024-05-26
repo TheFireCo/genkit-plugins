@@ -1,17 +1,16 @@
-require("node-absolute-path");
-import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
-import { glob } from "glob";
-import fs from "fs";
-import { CharacterTextSplitter } from "langchain/text_splitter";
-import { HNSWLib } from "langchain/vectorstores";
-import { TaskType } from "@google/generative-ai";
+import { GoogleGenerativeAIEmbeddings } from '@langchain/google-genai';
+import { glob } from 'glob';
+import fs from 'fs';
+import { CharacterTextSplitter } from 'langchain/text_splitter';
+import { HNSWLib } from 'langchain/vectorstores';
+import { TaskType } from '@google/generative-ai';
 
-import { IndexerFlowOptions, PluginOptions } from "../interfaces";
+import { IndexerFlowOptions, PluginOptions } from '../interfaces';
 import {
   EMBEDDING_MODEL_NAME,
   EMBEDDING_MODEL,
   EMBEDDING_TITLE,
-} from "../constants";
+} from '../constants';
 
 const getFilesData = (files: string[]): string[] => {
   console.log(
@@ -19,10 +18,10 @@ const getFilesData = (files: string[]): string[] => {
   );
   const filesData = [];
   for (const file of files) {
-    filesData.push(fs.readFileSync(file, "utf-8"));
+    filesData.push(fs.readFileSync(file, 'utf-8'));
   }
   return filesData;
-}
+};
 
 const getFiles = async (input: string): Promise<string[]> => {
   try {
@@ -39,12 +38,16 @@ const getSplitter = (
 ) => {
   return new CharacterTextSplitter({
     chunkSize: chunkSize || 12720,
-    separator: separator || "\n",
+    separator: separator || '\n',
   });
 };
 
-const saveVectorStore = async (docs: string[], apiKey: string | undefined, output: string) => {
-  console.log("Initializing Store...");
+const saveVectorStore = async (
+  docs: string[],
+  apiKey: string | undefined,
+  output: string
+) => {
+  console.log('Initializing Store...');
   const store = await HNSWLib.fromTexts(
     docs,
     docs.map((_: any, i: any) => ({ id: i })),
@@ -56,19 +59,22 @@ const saveVectorStore = async (docs: string[], apiKey: string | undefined, outpu
       title: EMBEDDING_TITLE,
     })
   );
-  console.log("Saving Vectorstore");
+  console.log('Saving Vectorstore');
   await store.save(output);
   return `VectorStore saved to ${output}`;
 };
 
-const getVectorDocument = (filesData: string[], textSplitter: { splitText: (arg0: any) => any; }) => {
+const getVectorDocument = (
+  filesData: string[],
+  textSplitter: { splitText: (arg0: any) => any }
+) => {
   let docs: string[] = [];
   for (const d of filesData) {
     const docOutput = textSplitter.splitText(d);
     docs = [...docs, ...docOutput];
   }
   return docs.splice(docs.length - 4, 4);
-}
+};
 
 const saveVectorIndexer = async (
   flowOptions: IndexerFlowOptions,

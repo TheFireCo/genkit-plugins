@@ -1,4 +1,4 @@
-import * as z from "zod";
+import * as z from 'zod';
 
 import {
   FLOW_NAME_INDEXER,
@@ -8,7 +8,7 @@ import {
   SCHEMA_RESULT,
   SCHEMA_TRAINABLE_PATH,
   SCHEMA_INDEX_OUTPUT_PATH,
-} from "./../constants";
+} from './../constants';
 
 export const indexerFlowConfig = {
   name: FLOW_NAME_INDEXER,
