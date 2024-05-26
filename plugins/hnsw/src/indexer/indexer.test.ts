@@ -1,4 +1,4 @@
-export {}
+export {};
 // saveVectorIndexer.test.js
 const fs = require('fs');
 const { glob } = require('glob');
@@ -29,7 +29,7 @@ describe('saveVectorIndexer', () => {
       dataPath: './*',
       indexOutputPath: mockOutputPath,
       chunkSize: 1024,
-      separator: '\n'
+      separator: '\n',
     };
     const mockPluginOptions = { apiKey: mockApiKey };
 
@@ -43,22 +43,22 @@ describe('saveVectorIndexer', () => {
       return {
         splitText: jest.fn().mockImplementation((text) => {
           return [text]; // Simple mock, return the text as single chunk
-        })
+        }),
       };
     });
 
     HNSWLib.fromTexts = jest.fn().mockResolvedValue({
-        save: jest.fn()
-      });
+      save: jest.fn(),
+    });
 
     const result = await saveVectorIndexer(mockFlowOptions, mockPluginOptions);
-    const options = { ignore: "node_modules/**" }
+    const options = { ignore: 'node_modules/**' };
 
     expect(glob).toHaveBeenCalledWith(mockFlowOptions.dataPath, options);
     expect(fs.readFileSync).toHaveBeenCalledTimes(mockFiles.length);
     expect(CharacterTextSplitter).toHaveBeenCalledWith({
       chunkSize: mockFlowOptions.chunkSize,
-      separator: mockFlowOptions.separator
+      separator: mockFlowOptions.separator,
     });
     expect(HNSWLib.fromTexts).toHaveBeenCalledWith(
       expect.arrayContaining(mockFileData),

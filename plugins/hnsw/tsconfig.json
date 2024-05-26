@@ -1,16 +1,16 @@
 {
   "compileOnSave": true,
   "include": [
-    "indexer",
-    "retriever",
-    "config",
-    "types",
-    "actions",
-    "index.ts",
-    "constants",
-    "interfaces",
-    "utilities",
-    "*.test.ts",
+    "src/indexer",
+    "src/retriever",
+    "src/config",
+    "src/types",
+    "src/actions",
+    "src/index.ts",
+    "src/constants",
+    "src/interfaces",
+    "src/utilities",
+    "*.test.ts"
   ],
   "compilerOptions": {
     "module": "commonjs",

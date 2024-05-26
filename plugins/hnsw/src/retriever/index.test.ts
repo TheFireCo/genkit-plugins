@@ -24,7 +24,7 @@ describe('retrieveResponseWithVector', () => {
       maxOutputTokens: 100,
       topK: 5,
       topP: 0.9,
-      stopSequences: ['.']
+      stopSequences: ['.'],
     };
     const mockPluginOptions = { apiKey: mockApiKey };
     const mockContext = ['context1', 'context2'];
@@ -34,18 +34,28 @@ describe('retrieveResponseWithVector', () => {
       { role: 'user', content: [{ text: 'context2' }] },
       { role: 'model', content: [{ text: 'Understood' }] },
     ];
-    const mockPromptResult = { text: jest.fn().mockReturnValue('mock response') };
+    const mockPromptResult = {
+      text: jest.fn().mockReturnValue('mock response'),
+    };
 
     const mockStore = {
-      similaritySearch: jest.fn().mockResolvedValue(mockContext.map(c => ({ pageContent: c }))),
+      similaritySearch: jest
+        .fn()
+        .mockResolvedValue(mockContext.map((c) => ({ pageContent: c }))),
     };
 
     HNSWLib.load.mockResolvedValue(mockStore);
     generate.mockResolvedValue(mockPromptResult);
 
-    const result = await retrieveResponseWithVector(mockFlowOptions, mockPluginOptions);
+    const result = await retrieveResponseWithVector(
+      mockFlowOptions,
+      mockPluginOptions
+    );
 
-    expect(HNSWLib.load).toHaveBeenCalledWith(mockIndexPath, expect.any(GoogleGenerativeAIEmbeddings));
+    expect(HNSWLib.load).toHaveBeenCalledWith(
+      mockIndexPath,
+      expect.any(GoogleGenerativeAIEmbeddings)
+    );
     expect(mockStore.similaritySearch).toHaveBeenCalledWith(mockPrompt, 1);
     expect(generate).toHaveBeenCalledWith({
       history: mockHistories,
@@ -57,7 +67,7 @@ describe('retrieveResponseWithVector', () => {
         topK: 5,
         topP: 0.9,
         stopSequences: ['.'],
-      }
+      },
     });
     expect(result).toBe('mock response');
   });
