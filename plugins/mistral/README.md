@@ -1,3 +1,5 @@
+![Firebase Genkit + Mistral AI](https://github.com/TheFireCo/genkit-plugins/blob/main/assets/genkit-mistral.png?raw=true)
+
 <h1 align="center">Firebase Genkit <> Mistral AI Plugin</h1>
 
 <h4 align="center">Mistral AI Community Plugin for Google Firebase Genkit</h4>

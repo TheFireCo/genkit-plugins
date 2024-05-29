@@ -1,3 +1,5 @@
+![Firebase Genkit + Cohere AI](https://github.com/TheFireCo/genkit-plugins/blob/main/assets/genkit-cohere.png?raw=true)
+
 <h1 align="center">Firebase Genkit <> Cohere AI Plugin</h1>
 
 <h4 align="center">Cohere AI Community Plugin for Google Firebase Genkit</h4>
