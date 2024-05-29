@@ -32,7 +32,7 @@ const getFilesData = (files: string[]): string[] => {
   console.log(
     `Added ${files.length} files to data.  Splitting text into chunks...`
   );
-  const filesData = [];
+  const filesData: string[] = [];
   for (const file of files) {
     filesData.push(fs.readFileSync(file, 'utf-8'));
   }

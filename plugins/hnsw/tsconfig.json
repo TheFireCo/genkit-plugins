@@ -1,10 +1,26 @@
 {
-  "extends": "../../tsconfig.json",
-  "include": ["src", "*.test.ts"],
+  "compileOnSave": true,
+  "include": [
+    "src/indexer",
+    "src/retriever",
+    "src/config",
+    "src/types",
+    "src/actions",
+    "src/index.ts",
+    "src/constants",
+    "src/interfaces",
+    "src/utilities",
+    "*.test.ts"
+  ],
   "compilerOptions": {
     "module": "commonjs",
     "noImplicitReturns": true,
+    "outDir": "lib",
+    "sourceMap": true,
+    "strict": true,
     "target": "es2017",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
     "types": ["jest", "node"]
   }
 }
