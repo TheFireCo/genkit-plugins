@@ -1,4 +1,10 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src"]
+  "include": ["src", "*.test.ts"],
+  "compilerOptions": {
+    "module": "commonjs",
+    "noImplicitReturns": true,
+    "target": "es2017",
+    "types": ["jest", "node"]
+  }
 }
