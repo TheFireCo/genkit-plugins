@@ -1,3 +1,5 @@
+![Firebase Genkit + Azure OpenAI](https://github.com/TheFireCo/genkit-plugins/blob/main/assets/genkit-azure-openai.png?raw=true)
+
 <h1 align="center">
    [WIP]Firebase Genkit <> Azure OpenAI Plugin
 </h1>

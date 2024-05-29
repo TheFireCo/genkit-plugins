@@ -1,3 +1,5 @@
+![Firebase Genkit + OpenAI](https://github.com/TheFireCo/genkit-plugins/blob/main/assets/genkit-openai.png?raw=true)
+
 <h1 align="center">
    Firebase Genkit <> OpenAI Plugin
 </h1>

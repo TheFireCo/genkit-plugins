@@ -1,3 +1,5 @@
+![Firebase Genkit + Anthropic AI](https://github.com/TheFireCo/genkit-plugins/blob/main/assets/genkit-anthropic.png?raw=true)
+
 <h1 align="center">Firebase Genkit <> Anthropic AI Plugin</h1>
 
 <h4 align="center">Anthropic AI Community Plugin for Google Firebase Genkit</h4>

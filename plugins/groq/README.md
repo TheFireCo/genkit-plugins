@@ -1,4 +1,4 @@
-![groq_genkit](https://github.com/TheFireCo/genkit-plugins/assets/21220927/b56501c2-25c1-48aa-8da9-65486f0e982d)
+![Firebase Genkit + Groq](https://github.com/TheFireCo/genkit-plugins/blob/main/assets/genkit-groq.png?raw=true)
 
 <h1 align="center">Firebase Genkit <> Groq Plugin</h1>
 
@@ -20,6 +20,8 @@
 
 **`genkitx-groq`** is a community plugin for using OpenAI APIs with
 [Firebase GenKit](https://github.com/firebase/genkit). Built by [**The Fire Company**](https://github.com/TheFireCo). 🔥
+
+![Genit + Groq example](https://github.com/TheFireCo/genkit-plugins/assets/21220927/b56501c2-25c1-48aa-8da9-65486f0e982d)
 
 ## Installation
 
