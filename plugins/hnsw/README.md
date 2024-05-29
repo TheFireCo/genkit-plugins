@@ -1,59 +1,43 @@
-# Genkit Plugin HNSW Vector Database
+![Firebase Genkit + Convex](https://github.com/TheFireCo/genkit-plugins/blob/main/assets/genkit-hnsw.png?raw=true)
 
-![Genkit HNSW Logo](https://github.com/retzd-tech/genkitx-hnsw/blob/main/assets/genkit-hnsw-logo.png?raw=true)
+<h1 align="center"> Firebase Genkit <> HNSW Vector Plugin</h1>
 
-You can contribute to this plugin in this [Repository](https://github.com/TheFireCo/genkit-plugins/tree/main/plugins/hnsw).
+<h4 align="center">HNSW Community Plugin for Google Firebase Genkit </h4>
 
-## Description
-HNSW is Vector Database Hierarchical Navigable Small World (HNSW) graphs are among the top-performing indexes for vector similarity search. HNSW is a hugely popular technology that time and time again produces state-of-the-art performance with super fast search speeds and fantastic recall. learn more about [HNSW](https://www.pinecone.io/learn/series/faiss/hnsw).
+<div align="center">
+   <img alt="Github lerna version" src="https://img.shields.io/github/lerna-json/v/TheFireCo/genkit-plugins?label=version">
+   <img alt="NPM Downloads" src="https://img.shields.io/npm/dw/genkitx-hnsw">
+   <img alt="GitHub Org's stars" src="https://img.shields.io/github/stars/TheFireCo?style=social">
+   <img alt="GitHub License" src="https://img.shields.io/github/license/TheFireCo/genkit-plugins">
+   <img alt="Static Badge" src="https://img.shields.io/badge/yes-a?label=maintained">
+</div>
 
-You can prefer this vector database if you prefer
-- A simple vector database setup
-- Handle and manage your own vector index on your own server
-- Managing vector index as a File
-- Small size but fast performance
+<div align="center">
+   <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues/TheFireCo/genkit-plugins?color=blue">
+   <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues-pr/TheFireCo/genkit-plugins?color=blue">
+   <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/TheFireCo/genkit-plugins">
+</div>
 
-With this you can achieve a high performing Retrieval Augmentation Generation (RAG) in Generative AI so you do not need to build your own AI Model or retrain the AI Model to get more context or knowledge, instead you can add additional layer of context so that your AI Model can understand more knowledge than what the base AI Model knows. this is useful if you want to get more context or more knowledge based on specific informations or knowledge that you define.
-
-### Example use case :
-You have Restaurant application or website, you can add specific information about your restaurants, address, food menu list with its price and the other specific things, so that when your customer ask something to the AI about your Restaurant, your AI can answer it accurately. this can remove your effort to build a Chatbot, instead you can use Generative AI enriched with specific knowledge.
-
-Example conversation :
-
-`You` : What is the price list of my restaurant in Surabaya City ?
-
-`AI` : Price list :
-- Rawon Setan - Rp. 15.000
-- Lontong Balap - Rp.12.000
-- Rendang - Rp.15.000
+**`genkitx-hnsw`** is a community plugin for using HNSW Vector Store with
+[Firebase GenKit](https://github.com/firebase/genkit). Built by [**The Fire Company**](https://github.com/TheFireCo). 🔥
 
 ## Installation
-Before installing the plugin, ensure you have the following prerequisites installed:
-- [Node.js](https://nodejs.org/) (version 12 or higher)
-- [npm](https://www.npmjs.com/) (usually comes with Node.js installation)
-- [TypeScript](https://www.typescriptlang.org/) (you can install it globally via npm: `npm install -g typescript`)
 
-To install this plugin, you can run this command or with your prefered package manager
+Install the plugin in your project with your favorite package manager:
 
-```bash
-npm install genkitx-hnsw
-```
-
-## Plugin List
-This plugin has several functionality as below :
-- `HNSW Indexer`
-  Used to create a Vector Index based on all the data and information you provided. this Vector Index will be used as a knowledge reference of HNSW Retriever.
-- `HNSW Retriever`
-  Used to get Generative AI response with Gemini Model as a base enriched with additional knowledge and context based on your Vector Index.
+- `npm install genkitx-hnsw`
+- `yarn add genkitx-hnsw`
+- `pnpm add genkitx-hnsw`
 
 ## Usage
+
 
 ## Usage HNSW Indexer plugin
 This is a usage of Genkit plugin flow to save data into vector store with HNSW Vector Store, Gemini Embedder and Gemini LLM.
 
 #### Data preparations
 Prepare your data or documents in a Folder
-![Restaurants data](https://github.com/retzd-tech/genkitx-hnsw/blob/main/assets/restaurants-data.png?raw=true)
+![Restaurants data](https://github.com/TheFireCo/genkit-plugins/blob/main/plugins/hnsw/assets/restaurants-data.png?raw=true)
 
 #### Register HNSW Indexer Plugin
 Import the plugin into your Genkit project
@@ -74,10 +58,10 @@ Execute the flow with Input and Output required parameter
 - `dataPath` : Your data and other documents path to be learned by the AI
 - `indexOutputPath` : Your expected output path for your Vector Store Index that is processed based on the data and documents you provided
 
-![Genkit UI HNSW Indexer Flow](https://github.com/retzd-tech/genkitx-hnsw/blob/main/assets/hnsw-indexer-flow.png?raw=true)
+![Genkit UI HNSW Indexer Flow](https://github.com/TheFireCo/genkit-plugins/blob/main/plugins/hnsw/assets/hnsw-indexer-flow.png?raw=true)
 
 #### Vector Store Index Result
-![HNSW Vector](https://github.com/retzd-tech/genkitx-hnsw/blob/main/assets/hnsw-indexer-result.png?raw=true)
+![HNSW Vector](https://github.com/retzd-tech/TheFireCo/genkit-plugins/blob/main/plugins/hnsw/assets/hnsw-indexer-result.png?raw=true)
 Vector store will be saved in the defined output path. this index will be used for the prompt generation process with the HNSW Retriever plugin. you can continue the implementation by using the HNSW Retriever plugin 
 
 ### Optional Parameter
@@ -92,7 +76,6 @@ Vector store will be saved in the defined output path. this index will be used f
 
 ## Usage HNSW Retriever plugin
 This is a usage of Genkit plugin flow to process your prompt with Gemini LLM Model enriched with additional and specific information or knowledge within the HNSW Vector Database you provided. with this plugin you will get LLM response with additional specific context.
-
 
 #### Register HNSW Retriever Plugin
 Import the plugin into your Genkit project
@@ -119,7 +102,7 @@ In this example, Let's try to ask about the price list information of a restaura
 
 We can type the prompt and run it, after the flow finished, you will get response enriched with specific knowledge based on your Vector Index.
 
-![Genkit UI Prompt Result](https://github.com/retzd-tech/genkit-hnsw/blob/main/assets/hnsw-retriever-flow.png?raw=true)
+![Genkit UI Prompt Result](https://github.com/TheFireCo/genkit-plugins/blob/main/plugins/hnsw/assets/hnsw-retriever-flow.png?raw=true)
 
 ### Optional Parameter
   - `temperature: number`
@@ -143,4 +126,21 @@ We can type the prompt and run it, after the flow finished, you will get respons
 
     `default value : []`
 
-License : Apache 2.0
+## Contributing
+
+Want to contribute to the project? That's awesome! Head over to our [Contribution Guidelines](https://github.com/TheFireCo/genkit-plugins/blob/main/CONTRIBUTING.md).
+
+## Need support?
+
+> \[!NOTE\]\
+> This repository depends on Google's Firebase Genkit. For issues and questions related to GenKit, please refer to instructions available in [GenKit's repository](https://github.com/firebase/genkit).
+
+Reach out by opening a discussion on [Github Discussions](https://github.com/TheFireCo/genkit-plugins/discussions).
+
+## Credits
+
+This plugin is proudly maintained by the team at [**The Fire Company**](https://github.com/TheFireCo). 🔥
+
+## License
+
+This project is licensed under the [Apache 2.0 License](https://github.com/TheFireCo/genkit-plugins/blob/main/LICENSE).
