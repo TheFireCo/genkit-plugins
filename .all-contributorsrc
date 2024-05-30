@@ -84,6 +84,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "retzd-tech",
+      "name": "Surahutomo Aziz Pradana",
+      "avatar_url": "https://avatars.githubusercontent.com/u/29590303?v=4",
+      "profile": "https://www.linkedin.com/in/retzd",
+      "contributions": [
+        "code",
+        "doc",
+        "test"
+      ]
     }
   ]
 }
