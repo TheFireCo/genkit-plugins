@@ -89,19 +89,21 @@ When you are done, make sure to create a Pull Request with `main` as the base br
 
 ### Building the Project
 
-You can build the package with npm:
+You can build the package with npm from the root directory:
 
 ```
 npm run build
 ```
 
+Or with the `npm: build` VSCode task. More about VSCode tasks [here](https://code.visualstudio.com/Docs/editor/tasks).
+
 ### Testing
 
 If you add code you need to add tests! If your pull request reduces our test coverage because it lacks tests then it will be rejected.
 
-Tests can be added in the `tests` subfolder. As an example, please take a look at the tests which are already there.
+Tests can be added in the `tests` subfolder of each of the plugins. As an example, please take a look at the tests which are already there.
 
-You can then run tests with npm:
+You can then run tests with npm from the root directory:
 
 ```
 npm run test
