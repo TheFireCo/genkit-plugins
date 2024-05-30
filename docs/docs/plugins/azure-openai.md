@@ -1,6 +1,6 @@
 ---
 id: genkitx-azure-openai
-title:  🚧 genkitx-azure-openai
+title: 🚧 genkitx-azure-openai
 ---
 
 :::warning
