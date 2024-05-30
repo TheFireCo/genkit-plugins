@@ -87,6 +87,9 @@ This repository is proudly maintained by the team at [**The Fire Company**](http
       <td align="center" valign="top" width="14.28%"><a href="https://calenwu.com"><img src="https://avatars.githubusercontent.com/u/23285716?v=4?s=100" width="100px;" alt="Georg Ye"/><br /><sub><b>Georg Ye</b></sub></a><br /><a href="#code-calenwu" title="Code">💻</a> <a href="#doc-calenwu" title="Documentation">📖</a> <a href="#test-calenwu" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://michaeldoyle.dev"><img src="https://avatars.githubusercontent.com/u/2858322?v=4?s=100" width="100px;" alt="Michael Doyle"/><br /><sub><b>Michael Doyle</b></sub></a><br /><a href="#code-MichaelDoyle" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/retzd"><img src="https://avatars.githubusercontent.com/u/29590303?v=4?s=100" width="100px;" alt="Surahutomo Aziz Pradana"/><br /><sub><b>Surahutomo Aziz Pradana</b></sub></a><br /><a href="#code-retzd-tech" title="Code">💻</a> <a href="#doc-retzd-tech" title="Documentation">📖</a> <a href="#test-retzd-tech" title="Tests">⚠️</a></td>
+    </tr>
   </tbody>
 </table>
 
