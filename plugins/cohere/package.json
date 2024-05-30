@@ -21,7 +21,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@genkit-ai/ai": "0.5.0",
-    "@genkit-ai/core": "0.5.0",
+    "@genkit-ai/core": "0.5.2",
     "cohere-ai": "^7.9.5",
     "zod": "^3.22.4"
   },
