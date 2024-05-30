@@ -34,6 +34,7 @@ This repository contains community plugins for
 ### Vector Store Plugins
 
 - [`genkitx-convex`](plugins/convex/README.md) - Plugin for Convex Vector Stores
+- [`genkitx-hnsw`](plugins/hnsw/README.md) - Plugin for HNSW Vector Stores
 
 ## Installation
 
