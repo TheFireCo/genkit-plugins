@@ -19,7 +19,7 @@
 </br>
 
 This repository contains community plugins for
-[Firebase GenKit](https://github.com/firebase/genkit). Built by [**The Fire Company**](https://github.com/TheFireCo). 🔥
+[Firebase Genkit](https://github.com/firebase/genkit). Built by [**The Fire Company**](https://github.com/TheFireCo). 🔥
 
 ## Available plugins
 
@@ -48,7 +48,7 @@ Install the plugin in your project with your favorite package manager. For examp
 
 Usage examples of the plugins are available [here](https://github.com/TheFireCo/genkit-plugins/blob/main/examples/README.md).
 
-For more detailed information on how to use GenKit plugins, please refer to the [official Genkit documentation](https://firebase.google.com/docs/genkit/get-started).
+For more detailed information on how to use Genkit plugins, please refer to the [official Genkit documentation](https://firebase.google.com/docs/genkit/get-started).
 
 ## Showcase
 
@@ -64,7 +64,7 @@ Want to contribute to the project? That's awesome! Head over to our [Contributio
 ## Need support?
 
 > [!NOTE]  
-> This repository depends on Google's Firebase Genkit. For issues and questions related to GenKit, please refer to instructions available in [GenKit's repository](https://github.com/firebase/genkit).
+> This repository depends on Google's Firebase Genkit. For issues and questions related to Genkit, please refer to instructions available in [Genkit's repository](https://github.com/firebase/genkit).
 
 Reach out by opening a discussion on [Github Discussions](https://github.com/TheFireCo/genkit-plugins/discussions).
 
