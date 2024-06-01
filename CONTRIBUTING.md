@@ -30,11 +30,11 @@ By participating in this project, you agree to abide by our [Code of Conduct](CO
 
 ## License
 
-By participating in this project and submitting contributions, you agree to license your contributions under the [project license](LICENSE.md).
+By participating in this project and submitting contributions, you agree to license your contributions under the [project license](LICENSE).
 
 ## Questions
 
-If you have any support questions, please open a [GitHub discussion](https://github.com/TheFireCo/genkit-plugins/discussion). The GitHub issue tracker is not for support-related requests.
+If you have any support questions, please open a [GitHub discussion](https://github.com/TheFireCo/genkit-plugins/discussions). The GitHub issue tracker is not for support-related requests.
 
 ## Feature Requests
 
@@ -54,7 +54,7 @@ If you find a bug in the source code, you can help us by submitting an issue or,
 
 Working on your first open source project or pull request? Here are some helpful tutorials:
 
-- [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github)
+- [How to Contribute to an Open Source Project on GitHub](https://egghead.io/courses/how-to-contribute-to-an-open-source-project-on-github)
 - [Make a Pull Request](https://makeapullrequest.com/)
 - [First Timers Only](http://www.firsttimersonly.com)
 
