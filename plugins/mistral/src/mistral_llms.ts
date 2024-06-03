@@ -19,7 +19,9 @@ import {
   CandidateData,
   defineModel,
   GenerateRequest,
+  GenerationCommonConfigSchema,
   MessageData,
+  ModelAction,
   modelRef,
   Part,
   Role,
@@ -38,13 +40,6 @@ import type {
 
 import z from 'zod';
 
-export const MistralConfigSchema = z.object({
-  temperature: z.number().min(0).max(1).optional(),
-  maxTokens: z.number().int().optional(),
-  topP: z.number().min(0).max(1).optional(),
-  stopSequences: z.array(z.string()).optional(),
-});
-
 export const openMistral7B = modelRef({
   name: 'mistral/open-mistral-7b',
   info: {
@@ -58,7 +53,7 @@ export const openMistral7B = modelRef({
       output: ['text', 'json'],
     },
   },
-  configSchema: MistralConfigSchema,
+  configSchema: GenerationCommonConfigSchema,
 });
 
 export const openMistral8x7B = modelRef({
@@ -104,7 +99,7 @@ export const openMistralSmall = modelRef({
       output: ['text', 'json'],
     },
   },
-  configSchema: MistralConfigSchema,
+  configSchema: GenerationCommonConfigSchema,
 });
 
 export const openMistralMedium = modelRef({
@@ -120,7 +115,7 @@ export const openMistralMedium = modelRef({
       output: ['text', 'json'],
     },
   },
-  configSchema: MistralConfigSchema,
+  configSchema: GenerationCommonConfigSchema,
 });
 
 export const openMistralLarge = modelRef({
@@ -136,7 +131,7 @@ export const openMistralLarge = modelRef({
       output: ['text', 'json'],
     },
   },
-  configSchema: MistralConfigSchema,
+  configSchema: GenerationCommonConfigSchema,
 });
 
 function toMistralRole(role: Role): string {
@@ -254,27 +249,15 @@ function fromMistralChunkChoice(
 
 export function toMistralRequestBody(
   modelName: string,
-  request: GenerateRequest
+  request: GenerateRequest<typeof GenerationCommonConfigSchema>
 ) {
-  const mapToSnakeCase = <T extends Record<string, any>>(
-    obj: T
-  ): Record<string, any> => {
-    return Object.entries(obj).reduce((acc, [key, value]) => {
-      const snakeCaseKey = key.replace(
-        /[A-Z]/g,
-        (letter) => `_${letter.toLowerCase()}`
-      );
-      acc[snakeCaseKey] = value;
-      return acc;
-    }, {});
-  };
   const model = SUPPORTED_MISTRAL_MODELS[modelName];
   if (!model) throw new Error(`Unsupported model: ${modelName}`);
   const mistralMessages = toMistralMessages(request.messages);
   const mappedModelName = request.config?.version || modelName;
 
   let responseFormat;
-  if (request.config?.responseFormat !== 'json') {
+  if (request.output?.format !== 'json') {
     responseFormat = { type: 'json_object' };
   } else {
     responseFormat = null;
@@ -283,13 +266,12 @@ export function toMistralRequestBody(
     messages: mistralMessages,
     tools: request.tools?.map(toMistralTool),
     model: mappedModelName,
-    max_tokens: request.config?.maxTokens,
+    max_tokens: request.config?.maxOutputTokens,
     temperature: request.config?.temperature,
     top_p: request.config?.topP,
     n: request.candidates,
     stop_sequences: request.config?.stopSequences,
     responseFormat: responseFormat,
-    ...mapToSnakeCase(request.config?.custom || {}),
   } as ChatRequest;
 
   for (const key in body) {
@@ -299,7 +281,10 @@ export function toMistralRequestBody(
   return body;
 }
 
-export function mistralModel(name: string, client: any) {
+export function mistralModel(
+  name: string,
+  client: any
+): ModelAction<typeof GenerationCommonConfigSchema> {
   //Ugly any type, should be MistralClient but cannot import it here
   const modelId = `mistral/${name}`;
   const model = SUPPORTED_MISTRAL_MODELS[name];

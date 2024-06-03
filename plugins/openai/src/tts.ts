@@ -16,6 +16,7 @@
 
 import { Message } from '@genkit-ai/ai';
 import {
+  GenerationCommonConfigSchema,
   defineModel,
   modelRef,
   type GenerateRequest,
@@ -26,7 +27,7 @@ import OpenAI from 'openai';
 import { type SpeechCreateParams } from 'openai/resources/audio/index.mjs';
 import { z } from 'zod';
 
-export const TTSConfigSchema = z.object({
+export const TTSConfigSchema = GenerationCommonConfigSchema.extend({
   voice: z
     .enum(['alloy', 'echo', 'fable', 'onyx', 'nova', 'shimmer'])
     .optional()
@@ -83,17 +84,15 @@ export const RESPONSE_FORMAT_MEDIA_TYPES = {
 
 function toTTSRequest(
   modelName: string,
-  request: GenerateRequest & {
-    config?: { custom?: z.infer<typeof TTSConfigSchema> };
-  }
+  request: GenerateRequest<typeof TTSConfigSchema>
 ): SpeechCreateParams {
   const mappedModelName = request.config?.version || modelName;
   const options: SpeechCreateParams = {
     model: mappedModelName,
     input: new Message(request.messages[0]).text(),
-    voice: request.config?.custom?.voice ?? 'alloy',
-    speed: request.config?.custom?.speed,
-    response_format: request.config?.custom?.response_format,
+    voice: request.config?.voice ?? 'alloy',
+    speed: request.config?.speed,
+    response_format: request.config?.response_format,
   };
   for (const k in options) {
     if (options[k] === undefined) {

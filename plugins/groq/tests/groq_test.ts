@@ -118,7 +118,7 @@ describe('toGroqRequestBody', () => {
     config: {
       temperature: 0.7,
       stopSequences: ['\n'],
-      maxTokens: 100,
+      maxOutputTokens: 100,
       topP: 0.9,
       frequencyPenalty: 0.5,
       logitBias: {

@@ -310,10 +310,8 @@ describe('toAnthropicRequestBody', () => {
         ],
         output: { format: 'text' },
         config: {
-          custom: {
-            metadata: {
-              user_id: 'exampleUser123',
-            },
+          metadata: {
+            user_id: 'exampleUser123',
           },
         },
       },
@@ -345,10 +343,8 @@ describe('toAnthropicRequestBody', () => {
         ],
         output: { format: 'text' },
         config: {
-          custom: {
-            metadata: {
-              user_id: 'exampleUser123',
-            },
+          metadata: {
+            user_id: 'exampleUser123',
           },
         },
       },
@@ -380,10 +376,8 @@ describe('toAnthropicRequestBody', () => {
         ],
         output: { format: 'text' },
         config: {
-          custom: {
-            metadata: {
-              user_id: 'exampleUser123',
-            },
+          metadata: {
+            user_id: 'exampleUser123',
           },
         },
       },
