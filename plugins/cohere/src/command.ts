@@ -398,7 +398,7 @@ export function toCohereRequestBody(
   };
   const model = SUPPORTED_COMMAND_MODELS[modelName];
   if (!model) throw new Error(`Unsupported model: ${modelName}`);
-  const mappedModelName = request.config?.version || modelName;
+  const mappedModelName = request.config?.version || model.version || modelName;
   const messageHistory = toCohereMessageHistory(request.messages);
   const body: Cohere.ChatRequest = {
     message: messageHistory[0].message,
