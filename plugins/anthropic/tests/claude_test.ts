@@ -16,16 +16,25 @@
 
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
-import { type GenerateRequest, type MessageData } from '@genkit-ai/ai/model';
+import {
+  GenerateResponseData,
+  type GenerateRequest,
+  type MessageData,
+} from '@genkit-ai/ai/model';
 import type Anthropic from '@anthropic-ai/sdk';
-import { toAnthropicMessages, toAnthropicRequestBody } from '../src/claude.js';
+import {
+  AnthropicConfigSchema,
+  fromAnthropicResponse,
+  toAnthropicMessages,
+  toAnthropicRequestBody,
+} from '../src/claude.js';
 
 describe('toAnthropicMessages', () => {
   const testCases: {
     should: string;
     inputMessages: MessageData[];
     expectedOutput: {
-      messages: Anthropic.Beta.Tools.ToolsBetaMessageParam[];
+      messages: Anthropic.MessageParam[];
       system?: string;
     };
   }[] = [
@@ -90,6 +99,43 @@ describe('toAnthropicMessages', () => {
                   {
                     type: 'text',
                     text: 'Why did the bob cross the road?',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+        system: undefined,
+      },
+    },
+    {
+      should: 'should transform tool response complex object content correctly',
+      inputMessages: [
+        {
+          role: 'tool',
+          content: [
+            {
+              toolResponse: {
+                ref: 'call_SVDpFV2l2fW88QRFtv85FWwM',
+                name: 'tellAFunnyJoke',
+                output: { joke: 'Why did the bob cross the road?' },
+              },
+            },
+          ],
+        },
+      ],
+      expectedOutput: {
+        messages: [
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'tool_result',
+                tool_use_id: 'call_SVDpFV2l2fW88QRFtv85FWwM',
+                content: [
+                  {
+                    type: 'text',
+                    text: '{"joke":"Why did the bob cross the road?"}',
                   },
                 ],
               },
@@ -298,8 +344,8 @@ describe('toAnthropicRequestBody', () => {
   const testCases: {
     should: string;
     modelName: string;
-    genkitRequest: GenerateRequest;
-    expectedOutput: Anthropic.Beta.Tools.Messages.MessageCreateParams;
+    genkitRequest: GenerateRequest<typeof AnthropicConfigSchema>;
+    expectedOutput: Anthropic.Messages.MessageCreateParams;
   }[] = [
     {
       should: '(claude-3-opus) handles request with text messages',
@@ -407,6 +453,99 @@ describe('toAnthropicRequestBody', () => {
         test.modelName,
         test.genkitRequest
       );
+      assert.deepStrictEqual(actualOutput, test.expectedOutput);
+    });
+  }
+});
+
+describe('fromAnthropicResponse', () => {
+  const testCases: {
+    should: string;
+    input: Anthropic.Message;
+    expectedOutput: GenerateResponseData;
+  }[] = [
+    {
+      should: 'should transform tool response content correctly',
+      input: {
+        id: 'id',
+        model: 'modelId',
+        role: 'assistant',
+        stop_reason: 'tool_use',
+        usage: {
+          input_tokens: 0,
+          output_tokens: 0,
+        },
+        stop_sequence: null,
+        type: 'message',
+        content: [
+          {
+            type: 'text',
+            text: 'I need to call a tool.',
+          },
+          {
+            type: 'tool_use',
+            id: 'toolu_01A09q90qw90lq917835lq9',
+            name: 'tellAFunnyJoke',
+            input: { topic: 'bob' },
+          },
+        ],
+      },
+      expectedOutput: {
+        candidates: [
+          {
+            finishReason: 'stop',
+            index: 0,
+            message: {
+              role: 'model',
+              content: [
+                {
+                  text: 'I need to call a tool.',
+                },
+                {
+                  toolRequest: {
+                    ref: 'toolu_01A09q90qw90lq917835lq9',
+                    name: 'tellAFunnyJoke',
+                    input: { topic: 'bob' },
+                  },
+                },
+              ],
+            },
+          },
+        ],
+        usage: {
+          inputTokens: 0,
+          outputTokens: 0,
+        },
+        custom: {
+          id: 'id',
+          model: 'modelId',
+          role: 'assistant',
+          stop_reason: 'tool_use',
+          usage: {
+            input_tokens: 0,
+            output_tokens: 0,
+          },
+          stop_sequence: null,
+          type: 'message',
+          content: [
+            {
+              type: 'text',
+              text: 'I need to call a tool.',
+            },
+            {
+              type: 'tool_use',
+              id: 'toolu_01A09q90qw90lq917835lq9',
+              name: 'tellAFunnyJoke',
+              input: { topic: 'bob' },
+            },
+          ],
+        },
+      },
+    },
+  ];
+  for (const test of testCases) {
+    it(test.should, () => {
+      const actualOutput = fromAnthropicResponse(test.input);
       assert.deepStrictEqual(actualOutput, test.expectedOutput);
     });
   }
