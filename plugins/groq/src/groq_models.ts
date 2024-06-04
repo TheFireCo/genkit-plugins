@@ -19,6 +19,7 @@ import {
   CandidateData,
   defineModel,
   GenerateRequest,
+  GenerationCommonConfigSchema,
   MessageData,
   modelRef,
   Part,
@@ -36,11 +37,7 @@ import {
 
 import z from 'zod';
 
-export const GroqConfigSchema = z.object({
-  temperature: z.number().min(0).max(1).optional(),
-  maxTokens: z.number().int().min(1).max(2048).optional(),
-  topP: z.number().min(0).max(1).optional(),
-  stop: z.string().optional(),
+export const GroqConfigSchema = GenerationCommonConfigSchema.extend({
   stream: z.boolean().optional(),
   frequencyPenalty: z.number().optional(),
   logitBias: z.record(z.number()).optional(),
@@ -397,7 +394,7 @@ export function toGroqRequestBody(
     tools: request.tools?.map(toGroqTool),
     model: request.config?.version || model.version || modelName,
     temperature: request.config?.temperature,
-    max_tokens: request.config?.maxTokens,
+    max_tokens: request.config?.maxOutputTokens,
     top_p: request.config?.topP,
     stop: request.config?.stopSequences,
     n: request.candidates,

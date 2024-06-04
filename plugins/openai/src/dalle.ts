@@ -16,6 +16,7 @@
 
 import { Message } from '@genkit-ai/ai';
 import {
+  GenerationCommonConfigSchema,
   defineModel,
   modelRef,
   type GenerateRequest,
@@ -29,7 +30,7 @@ import {
 } from 'openai/resources/images.mjs';
 import { z } from 'zod';
 
-export const DallE3ConfigSchema = z.object({
+export const DallE3ConfigSchema = GenerationCommonConfigSchema.extend({
   size: z.enum(['1024x1024', '1792x1024', '1024x1792']).optional(),
   style: z.enum(['vivid', 'natural']).optional(),
   user: z.string().optional(),
@@ -53,19 +54,17 @@ export const dallE3 = modelRef({
 });
 
 function toDallE3Request(
-  request: GenerateRequest & {
-    config?: { custom?: z.infer<typeof DallE3ConfigSchema> };
-  }
+  request: GenerateRequest<typeof DallE3ConfigSchema>
 ): ImageGenerateParams {
   const options = {
     model: 'dall-e-3',
     prompt: new Message(request.messages[0]).text(),
     n: request.candidates || 1,
-    size: request.config?.custom?.size,
-    style: request.config?.custom?.style,
-    user: request.config?.custom?.user,
-    quality: request.config?.custom?.quality,
-    response_format: request.config?.custom?.response_format || 'b64_json',
+    size: request.config?.size,
+    style: request.config?.style,
+    user: request.config?.user,
+    quality: request.config?.quality,
+    response_format: request.config?.response_format || 'b64_json',
   };
   for (const k in options) {
     if (options[k] === undefined) {

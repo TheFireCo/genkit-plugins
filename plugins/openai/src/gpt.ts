@@ -16,6 +16,8 @@
 
 import { Message } from '@genkit-ai/ai';
 import {
+  GenerationCommonConfigSchema,
+  ModelAction,
   defineModel,
   modelRef,
   type CandidateData,
@@ -53,7 +55,7 @@ const MODELS_SUPPORTING_OPENAI_RESPONSE_FORMAT = [
   'gpt-3.5-turbo-1106',
 ];
 
-export const OpenAiConfigSchema = z.object({
+export const OpenAiConfigSchema = GenerationCommonConfigSchema.extend({
   frequencyPenalty: z.number().min(-2).max(2).optional(),
   logitBias: z.record(z.string(), z.number().min(-100).max(100)).optional(),
   logProbs: z.boolean().optional(),
@@ -408,20 +410,8 @@ function fromOpenAiChunkChoice(
  */
 export function toOpenAiRequestBody(
   modelName: string,
-  request: GenerateRequest
+  request: GenerateRequest<typeof OpenAiConfigSchema>
 ) {
-  const mapToSnakeCase = <T extends Record<string, any>>(
-    obj: T
-  ): Record<string, any> => {
-    return Object.entries(obj).reduce((acc, [key, value]) => {
-      const snakeCaseKey = key.replace(
-        /[A-Z]/g,
-        (letter) => `_${letter.toLowerCase()}`
-      );
-      acc[snakeCaseKey] = value;
-      return acc;
-    }, {});
-  };
   const model = SUPPORTED_GPT_MODELS[modelName];
   if (!model) throw new Error(`Unsupported model: ${modelName}`);
   const openAiMessages = toOpenAiMessages(
@@ -430,15 +420,21 @@ export function toOpenAiRequestBody(
   );
   const mappedModelName = request.config?.version || model.version || modelName;
   const body = {
-    messages: openAiMessages,
-    tools: request.tools?.map(toOpenAiTool),
     model: mappedModelName,
-    max_tokens: request.config?.maxOutputTokens,
+    messages: openAiMessages,
     temperature: request.config?.temperature,
+    max_tokens: request.config?.maxOutputTokens,
     top_p: request.config?.topP,
-    n: request.candidates,
     stop: request.config?.stopSequences,
-    ...mapToSnakeCase(request.config?.custom || {}),
+    frequency_penalty: request.config?.frequencyPenalty,
+    logit_bias: request.config?.logitBias,
+    logprobs: request.config?.logProbs, // logprobs not snake case!
+    presence_penalty: request.config?.presencePenalty,
+    seed: request.config?.seed,
+    top_logprobs: request.config?.topLogProbs, // logprobs not snake case!
+    user: request.config?.user,
+    tools: request.tools?.map(toOpenAiTool),
+    n: request.candidates,
   } as ChatCompletionCreateParamsNonStreaming;
 
   const response_format = request.output?.format;
@@ -480,7 +476,10 @@ export function toOpenAiRequestBody(
  * @returns The defined GPT model.
  * @throws An error if the specified model is not supported.
  */
-export function gptModel(name: string, client: OpenAI) {
+export function gptModel(
+  name: string,
+  client: OpenAI
+): ModelAction<typeof OpenAiConfigSchema> {
   const modelId = `openai/${name}`;
   const model = SUPPORTED_GPT_MODELS[name];
   if (!model) throw new Error(`Unsupported model: ${name}`);

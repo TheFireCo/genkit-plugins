@@ -16,6 +16,7 @@
 
 import { Message } from '@genkit-ai/ai';
 import {
+  GenerationCommonConfigSchema,
   defineModel,
   modelRef,
   type GenerateRequest,
@@ -29,7 +30,7 @@ import {
 } from 'openai/resources/audio/index.mjs';
 import { z } from 'zod';
 
-export const Whisper1ConfigSchema = z.object({
+export const Whisper1ConfigSchema = GenerationCommonConfigSchema.extend({
   language: z.string().optional(),
   timestamp_granularities: z.array(z.enum(['word', 'segment'])).optional(),
   response_format: z
@@ -53,9 +54,7 @@ export const whisper1 = modelRef({
 });
 
 function toWhisper1Request(
-  request: GenerateRequest & {
-    config?: { custom?: z.infer<typeof Whisper1ConfigSchema> };
-  }
+  request: GenerateRequest<typeof Whisper1ConfigSchema>
 ): TranscriptionCreateParams {
   const message = new Message(request.messages[0]);
   const media = message.media();
@@ -76,21 +75,24 @@ function toWhisper1Request(
     file: mediaFile,
     prompt: message.text(),
     temperature: request.config?.temperature,
-    language: request.config?.custom?.language,
-    timestamp_granularities: request.config?.custom?.timestamp_granularities,
+    language: request.config?.language,
+    timestamp_granularities: request.config?.timestamp_granularities,
   };
   const outputFormat = request.output?.format;
-  const customFormat = request.config?.custom?.response_format;
+  const customFormat = request.config?.response_format;
   if (outputFormat && customFormat) {
     if (
       outputFormat === 'json' &&
       customFormat !== 'json' &&
-      customFormat !== 'json_verbose'
+      customFormat !== 'verbose_json'
     ) {
       throw new Error(
         `Custom response format ${customFormat} is not compatible with output format ${outputFormat}`
       );
     }
+  }
+  if (outputFormat === 'media') {
+    throw new Error(`Output format ${outputFormat} is not supported.`);
   }
   options.response_format = customFormat || outputFormat || 'text';
   for (const k in options) {

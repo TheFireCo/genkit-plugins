@@ -19,7 +19,9 @@ import {
   CandidateData,
   defineModel,
   GenerateRequest,
+  GenerationCommonConfigSchema,
   MessageData,
+  ModelAction,
   modelRef,
   Part,
   Role,
@@ -31,7 +33,7 @@ import { ChatStreamEndEventFinishReason } from 'cohere-ai/api';
 
 import z from 'zod';
 
-export const CohereConfigSchema = z.object({
+export const CohereConfigSchema = GenerationCommonConfigSchema.extend({
   frequencyPenalty: z.number().min(-2).max(2).optional(),
   logitBias: z.record(z.string(), z.number().min(-100).max(100)).optional(),
   logProbs: z.boolean().optional(),
@@ -381,21 +383,9 @@ function fromCohereStreamEvent(
 
 export function toCohereRequestBody(
   modelName: string,
-  request: GenerateRequest
+  request: GenerateRequest<typeof CohereConfigSchema>
 ): Cohere.ChatRequest | Cohere.ChatStreamRequest {
   // Note: these types are the same in the Cohere API (not on the surface, e.g. one uses ChatRequestToolResultsItem and the other uses ChatStreamRequestToolResultsItem, but when the types are unwrapped they are exactly the same)
-  const mapToSnakeCase = <T extends Record<string, any>>(
-    obj: T
-  ): Record<string, any> => {
-    return Object.entries(obj).reduce((acc, [key, value]) => {
-      const snakeCaseKey = key.replace(
-        /[A-Z]/g,
-        (letter) => `_${letter.toLowerCase()}`
-      );
-      acc[snakeCaseKey] = value;
-      return acc;
-    }, {});
-  };
   const model = SUPPORTED_COMMAND_MODELS[modelName];
   if (!model) throw new Error(`Unsupported model: ${modelName}`);
   const mappedModelName = request.config?.version || model.version || modelName;
@@ -423,7 +413,6 @@ export function toCohereRequestBody(
     rawPrompting: request.config?.rawPrompting,
     tools: request.tools?.map(toCohereTool),
     // toolResults: request.messages?.map(toCohereToolResult),
-    ...mapToSnakeCase(request.config?.custom || {}),
   };
 
   for (const key in body) {
@@ -436,7 +425,10 @@ export function toCohereRequestBody(
 /**
  *
  */
-export function commandModel(name: string, client: CohereClient) {
+export function commandModel(
+  name: string,
+  client: CohereClient
+): ModelAction<typeof CohereConfigSchema> {
   const modelId = `cohere/${name}`;
   const model = SUPPORTED_COMMAND_MODELS[name];
   if (!model) throw new Error(`Unsupported model: ${name}`);

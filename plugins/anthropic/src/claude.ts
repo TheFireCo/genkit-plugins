@@ -16,6 +16,8 @@
 
 import { Message } from '@genkit-ai/ai';
 import {
+  GenerationCommonConfigSchema,
+  ModelAction,
   defineModel,
   modelRef,
   type CandidateData,
@@ -29,19 +31,21 @@ import {
 import Anthropic from '@anthropic-ai/sdk';
 import z from 'zod';
 
-const AnthropicConfigSchema = z.object({
-  tool_choice: z.union([
-    z.object({
-      type: z.literal('auto'),
-    }),
-    z.object({
-      type: z.literal('any'),
-    }),
-    z.object({
-      type: z.literal('tool'),
-      name: z.string(),
-    }),
-  ]),
+const AnthropicConfigSchema = GenerationCommonConfigSchema.extend({
+  tool_choice: z
+    .union([
+      z.object({
+        type: z.literal('auto'),
+      }),
+      z.object({
+        type: z.literal('any'),
+      }),
+      z.object({
+        type: z.literal('tool'),
+        name: z.string(),
+      }),
+    ])
+    .optional(),
   metadata: z
     .object({
       user_id: z.string().optional(),
@@ -391,7 +395,7 @@ function fromAnthropicContentBlockChunk(
  */
 export function toAnthropicRequestBody(
   modelName: string,
-  request: GenerateRequest,
+  request: GenerateRequest<typeof AnthropicConfigSchema>,
   stream?: boolean
 ): Anthropic.Beta.Tools.Messages.MessageCreateParams {
   const model = SUPPORTED_CLAUDE_MODELS[modelName];
@@ -408,8 +412,9 @@ export function toAnthropicRequestBody(
     top_p: request.config?.topP,
     temperature: request.config?.temperature,
     stop_sequences: request.config?.stopSequences,
+    metadata: request.config?.metadata,
+    tool_choice: request.config?.tool_choice,
     stream,
-    ...(request.config?.custom || {}),
   };
 
   if (request.output?.format && request.output.format !== 'text') {
@@ -431,7 +436,10 @@ export function toAnthropicRequestBody(
  * @returns The defined Claude model.
  * @throws An error if the specified model is not supported.
  */
-export function claudeModel(name: string, client: Anthropic) {
+export function claudeModel(
+  name: string,
+  client: Anthropic
+): ModelAction<typeof AnthropicConfigSchema> {
   const modelId = `anthropic/${name}`;
   const model = SUPPORTED_CLAUDE_MODELS[name];
   if (!model) throw new Error(`Unsupported model: ${name}`);

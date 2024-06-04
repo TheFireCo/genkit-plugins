@@ -17,7 +17,11 @@
 import { GenerateRequest, MessageData } from '@genkit-ai/ai/model';
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
-import { toOpenAiMessages, toOpenAiRequestBody } from '../src/gpt.js';
+import {
+  OpenAiConfigSchema,
+  toOpenAiMessages,
+  toOpenAiRequestBody,
+} from '../src/gpt.js';
 
 describe('toOpenAiMessages', () => {
   const testCases = [
@@ -145,20 +149,18 @@ describe('toOpenAiRequestBody', () => {
         tools: [],
         output: { format: 'text' },
         config: {
-          custom: {
-            frequencyPenalty: 0.7,
-            logitBias: {
-              science: 12,
-              technology: 8,
-              politics: -5,
-              sports: 3,
-            },
-            logProbs: true,
-            presencePenalty: -0.3,
-            seed: 42,
-            topLogProbs: 10,
-            user: 'exampleUser123',
+          frequencyPenalty: 0.7,
+          logitBias: {
+            science: 12,
+            technology: 8,
+            politics: -5,
+            sports: 3,
           },
+          logProbs: true,
+          presencePenalty: -0.3,
+          seed: 42,
+          topLogProbs: 10,
+          user: 'exampleUser123',
         },
       },
       expectedOutput: {
@@ -177,10 +179,10 @@ describe('toOpenAiRequestBody', () => {
           politics: -5,
           sports: 3,
         },
-        log_probs: true,
+        logprobs: true,
         presence_penalty: -0.3,
         seed: 42,
-        top_log_probs: 10,
+        top_logprobs: 10,
         user: 'exampleUser123',
       },
     },
@@ -571,7 +573,7 @@ describe('toOpenAiRequestBody', () => {
     it(test.should, () => {
       const actualOutput = toOpenAiRequestBody(
         test.modelName,
-        test.genkitRequest as GenerateRequest
+        test.genkitRequest as GenerateRequest<typeof OpenAiConfigSchema>
       );
       assert.deepStrictEqual(actualOutput, test.expectedOutput);
     });
@@ -720,11 +722,11 @@ describe('toOpenAiRequestBody', () => {
     };
     const actualOutput1 = toOpenAiRequestBody(
       modelName,
-      genkitRequestTextFormat as GenerateRequest
+      genkitRequestTextFormat as GenerateRequest<typeof OpenAiConfigSchema>
     );
     const actualOutput2 = toOpenAiRequestBody(
       modelName,
-      genkitRequestJsonFormat as GenerateRequest
+      genkitRequestJsonFormat as GenerateRequest<typeof OpenAiConfigSchema>
     );
     assert.deepStrictEqual(actualOutput1, expectedOutput);
     assert.deepStrictEqual(actualOutput2, expectedOutput);
@@ -872,11 +874,11 @@ describe('toOpenAiRequestBody', () => {
     };
     const actualOutput1 = toOpenAiRequestBody(
       modelName,
-      genkitRequestTextFormat as GenerateRequest
+      genkitRequestTextFormat as GenerateRequest<typeof OpenAiConfigSchema>
     );
     const actualOutput2 = toOpenAiRequestBody(
       modelName,
-      genkitRequestJsonFormat as GenerateRequest
+      genkitRequestJsonFormat as GenerateRequest<typeof OpenAiConfigSchema>
     );
     assert.deepStrictEqual(actualOutput1, expectedOutput);
     assert.deepStrictEqual(actualOutput2, expectedOutput);
