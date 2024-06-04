@@ -254,7 +254,7 @@ export function toMistralRequestBody(
   const model = SUPPORTED_MISTRAL_MODELS[modelName];
   if (!model) throw new Error(`Unsupported model: ${modelName}`);
   const mistralMessages = toMistralMessages(request.messages);
-  const mappedModelName = request.config?.version || modelName;
+  const mappedModelName = request.config?.version || model.version || modelName;
 
   let responseFormat;
   if (request.output?.format !== 'json') {

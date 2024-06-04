@@ -31,12 +31,6 @@ import {
 import Anthropic from '@anthropic-ai/sdk';
 import z from 'zod';
 
-const API_NAME_MAP: Record<string, string> = {
-  'claude-3-opus': 'claude-3-opus-20240229',
-  'claude-3-sonnet': 'claude-3-sonnet-20240229',
-  'claude-3-haiku': 'claude-3-haiku-20240307',
-};
-
 const AnthropicConfigSchema = GenerationCommonConfigSchema.extend({
   tool_choice: z
     .union([
@@ -73,6 +67,7 @@ export const claude3Opus = modelRef({
     },
   },
   configSchema: AnthropicConfigSchema,
+  version: 'claude-3-opus-20240229',
 });
 
 export const claude3Sonnet = modelRef({
@@ -89,6 +84,7 @@ export const claude3Sonnet = modelRef({
     },
   },
   configSchema: AnthropicConfigSchema,
+  version: 'claude-3-sonnet-20240229',
 });
 
 export const claude3Haiku = modelRef({
@@ -105,6 +101,7 @@ export const claude3Haiku = modelRef({
     },
   },
   configSchema: AnthropicConfigSchema,
+  version: 'claude-3-haiku-20240307',
 });
 
 export const SUPPORTED_CLAUDE_MODELS: Record<
@@ -404,7 +401,7 @@ export function toAnthropicRequestBody(
   const model = SUPPORTED_CLAUDE_MODELS[modelName];
   if (!model) throw new Error(`Unsupported model: ${modelName}`);
   const { system, messages } = toAnthropicMessages(request.messages);
-  const mappedModelName = API_NAME_MAP[modelName] || modelName;
+  const mappedModelName = request.config?.version || model.version || modelName;
   const body: Anthropic.Beta.Tools.MessageCreateParams = {
     system,
     messages,

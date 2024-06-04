@@ -388,7 +388,7 @@ export function toCohereRequestBody(
   // Note: these types are the same in the Cohere API (not on the surface, e.g. one uses ChatRequestToolResultsItem and the other uses ChatStreamRequestToolResultsItem, but when the types are unwrapped they are exactly the same)
   const model = SUPPORTED_COMMAND_MODELS[modelName];
   if (!model) throw new Error(`Unsupported model: ${modelName}`);
-  const mappedModelName = request.config?.version || modelName;
+  const mappedModelName = request.config?.version || model.version || modelName;
   const messageHistory = toCohereMessageHistory(request.messages);
   const body: Cohere.ChatRequest = {
     message: messageHistory[0].message,

@@ -67,6 +67,7 @@ export const llama3x8b = modelRef({
     },
   },
   configSchema: GroqConfigSchema,
+  version: 'llama3-8b-8192',
 });
 
 // Worst at JSON mode
@@ -85,6 +86,7 @@ export const llama3x70b = modelRef({
     },
   },
   configSchema: GroqConfigSchema,
+  version: 'llama3-70b-8192',
 });
 
 // Best at JSON mode
@@ -102,6 +104,7 @@ export const mixtral8x7b = modelRef({
     },
   },
   configSchema: GroqConfigSchema,
+  version: 'mixtral-8x7b-32768',
 });
 
 // Runner up at JSON mode
@@ -119,6 +122,7 @@ export const gemma7b = modelRef({
     },
   },
   configSchema: GroqConfigSchema,
+  version: 'gemma-7b-it',
 });
 
 export const SUPPORTED_GROQ_MODELS = {
@@ -126,13 +130,6 @@ export const SUPPORTED_GROQ_MODELS = {
   'llama-3-70b': llama3x70b,
   'mixtral-8-7b': mixtral8x7b,
   'gemma-7b': gemma7b,
-};
-
-export const DEFAULT_MODEL_VERSION = {
-  'llama-3-8b': 'llama3-8b-8192',
-  'llama-3-70b': 'llama3-70b-8192',
-  'mixtral-8-7b': 'mixtral-8x7b-32768',
-  'gemma-7b': 'gemma-7b-it',
 };
 
 /**
@@ -395,7 +392,7 @@ export function toGroqRequestBody(
   const body: ChatCompletionCreateParamsBase = {
     messages: toGroqMessages(request.messages),
     tools: request.tools?.map(toGroqTool),
-    model: request.config?.version || DEFAULT_MODEL_VERSION[modelName],
+    model: request.config?.version || model.version || modelName,
     temperature: request.config?.temperature,
     max_tokens: request.config?.maxOutputTokens,
     top_p: request.config?.topP,

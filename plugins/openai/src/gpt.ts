@@ -418,7 +418,7 @@ export function toOpenAiRequestBody(
     request.messages,
     request.config?.visualDetailLevel
   );
-  const mappedModelName = request.config?.version || modelName;
+  const mappedModelName = request.config?.version || model.version || modelName;
   const body = {
     model: mappedModelName,
     messages: openAiMessages,
