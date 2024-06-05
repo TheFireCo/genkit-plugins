@@ -33,7 +33,7 @@ export const defaultOptions = {
   clean: true,
   shims: true,
   outDir: 'lib',
-  entry: ['src/**/*.ts'],
+  entry: ['src/**/*.ts', '!src/**/*.test.ts'],
   bundle: false,
   treeshake: false,
 };
