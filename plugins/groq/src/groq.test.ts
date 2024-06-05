@@ -1,5 +1,4 @@
-import assert from 'node:assert';
-import { describe, it } from 'node:test';
+import { describe, it, expect } from '@jest/globals';
 import {
   GenerateRequest,
   MessageData,
@@ -11,30 +10,30 @@ import {
   toGroqRole,
   toGroqTool,
   toGroqMessages,
-} from '../src/groq_models';
+} from './groq_models';
 import { ChatCompletionCreateParamsBase } from 'groq-sdk/resources/chat/completions.mjs';
 
 describe('toGroqRole', () => {
   it('should convert user role correctly', () => {
-    assert.strictEqual(toGroqRole('user'), 'user');
+    expect(toGroqRole('user')).toBe('user');
   });
 
   it('should convert model role to assistant', () => {
-    assert.strictEqual(toGroqRole('model'), 'assistant');
+    expect(toGroqRole('model')).toBe('assistant');
   });
 
   it('should convert system role correctly', () => {
-    assert.strictEqual(toGroqRole('system'), 'system');
+    expect(toGroqRole('system')).toBe('system');
   });
 
   it('should convert tool role correctly', () => {
-    assert.strictEqual(toGroqRole('tool'), 'assistant');
+    expect(toGroqRole('tool')).toBe('assistant');
   });
 
   it('should throw error for unsupported roles', () => {
-    assert.throws(() => toGroqRole('unknown' as Role), {
-      message: "role unknown doesn't map to a Groq role.",
-    });
+    expect(() => toGroqRole('unknown' as Role)).toThrowError(
+      "role unknown doesn't map to a Groq role."
+    );
   });
 });
 
@@ -60,7 +59,7 @@ describe('toGroqTool', () => {
         parameters: tool.inputSchema,
       },
     };
-    assert.deepStrictEqual(toGroqTool(tool), expected);
+    expect(toGroqTool(tool)).toStrictEqual(expected);
   });
 });
 
@@ -104,7 +103,7 @@ describe('toGroqMessages', () => {
         content: 'Sample response',
       },
     ];
-    assert.deepStrictEqual(toGroqMessages(messages), expectedOutput);
+    expect(toGroqMessages(messages)).toStrictEqual(expectedOutput);
   });
 });
 
@@ -165,12 +164,12 @@ describe('toGroqRequestBody', () => {
     };
     const actualOutput = toGroqRequestBody('llama-3-8b', request);
     console.log(`actualOutput.stop: ${actualOutput.stop}`);
-    assert.deepStrictEqual(actualOutput, expectedOutput);
+    expect(actualOutput).toStrictEqual(expectedOutput);
   });
 
   it('should handle unsupported models', () => {
-    assert.throws(() => toGroqRequestBody('unsupported-model', request), {
-      message: 'Unsupported model: unsupported-model',
-    });
+    expect(() => toGroqRequestBody('unsupported-model', request)).toThrowError(
+      'Unsupported model: unsupported-model'
+    );
   });
 });
