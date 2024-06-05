@@ -15,13 +15,12 @@
  */
 
 import { GenerateRequest, MessageData } from '@genkit-ai/ai/model';
-import assert from 'node:assert';
-import { describe, it } from 'node:test';
+import { describe, it, expect } from '@jest/globals';
 import {
   OpenAiConfigSchema,
   toOpenAiMessages,
   toOpenAiRequestBody,
-} from '../src/gpt.js';
+} from './gpt';
 
 describe('toOpenAiMessages', () => {
   const testCases = [
@@ -132,7 +131,7 @@ describe('toOpenAiMessages', () => {
       const actualOutput = toOpenAiMessages(
         test.inputMessages as MessageData[]
       );
-      assert.deepStrictEqual(actualOutput, test.expectedOutput);
+      expect(actualOutput).toStrictEqual(test.expectedOutput);
     });
   }
 });
@@ -575,7 +574,7 @@ describe('toOpenAiRequestBody', () => {
         test.modelName,
         test.genkitRequest as GenerateRequest<typeof OpenAiConfigSchema>
       );
-      assert.deepStrictEqual(actualOutput, test.expectedOutput);
+      expect(actualOutput).toStrictEqual(test.expectedOutput);
     });
   }
 
@@ -728,8 +727,8 @@ describe('toOpenAiRequestBody', () => {
       modelName,
       genkitRequestJsonFormat as GenerateRequest<typeof OpenAiConfigSchema>
     );
-    assert.deepStrictEqual(actualOutput1, expectedOutput);
-    assert.deepStrictEqual(actualOutput2, expectedOutput);
+    expect(actualOutput1).toStrictEqual(expectedOutput);
+    expect(actualOutput2).toStrictEqual(expectedOutput);
   });
   it('(gpt4-vision) does NOT set response_format in openai request body', () => {
     // In either case - output.format='json' or output.format='text' - do NOT set response_format in the OpenAI request body explicitly.
@@ -880,7 +879,7 @@ describe('toOpenAiRequestBody', () => {
       modelName,
       genkitRequestJsonFormat as GenerateRequest<typeof OpenAiConfigSchema>
     );
-    assert.deepStrictEqual(actualOutput1, expectedOutput);
-    assert.deepStrictEqual(actualOutput2, expectedOutput);
+    expect(actualOutput1).toStrictEqual(expectedOutput);
+    expect(actualOutput2).toStrictEqual(expectedOutput);
   });
 });
