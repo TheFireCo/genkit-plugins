@@ -357,7 +357,7 @@ function fromAnthropicContentBlockChunk(
   }
   const eventField =
     event.type === 'content_block_start' ? 'content_block' : 'delta';
-  return event[eventField].type === 'text'
+  return ['text', 'text_delta'].includes(event[eventField].type)
     ? {
         text: event[eventField].text,
       }
