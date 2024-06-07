@@ -225,7 +225,7 @@ export function toGroqMessages(
               );
             }
             return {
-              id: part.toolRequest.ref ?? '',
+              id: part.toolRequest.ref,
               type: 'function',
               function: {
                 name: part.toolRequest.name,
@@ -251,7 +251,7 @@ export function toGroqMessages(
         toolResponseParts.map((part) => {
           groqMsgs.push({
             role: toGroqRole(message.role),
-            tool_call_id: part.toolResponse.ref ?? '',
+            tool_call_id: part.toolResponse.ref,
             content:
               typeof part.toolResponse.output === 'string'
                 ? part.toolResponse.output
