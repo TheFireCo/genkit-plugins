@@ -425,7 +425,7 @@ export function toAnthropicRequestBody(
   const model = SUPPORTED_CLAUDE_MODELS[modelName];
   if (!model) throw new Error(`Unsupported model: ${modelName}`);
   const { system, messages } = toAnthropicMessages(request.messages);
-  const mappedModelName = request.config?.version ?? model.version ?? modelName;
+  const mappedModelName = request.config?.version || model.version || modelName;
   const body: MessageCreateParams = {
     system,
     messages,
