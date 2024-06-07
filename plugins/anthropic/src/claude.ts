@@ -236,7 +236,7 @@ export function toAnthropicMessageContent(
   }
   if (part.media) {
     const { data, contentType } =
-      extractDataFromBase64Url(part.media.url) || {};
+      extractDataFromBase64Url(part.media.url) ?? {};
     if (!data) {
       throw Error(
         `Invalid genkit part media provided to toAnthropicMessageContent: ${part.media}.`
@@ -313,16 +313,6 @@ export function toAnthropicTool(tool: ToolDefinition): Tool {
   };
 }
 
-const finishReasonMap: Record<
-  NonNullable<Message['stop_reason']>,
-  CandidateData['finishReason']
-> = {
-  end_turn: 'stop',
-  max_tokens: 'length',
-  stop_sequence: 'stop',
-  tool_use: 'stop',
-};
-
 /**
  * Converts an Anthropic content block to a Genkit Part object.
  * @param contentBlock The Anthropic content block to convert.
@@ -346,7 +336,7 @@ function fromAnthropicContentBlock(contentBlock: ContentBlock): Part {
  * @returns The converted Genkit Part object if the event is a content block
  *          start or delta, otherwise undefined.
  */
-function fromAnthropicContentBlockChunk(
+export function fromAnthropicContentBlockChunk(
   event: MessageStreamEvent
 ): Part | undefined {
   if (
@@ -370,7 +360,7 @@ function fromAnthropicContentBlockChunk(
       };
 }
 
-function fromAnthropicStopReason(
+export function fromAnthropicStopReason(
   reason: Message['stop_reason']
 ): CandidateData['finishReason'] {
   switch (reason) {
@@ -425,7 +415,7 @@ export function toAnthropicRequestBody(
   const model = SUPPORTED_CLAUDE_MODELS[modelName];
   if (!model) throw new Error(`Unsupported model: ${modelName}`);
   const { system, messages } = toAnthropicMessages(request.messages);
-  const mappedModelName = request.config?.version || model.version || modelName;
+  const mappedModelName = request.config?.version ?? model.version ?? modelName;
   const body: MessageCreateParams = {
     system,
     messages,

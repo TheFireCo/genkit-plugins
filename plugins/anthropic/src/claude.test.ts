@@ -14,11 +14,25 @@
  * limitations under the License.
  */
 
-import { type GenerateRequest, type MessageData } from '@genkit-ai/ai/model';
 import { describe, it, expect } from '@jest/globals';
-import type Anthropic from '@anthropic-ai/sdk';
+import {
+  type GenerateResponseData,
+  type Part,
+  type GenerateRequest,
+  type MessageData,
+  CandidateData,
+} from '@genkit-ai/ai/model';
+import {
+  type Message,
+  type MessageParam,
+  type MessageCreateParams,
+  type MessageStreamEvent,
+} from '@anthropic-ai/sdk/resources/messages.mjs';
 import {
   AnthropicConfigSchema,
+  fromAnthropicContentBlockChunk,
+  fromAnthropicResponse,
+  fromAnthropicStopReason,
   toAnthropicMessages,
   toAnthropicRequestBody,
 } from './claude';
@@ -28,7 +42,7 @@ describe('toAnthropicMessages', () => {
     should: string;
     inputMessages: MessageData[];
     expectedOutput: {
-      messages: Anthropic.MessageParam[];
+      messages: MessageParam[];
       system?: string;
     };
   }[] = [
@@ -297,12 +311,220 @@ describe('toAnthropicMessages', () => {
   }
 });
 
+describe('fromAnthropicContentBlockChunk', () => {
+  const testCases: {
+    should: string;
+    event: MessageStreamEvent;
+    expectedOutput: Part | undefined;
+  }[] = [
+    {
+      should: 'should return text part from content_block_start event',
+      event: {
+        index: 0,
+        type: 'content_block_start',
+        content_block: {
+          type: 'text',
+          text: 'Hello, World!',
+        },
+      },
+      expectedOutput: { text: 'Hello, World!' },
+    },
+    {
+      should: 'should return text delta part from content_block_delta event',
+      event: {
+        index: 0,
+        type: 'content_block_delta',
+        delta: {
+          type: 'text_delta',
+          text: 'Hello, World!',
+        },
+      },
+      expectedOutput: { text: 'Hello, World!' },
+    },
+    {
+      should: 'should return tool use requests',
+      event: {
+        index: 0,
+        type: 'content_block_start',
+        content_block: {
+          type: 'tool_use',
+          id: 'abc123',
+          name: 'tellAJoke',
+          input: { topic: 'dogs' },
+        },
+      },
+      expectedOutput: {
+        toolRequest: {
+          name: 'tellAJoke',
+          input: { topic: 'dogs' },
+          ref: 'abc123',
+        },
+      },
+    },
+    {
+      should: 'should return undefined for any other event',
+      event: {
+        type: 'message_stop',
+      },
+      expectedOutput: undefined,
+    },
+  ];
+
+  for (const test of testCases) {
+    it(test.should, () => {
+      const actualOutput = fromAnthropicContentBlockChunk(test.event);
+      expect(actualOutput).toStrictEqual(test.expectedOutput);
+    });
+  }
+});
+
+describe('fromAnthropicStopReason', () => {
+  const testCases: {
+    inputStopReason: Message['stop_reason'];
+    expectedFinishReason: CandidateData['finishReason'];
+  }[] = [
+    {
+      inputStopReason: 'max_tokens',
+      expectedFinishReason: 'length',
+    },
+    {
+      inputStopReason: 'end_turn',
+      expectedFinishReason: 'stop',
+    },
+    {
+      inputStopReason: 'stop_sequence',
+      expectedFinishReason: 'stop',
+    },
+    {
+      inputStopReason: 'tool_use',
+      expectedFinishReason: 'stop',
+    },
+    {
+      inputStopReason: null,
+      expectedFinishReason: 'unknown',
+    },
+    {
+      inputStopReason: 'unknown' as any,
+      expectedFinishReason: 'other',
+    },
+  ];
+
+  for (const test of testCases) {
+    it(`should map Anthropic stop reason "${test.inputStopReason}" to Genkit finish reason "${test.expectedFinishReason}"`, () => {
+      const actualOutput = fromAnthropicStopReason(test.inputStopReason);
+      expect(actualOutput).toBe(test.expectedFinishReason);
+    });
+  }
+});
+
+describe('fromAnthropicResponse', () => {
+  const testCases: {
+    should: string;
+    message: Message;
+    expectedOutput: GenerateResponseData;
+  }[] = [
+    {
+      should: 'should work with text content',
+      message: {
+        id: 'abc123',
+        model: 'whatever',
+        type: 'message',
+        role: 'assistant',
+        stop_reason: 'max_tokens',
+        stop_sequence: null,
+        content: [
+          {
+            type: 'text',
+            text: 'Tell a joke about dogs.',
+          },
+        ],
+        usage: {
+          input_tokens: 10,
+          output_tokens: 20,
+        },
+      },
+      expectedOutput: {
+        candidates: [
+          {
+            index: 0,
+            finishReason: 'length',
+            message: {
+              role: 'model',
+              content: [{ text: 'Tell a joke about dogs.' }],
+            },
+          },
+        ],
+        usage: {
+          inputTokens: 10,
+          outputTokens: 20,
+        },
+        custom: expect.any(Object),
+      },
+    },
+    {
+      should: 'should work with tool use content',
+      message: {
+        id: 'abc123',
+        model: 'whatever',
+        type: 'message',
+        role: 'assistant',
+        stop_reason: 'tool_use',
+        stop_sequence: null,
+        content: [
+          {
+            type: 'tool_use',
+            id: 'abc123',
+            name: 'tellAJoke',
+            input: { topic: 'dogs' },
+          },
+        ],
+        usage: {
+          input_tokens: 10,
+          output_tokens: 20,
+        },
+      },
+      expectedOutput: {
+        candidates: [
+          {
+            index: 0,
+            finishReason: 'stop',
+            message: {
+              role: 'model',
+              content: [
+                {
+                  toolRequest: {
+                    name: 'tellAJoke',
+                    input: { topic: 'dogs' },
+                    ref: 'abc123',
+                  },
+                },
+              ],
+            },
+          },
+        ],
+        usage: {
+          inputTokens: 10,
+          outputTokens: 20,
+        },
+        custom: expect.any(Object),
+      },
+    },
+  ];
+
+  for (const test of testCases) {
+    it(test.should, () => {
+      const actualOutput = fromAnthropicResponse(test.message);
+      expect(actualOutput).toStrictEqual(test.expectedOutput);
+    });
+  }
+});
+
 describe('toAnthropicRequestBody', () => {
   const testCases: {
     should: string;
     modelName: string;
     genkitRequest: GenerateRequest<typeof AnthropicConfigSchema>;
-    expectedOutput: Anthropic.MessageCreateParams;
+    expectedOutput: MessageCreateParams;
   }[] = [
     {
       should: '(claude-3-opus) handles request with text messages',
