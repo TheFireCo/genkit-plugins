@@ -1,7 +1,9 @@
 import { describe, it, expect } from '@jest/globals';
 import {
+  CandidateData,
   GenerateRequest,
   MessageData,
+  Part,
   Role,
   ToolDefinition,
 } from '@genkit-ai/ai/model';
@@ -10,8 +12,15 @@ import {
   toGroqRole,
   toGroqTool,
   toGroqMessages,
+  toGroqTextAndMedia,
+  fromGroqChoice,
+  fromGroqChunkChoice,
 } from './groq_models';
-import { ChatCompletionCreateParamsBase } from 'groq-sdk/resources/chat/completions.mjs';
+import {
+  ChatCompletion,
+  ChatCompletionCreateParamsBase,
+} from 'groq-sdk/resources/chat/completions.mjs';
+import { ChatCompletionChunk } from 'groq-sdk/lib/chat_completions_ext.mjs';
 
 describe('toGroqRole', () => {
   it('should convert user role correctly', () => {
@@ -63,32 +72,71 @@ describe('toGroqTool', () => {
   });
 });
 
+describe('toGroqTextAndMedia', () => {
+  it('should work with text parts', () => {
+    expect(toGroqTextAndMedia({ text: 'Hello, world!' })).toBe('Hello, world!');
+  });
+
+  it('should work with media parts', () => {
+    expect(
+      toGroqTextAndMedia({ media: { url: 'https://www.example.com' } })
+    ).toBe('https://www.example.com');
+  });
+
+  it('should throw error for unsupported part types', () => {
+    expect(() => toGroqTextAndMedia({ unknown: 'value' } as Part)).toThrowError(
+      'Unsupported part type. Only text and media (url) parts are supported.'
+    );
+  });
+});
+
 describe('toGroqMessages', () => {
   const messages: MessageData[] = [
+    {
+      role: 'system',
+      content: [{ text: 'You are an helpful assistant' }],
+    },
     {
       role: 'user',
       content: [{ text: 'Hello, world!' }],
     },
     {
       role: 'model',
-      content: [{ text: 'How can I assist you today?' }],
+      content: [
+        { text: 'How can I assist you today?' },
+        {
+          toolRequest: {
+            name: 'exampleTool',
+            input: { param: 'value' },
+            ref: 'ref123',
+          },
+        },
+      ],
     },
     {
       role: 'tool',
       content: [
         {
           toolResponse: {
-            ref: 'ref123',
+            ref: 'ref456',
             name: 'getResponse',
-            output: 'Sample response',
+            output: 'Sample response with tools',
           },
         },
       ],
+    },
+    {
+      role: 'model',
+      content: [{ text: 'Sample response without tools' }],
     },
   ];
 
   it('should convert message data to Groq message format', () => {
     const expectedOutput = [
+      {
+        role: 'system',
+        content: 'You are an helpful assistant',
+      },
       {
         role: 'user',
         content: 'Hello, world!',
@@ -96,15 +144,201 @@ describe('toGroqMessages', () => {
       {
         role: 'assistant',
         content: 'How can I assist you today?',
+        tool_calls: [
+          {
+            function: {
+              arguments: JSON.stringify({ param: 'value' }),
+              name: 'exampleTool',
+            },
+            id: 'ref123',
+            type: 'function',
+          },
+        ],
       },
       {
         role: 'assistant',
-        tool_call_id: 'ref123',
-        content: 'Sample response',
+        tool_call_id: 'ref456',
+        content: 'Sample response with tools',
+      },
+      {
+        role: 'assistant',
+        content: 'Sample response without tools',
       },
     ];
     expect(toGroqMessages(messages)).toStrictEqual(expectedOutput);
   });
+});
+
+describe('fromGroqChoice', () => {
+  const testCases: {
+    should: string;
+    choice: ChatCompletion.Choice;
+    jsonMode?: boolean;
+    expectedOutput: CandidateData;
+  }[] = [
+    {
+      should: 'should work with text',
+      choice: {
+        index: 0,
+        message: {
+          role: 'assistant',
+          content: 'Tell a joke about dogs.',
+        },
+        finish_reason: 'whatever',
+        logprobs: {},
+      },
+      expectedOutput: {
+        index: 0,
+        finishReason: 'unknown',
+        message: {
+          role: 'model',
+          content: [{ text: 'Tell a joke about dogs.' }],
+        },
+        custom: {},
+      },
+    },
+    {
+      should: 'should work with json',
+      choice: {
+        index: 0,
+        message: {
+          role: 'assistant',
+          content: JSON.stringify({ json: 'test' }),
+        },
+        finish_reason: 'content_filter',
+        logprobs: {},
+      },
+      jsonMode: true,
+      expectedOutput: {
+        index: 0,
+        finishReason: 'blocked',
+        message: {
+          role: 'model',
+          content: [{ data: { json: 'test' } }],
+        },
+        custom: {},
+      },
+    },
+    {
+      should: 'should work with tools',
+      choice: {
+        index: 0,
+        message: {
+          role: 'assistant',
+          content: 'Tool call',
+          tool_calls: [
+            {
+              id: 'ref123',
+              function: {
+                name: 'exampleTool',
+                arguments: JSON.stringify({ param: 'value' }),
+              },
+            },
+          ],
+        },
+        finish_reason: 'tool_calls',
+        logprobs: {},
+      },
+      expectedOutput: {
+        index: 0,
+        message: {
+          role: 'model',
+          content: [
+            {
+              toolRequest: {
+                name: 'exampleTool',
+                input: { param: 'value' },
+                ref: 'ref123',
+              },
+            },
+          ],
+        },
+        finishReason: 'stop',
+        custom: {},
+      },
+    },
+  ];
+
+  for (const test of testCases) {
+    it(test.should, () => {
+      const actualOutput = fromGroqChoice(test.choice, test.jsonMode);
+      expect(actualOutput).toStrictEqual(test.expectedOutput);
+    });
+  }
+});
+
+describe('fromGroqChunkChoice', () => {
+  const testCases: {
+    should: string;
+    chunkChoice: ChatCompletionChunk.Choice;
+    expectedOutput: CandidateData;
+  }[] = [
+    {
+      should: 'should work with text',
+      chunkChoice: {
+        index: 0,
+        delta: {
+          role: 'assistant',
+          content: 'Tell a joke about dogs.',
+        },
+        finish_reason: 'whatever' as any,
+      },
+      expectedOutput: {
+        index: 0,
+        finishReason: 'unknown',
+        message: {
+          role: 'model',
+          content: [{ text: 'Tell a joke about dogs.' }],
+        },
+        custom: {},
+      },
+    },
+    {
+      should: 'should work with tools',
+      chunkChoice: {
+        index: 0,
+        delta: {
+          role: 'assistant',
+          content: 'Tool call',
+          tool_calls: [
+            {
+              index: 0,
+              id: 'ref123',
+              function: {
+                name: 'exampleTool',
+                arguments: JSON.stringify({ param: 'value' }),
+              },
+            },
+          ],
+        },
+        finish_reason: 'tool_calls',
+      },
+      expectedOutput: {
+        index: 0,
+        message: {
+          role: 'model',
+          content: [
+            {
+              toolRequest: {
+                name: 'exampleTool',
+                input: { param: 'value' },
+                ref: 'ref123',
+              },
+            },
+          ],
+        },
+        finishReason: 'stop',
+        custom: {},
+      },
+    },
+  ];
+
+  for (const test of testCases) {
+    it(test.should, () => {
+      const actualOutput = fromGroqChunkChoice(test.chunkChoice);
+      expect(actualOutput).toStrictEqual(test.expectedOutput);
+    });
+  }
 });
 
 describe('toGroqRequestBody', () => {

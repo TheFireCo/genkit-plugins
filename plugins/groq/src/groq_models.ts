@@ -313,7 +313,7 @@ function fromGroqToolCall(
  * @param jsonMode - Whether the response is in JSON mode.
  * @returns The equivalent Genkit candidate.
  */
-function fromGroqChoice(
+export function fromGroqChoice(
   choice: ChatCompletion.Choice,
   jsonMode = false
 ): CandidateData {
@@ -321,7 +321,7 @@ function fromGroqChoice(
 
   return {
     index: choice.index,
-    finishReason: FINISH_REASON_MAP[choice.finish_reason] || 'unknown',
+    finishReason: FINISH_REASON_MAP[choice.finish_reason] ?? 'unknown',
     message: {
       role: 'model',
       content: toolRequestParts
@@ -342,17 +342,15 @@ function fromGroqChoice(
  * @param choice - The Groq chunk choice to be transformed.
  * @returns The equivalent Genkit candidate.
  */
-function fromGroqChunkChoice(
+export function fromGroqChunkChoice(
   choice: ChatCompletionChunk.Choice
   // jsonMode = false // JSON mode does not support streaming or stop sequences
 ): CandidateData {
   const toolRequestParts = choice.delta.tool_calls?.map(fromGroqToolCall);
   return {
-    index: 0,
+    index: choice.index,
     finishReason:
-      choice.finish_reason && choice.finish_reason != null
-        ? FINISH_REASON_MAP[choice.finish_reason]
-        : 'unknown',
+      FINISH_REASON_MAP[choice.finish_reason as string] ?? 'unknown',
     message: {
       role: 'model',
       content: toolRequestParts
@@ -374,18 +372,6 @@ export function toGroqRequestBody(
   modelName: string,
   request: GenerateRequest
 ): ChatCompletionCreateParamsBase {
-  const mapToSnakeCase = <T extends Record<string, any>>(
-    obj: T
-  ): Record<string, any> => {
-    return Object.entries(obj).reduce((acc, [key, value]) => {
-      const snakeCaseKey = key.replace(
-        /[A-Z]/g,
-        (letter) => `_${letter.toLowerCase()}`
-      );
-      acc[snakeCaseKey] = value;
-      return acc;
-    }, {});
-  };
   const model = SUPPORTED_GROQ_MODELS[modelName];
   if (!model) throw new Error(`Unsupported model: ${modelName}`);
 
