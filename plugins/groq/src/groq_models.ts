@@ -225,7 +225,7 @@ export function toGroqMessages(
               );
             }
             return {
-              id: part.toolRequest.ref || '',
+              id: part.toolRequest.ref ?? '',
               type: 'function',
               function: {
                 name: part.toolRequest.name,
@@ -251,7 +251,7 @@ export function toGroqMessages(
         toolResponseParts.map((part) => {
           groqMsgs.push({
             role: toGroqRole(message.role),
-            tool_call_id: part.toolResponse.ref || '',
+            tool_call_id: part.toolResponse.ref ?? '',
             content:
               typeof part.toolResponse.output === 'string'
                 ? part.toolResponse.output
@@ -268,8 +268,12 @@ export function toGroqMessages(
 
 const FINISH_REASON_MAP: Record<
   NonNullable<
+    // Sonar complains because ChatCompletion finish_reason is a simple string
+    // in the Groq typings. However, we want to be as explicit as possible
+    // (and also, it's the SDK that should be updated to have a more specific
+    // type as for the ChatCompletionChunk finish_reason).
     | ChatCompletion.Choice['finish_reason']
-    | ChatCompletionChunk.Choice['finish_reason']
+    | ChatCompletionChunk.Choice['finish_reason'] // NOSONAR
   >,
   CandidateData['finishReason']
 > = {
@@ -394,7 +398,7 @@ export function toGroqRequestBody(
     // response_format: request.config?.responseFormat, // Being set automatically
   };
 
-  const response_format = request.output?.format || 'text';
+  const response_format = request.output?.format ?? 'text';
   if (
     response_format === 'json' &&
     model.info.supports?.output?.includes('json')
@@ -465,8 +469,8 @@ export function groqModel(name: string, client: Groq) {
           object: string;
         } = {} as any;
         for await (const chunk of stream) {
-          totalPromptTokens += chunk.x_groq?.usage?.prompt_tokens || 0;
-          totalCompletionTokens += chunk.x_groq?.usage?.completion_tokens || 0;
+          totalPromptTokens += chunk.x_groq?.usage?.prompt_tokens ?? 0;
+          totalCompletionTokens += chunk.x_groq?.usage?.completion_tokens ?? 0;
           if (!completionMetadata.model) {
             completionMetadata.model = chunk.model;
             completionMetadata.id = chunk.id;
@@ -479,18 +483,18 @@ export function groqModel(name: string, client: Groq) {
               index: choice.index,
               logprobs: choice.logprobs as ChatCompletion.Choice.Logprobs,
               message: {
-                content: choice.delta.content || '',
+                content: choice.delta.content ?? '',
                 role: 'model',
                 tool_calls: choice.delta.tool_calls,
               },
-              finish_reason: choice.finish_reason || 'unknown',
+              finish_reason: choice.finish_reason ?? 'unknown',
             });
             const c = fromGroqChunkChoice(choice);
             streamingCallback({
               index: c.index,
               content: c.message.content,
             });
-            fullContent += choice.delta.content || '';
+            fullContent += choice.delta.content ?? '';
           });
         }
         response = {
