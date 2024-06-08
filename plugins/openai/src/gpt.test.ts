@@ -40,6 +40,7 @@ import {
   toOpenAiMessages,
   toOpenAiRequestBody,
   toOpenAiTextAndMedia,
+  gptRunner,
 } from './gpt';
 import OpenAI from 'openai';
 
@@ -1277,6 +1278,69 @@ describe('toOpenAiRequestBody', () => {
         output: { format: 'media' },
       })
     ).toThrowError('media format is not supported for GPT models currently');
+  });
+});
+
+describe('gptRunner', () => {
+  it('should correctly run non-streaming requests', async () => {
+    const openaiClient = {
+      chat: {
+        completions: {
+          create: jest.fn(async () => ({
+            choices: [{ message: { content: 'response' } }],
+          })),
+        },
+      },
+    };
+    const runner = gptRunner('gpt-4o', openaiClient as unknown as OpenAI);
+    await runner({ messages: [] });
+    expect(openaiClient.chat.completions.create).toHaveBeenCalledWith({
+      model: 'gpt-4o',
+    });
+  });
+
+  it('should correctly run streaming requests', async () => {
+    const openaiClient = {
+      beta: {
+        chat: {
+          completions: {
+            stream: jest.fn(
+              () =>
+                // Simluate OpenAI SDK request streaming
+                new (class {
+                  isFirstRequest = true;
+                  [Symbol.asyncIterator]() {
+                    return {
+                      next: async () => {
+                        const returnValue = this.isFirstRequest
+                          ? {
+                              value: {
+                                choices: [{ delta: { content: 'response' } }],
+                              },
+                              done: false,
+                            }
+                          : { done: true };
+                        this.isFirstRequest = false;
+                        return returnValue;
+                      },
+                    };
+                  }
+                  async finalChatCompletion() {
+                    return { choices: [{ message: { content: 'response' } }] };
+                  }
+                })()
+            ),
+          },
+        },
+      },
+    };
+    const streamingCallback = jest.fn();
+    const runner = gptRunner('gpt-4o', openaiClient as unknown as OpenAI);
+    await runner({ messages: [] }, streamingCallback);
+    expect(openaiClient.beta.chat.completions.stream).toHaveBeenCalledWith({
+      model: 'gpt-4o',
+      stream: true,
+    });
   });
 });
 
