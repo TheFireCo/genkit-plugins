@@ -21,7 +21,7 @@
   "dependencies": {
     "@genkit-ai/ai": "0.5.0",
     "@genkit-ai/core": "0.5.0",
-    "@genkit-ai/dotprompt": "0.5.0",
+    "@genkit-ai/dotprompt": "0.5.2",
     "@genkit-ai/flow": "0.5.0",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
