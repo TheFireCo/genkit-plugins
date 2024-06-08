@@ -14,14 +14,109 @@
  * limitations under the License.
  */
 
-import { GenerateRequest, MessageData } from '@genkit-ai/ai/model';
-import assert from 'node:assert';
-import { describe, it } from 'node:test';
+import { describe, it, expect } from '@jest/globals';
 import {
+  CandidateData,
+  GenerateRequest,
+  MessageData,
+  Part,
+  Role,
+} from '@genkit-ai/ai/model';
+import * as GenkitAiModel from '@genkit-ai/ai/model';
+import {
+  ChatCompletion,
+  ChatCompletionChunk,
+  ChatCompletionMessageToolCall,
+  ChatCompletionRole,
+} from 'openai/resources/index.mjs';
+import {
+  gpt4o,
   OpenAiConfigSchema,
+  fromOpenAiChoice,
+  fromOpenAiChunkChoice,
+  fromOpenAiToolCall,
+  gptModel,
+  toOpenAIRole,
   toOpenAiMessages,
   toOpenAiRequestBody,
-} from '../src/gpt.js';
+  toOpenAiTextAndMedia,
+  gptRunner,
+} from './gpt';
+import OpenAI from 'openai';
+
+jest.mock('@genkit-ai/ai/model', () => ({
+  ...jest.requireActual('@genkit-ai/ai/model'),
+  defineModel: jest.fn(),
+}));
+
+describe('toOpenAIRole', () => {
+  const testCases: {
+    genkitRole: Role;
+    expectedOpenAiRole: ChatCompletionRole;
+  }[] = [
+    {
+      genkitRole: 'user',
+      expectedOpenAiRole: 'user',
+    },
+    {
+      genkitRole: 'model',
+      expectedOpenAiRole: 'assistant',
+    },
+    {
+      genkitRole: 'system',
+      expectedOpenAiRole: 'system',
+    },
+    {
+      genkitRole: 'tool',
+      expectedOpenAiRole: 'tool',
+    },
+  ];
+
+  for (const test of testCases) {
+    it(`should map Genkit "${test.genkitRole}" role to OpenAI "${test.expectedOpenAiRole}" role`, () => {
+      const actualOutput = toOpenAIRole(test.genkitRole);
+      expect(actualOutput).toBe(test.expectedOpenAiRole);
+    });
+  }
+
+  it('should throw an error for unknown roles', () => {
+    expect(() => toOpenAIRole('unknown' as Role)).toThrowError(
+      "role unknown doesn't map to an OpenAI role."
+    );
+  });
+});
+
+describe('toOpenAiTextAndMedia', () => {
+  it('should transform text content correctly', () => {
+    const part: Part = { text: 'hi' };
+    const actualOutput = toOpenAiTextAndMedia(part, 'low');
+    expect(actualOutput).toStrictEqual({ type: 'text', text: 'hi' });
+  });
+
+  it('should transform media content correctly', () => {
+    const part: Part = {
+      media: {
+        contentType: 'image/jpeg',
+        url: 'https://example.com/image.jpg',
+      },
+    };
+    const actualOutput = toOpenAiTextAndMedia(part, 'low');
+    expect(actualOutput).toStrictEqual({
+      type: 'image_url',
+      image_url: {
+        url: 'https://example.com/image.jpg',
+        detail: 'low',
+      },
+    });
+  });
+
+  it('should throw an error for unknown parts', () => {
+    const part: Part = { data: 'hi' };
+    expect(() => toOpenAiTextAndMedia(part, 'low')).toThrowError(
+      `Unsupported genkit part fields encountered for current message role: {"data":"hi"}`
+    );
+  });
+});
 
 describe('toOpenAiMessages', () => {
   const testCases = [
@@ -58,7 +153,7 @@ describe('toOpenAiMessages', () => {
       ],
     },
     {
-      should: 'should transform tool response content correctly',
+      should: 'should transform tool response text content correctly',
       inputMessages: [
         {
           role: 'tool',
@@ -78,6 +173,30 @@ describe('toOpenAiMessages', () => {
           role: 'tool',
           tool_call_id: 'call_SVDpFV2l2fW88QRFtv85FWwM',
           content: 'Why did the bob cross the road?',
+        },
+      ],
+    },
+    {
+      should: 'should transform tool response json content correctly',
+      inputMessages: [
+        {
+          role: 'tool',
+          content: [
+            {
+              toolResponse: {
+                ref: 'call_SVDpFV2l2fW88QRFtv85FWwM',
+                name: 'tellAFunnyJoke',
+                output: { test: 'example' },
+              },
+            },
+          ],
+        },
+      ],
+      expectedOutput: [
+        {
+          role: 'tool',
+          tool_call_id: 'call_SVDpFV2l2fW88QRFtv85FWwM',
+          content: JSON.stringify({ test: 'example' }),
         },
       ],
     },
@@ -126,13 +245,271 @@ describe('toOpenAiMessages', () => {
         },
       ],
     },
+    {
+      should: 'should transform system messages correctly',
+      inputMessages: [
+        { role: 'system', content: [{ text: 'system message' }] },
+      ],
+      expectedOutput: [{ role: 'system', content: 'system message' }],
+    },
   ];
+
   for (const test of testCases) {
     it(test.should, () => {
       const actualOutput = toOpenAiMessages(
         test.inputMessages as MessageData[]
       );
-      assert.deepStrictEqual(actualOutput, test.expectedOutput);
+      expect(actualOutput).toStrictEqual(test.expectedOutput);
+    });
+  }
+});
+
+describe('fromOpenAiToolCall', () => {
+  it('should transform tool call correctly', () => {
+    const toolCall: ChatCompletionMessageToolCall = {
+      id: 'call_SVDpFV2l2fW88QRFtv85FWwM',
+      type: 'function',
+      function: {
+        name: 'tellAFunnyJoke',
+        arguments: '{"topic":"bob"}',
+      },
+    };
+    const actualOutput = fromOpenAiToolCall(toolCall);
+    expect(actualOutput).toStrictEqual({
+      toolRequest: {
+        ref: 'call_SVDpFV2l2fW88QRFtv85FWwM',
+        name: 'tellAFunnyJoke',
+        input: { topic: 'bob' },
+      },
+    });
+  });
+
+  it('should proxy null-ish arguments', () => {
+    const toolCall: ChatCompletionMessageToolCall = {
+      id: 'call_SVDpFV2l2fW88QRFtv85FWwM',
+      type: 'function',
+      function: {
+        name: 'tellAFunnyJoke',
+        arguments: '',
+      },
+    };
+    const actualOutput = fromOpenAiToolCall(toolCall);
+    expect(actualOutput).toStrictEqual({
+      toolRequest: {
+        ref: 'call_SVDpFV2l2fW88QRFtv85FWwM',
+        name: 'tellAFunnyJoke',
+        input: '',
+      },
+    });
+  });
+
+  it('should throw an error if tool call is missing required fields', () => {
+    const toolCall: ChatCompletionMessageToolCall = {
+      id: 'call_SVDpFV2l2fW88QRFtv85FWwM',
+      type: 'function',
+      function: undefined as any,
+    };
+    expect(() => fromOpenAiToolCall(toolCall)).toThrowError(
+      'Unexpected openAI chunk choice. tool_calls was provided but one or more tool_calls is missing.'
+    );
+  });
+});
+
+describe('fromOpenAiChoice', () => {
+  const testCases: {
+    should: string;
+    choice: ChatCompletion.Choice;
+    jsonMode?: boolean;
+    expectedOutput: CandidateData;
+  }[] = [
+    {
+      should: 'should work with text',
+      choice: {
+        index: 0,
+        message: {
+          role: 'assistant',
+          content: 'Tell a joke about dogs.',
+        },
+        finish_reason: 'whatever' as any,
+        logprobs: null,
+      },
+      expectedOutput: {
+        index: 0,
+        finishReason: 'other',
+        message: {
+          role: 'model',
+          content: [{ text: 'Tell a joke about dogs.' }],
+        },
+        custom: {},
+      },
+    },
+    {
+      should: 'should work with json',
+      choice: {
+        index: 0,
+        message: {
+          role: 'assistant',
+          content: JSON.stringify({ json: 'test' }),
+        },
+        finish_reason: 'content_filter',
+        logprobs: null,
+      },
+      jsonMode: true,
+      expectedOutput: {
+        index: 0,
+        finishReason: 'blocked',
+        message: {
+          role: 'model',
+          content: [{ data: { json: 'test' } }],
+        },
+        custom: {},
+      },
+    },
+    {
+      should: 'should work with tools',
+      choice: {
+        index: 0,
+        message: {
+          role: 'assistant',
+          content: 'Tool call',
+          tool_calls: [
+            {
+              id: 'ref123',
+              type: 'function',
+              function: {
+                name: 'exampleTool',
+                arguments: JSON.stringify({ param: 'value' }),
+              },
+            },
+          ],
+        },
+        finish_reason: 'tool_calls',
+        logprobs: null,
+      },
+      expectedOutput: {
+        index: 0,
+        message: {
+          role: 'model',
+          content: [
+            {
+              toolRequest: {
+                name: 'exampleTool',
+                input: { param: 'value' },
+                ref: 'ref123',
+              },
+            },
+          ],
+        },
+        finishReason: 'stop',
+        custom: {},
+      },
+    },
+  ];
+
+  for (const test of testCases) {
+    it(test.should, () => {
+      const actualOutput = fromOpenAiChoice(test.choice, test.jsonMode);
+      expect(actualOutput).toStrictEqual(test.expectedOutput);
+    });
+  }
+});
+
+describe('fromOpenAiChunkChoice', () => {
+  const testCases: {
+    should: string;
+    chunkChoice: ChatCompletionChunk.Choice;
+    jsonMode?: boolean;
+    expectedOutput: CandidateData;
+  }[] = [
+    {
+      should: 'should work with text',
+      chunkChoice: {
+        index: 0,
+        delta: {
+          role: 'assistant',
+          content: 'Tell a joke about dogs.',
+        },
+        finish_reason: 'whatever' as any,
+      },
+      expectedOutput: {
+        index: 0,
+        finishReason: 'other',
+        message: {
+          role: 'model',
+          content: [{ text: 'Tell a joke about dogs.' }],
+        },
+        custom: {},
+      },
+    },
+    {
+      should: 'should work with json',
+      chunkChoice: {
+        index: 0,
+        delta: {
+          role: 'assistant',
+          content: JSON.stringify({ json: 'test' }),
+        },
+        finish_reason: null,
+        logprobs: null,
+      },
+      jsonMode: true,
+      expectedOutput: {
+        index: 0,
+        finishReason: 'unknown',
+        message: {
+          role: 'model',
+          content: [{ data: { json: 'test' } }],
+        },
+        custom: {},
+      },
+    },
+    {
+      should: 'should work with tools',
+      chunkChoice: {
+        index: 0,
+        delta: {
+          role: 'assistant',
+          content: 'Tool call',
+          tool_calls: [
+            {
+              index: 0,
+              id: 'ref123',
+              function: {
+                name: 'exampleTool',
+                arguments: JSON.stringify({ param: 'value' }),
+              },
+            },
+          ],
+        },
+        finish_reason: 'tool_calls',
+      },
+      expectedOutput: {
+        index: 0,
+        message: {
+          role: 'model',
+          content: [
+            {
+              toolRequest: {
+                name: 'exampleTool',
+                input: { param: 'value' },
+                ref: 'ref123',
+              },
+            },
+          ],
+        },
+        finishReason: 'stop',
+        custom: {},
+      },
+    },
+  ];
+
+  for (const test of testCases) {
+    it(test.should, () => {
+      const actualOutput = fromOpenAiChunkChoice(
+        test.chunkChoice,
+        test.jsonMode
+      );
+      expect(actualOutput).toStrictEqual(test.expectedOutput);
     });
   }
 });
@@ -575,7 +952,7 @@ describe('toOpenAiRequestBody', () => {
         test.modelName,
         test.genkitRequest as GenerateRequest<typeof OpenAiConfigSchema>
       );
-      assert.deepStrictEqual(actualOutput, test.expectedOutput);
+      expect(actualOutput).toStrictEqual(test.expectedOutput);
     });
   }
 
@@ -728,8 +1105,8 @@ describe('toOpenAiRequestBody', () => {
       modelName,
       genkitRequestJsonFormat as GenerateRequest<typeof OpenAiConfigSchema>
     );
-    assert.deepStrictEqual(actualOutput1, expectedOutput);
-    assert.deepStrictEqual(actualOutput2, expectedOutput);
+    expect(actualOutput1).toStrictEqual(expectedOutput);
+    expect(actualOutput2).toStrictEqual(expectedOutput);
   });
   it('(gpt4-vision) does NOT set response_format in openai request body', () => {
     // In either case - output.format='json' or output.format='text' - do NOT set response_format in the OpenAI request body explicitly.
@@ -880,7 +1257,116 @@ describe('toOpenAiRequestBody', () => {
       modelName,
       genkitRequestJsonFormat as GenerateRequest<typeof OpenAiConfigSchema>
     );
-    assert.deepStrictEqual(actualOutput1, expectedOutput);
-    assert.deepStrictEqual(actualOutput2, expectedOutput);
+    expect(actualOutput1).toStrictEqual(expectedOutput);
+    expect(actualOutput2).toStrictEqual(expectedOutput);
+  });
+
+  it('should throw for unknown models', () => {
+    expect(() =>
+      toOpenAiRequestBody(
+        'unknown-model',
+        {} as GenerateRequest<typeof OpenAiConfigSchema>
+      )
+    ).toThrowError('Unsupported model: unknown-model');
+  });
+
+  it('should throw if model does not support specified output format', () => {
+    expect(() =>
+      toOpenAiRequestBody('gpt-4o', {
+        messages: [],
+        tools: [],
+        output: { format: 'media' },
+      })
+    ).toThrowError('media format is not supported for GPT models currently');
+  });
+});
+
+describe('gptRunner', () => {
+  it('should correctly run non-streaming requests', async () => {
+    const openaiClient = {
+      chat: {
+        completions: {
+          create: jest.fn(async () => ({
+            choices: [{ message: { content: 'response' } }],
+          })),
+        },
+      },
+    };
+    const runner = gptRunner('gpt-4o', openaiClient as unknown as OpenAI);
+    await runner({ messages: [] });
+    expect(openaiClient.chat.completions.create).toHaveBeenCalledWith({
+      model: 'gpt-4o',
+    });
+  });
+
+  it('should correctly run streaming requests', async () => {
+    const openaiClient = {
+      beta: {
+        chat: {
+          completions: {
+            stream: jest.fn(
+              () =>
+                // Simluate OpenAI SDK request streaming
+                new (class {
+                  isFirstRequest = true;
+                  [Symbol.asyncIterator]() {
+                    return {
+                      next: async () => {
+                        const returnValue = this.isFirstRequest
+                          ? {
+                              value: {
+                                choices: [{ delta: { content: 'response' } }],
+                              },
+                              done: false,
+                            }
+                          : { done: true };
+                        this.isFirstRequest = false;
+                        return returnValue;
+                      },
+                    };
+                  }
+                  async finalChatCompletion() {
+                    return { choices: [{ message: { content: 'response' } }] };
+                  }
+                })()
+            ),
+          },
+        },
+      },
+    };
+    const streamingCallback = jest.fn();
+    const runner = gptRunner('gpt-4o', openaiClient as unknown as OpenAI);
+    await runner({ messages: [] }, streamingCallback);
+    expect(openaiClient.beta.chat.completions.stream).toHaveBeenCalledWith({
+      model: 'gpt-4o',
+      stream: true,
+    });
+  });
+});
+
+describe('gptModel', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should correctly define supported GPT models', () => {
+    jest
+      .spyOn(GenkitAiModel, 'defineModel')
+      .mockImplementation((() => ({})) as any);
+    gptModel('gpt-4o', {} as OpenAI);
+    expect(GenkitAiModel.defineModel).toHaveBeenCalledWith(
+      {
+        name: gpt4o.name,
+        ...gpt4o.info,
+        configSchema: gpt4o.configSchema,
+      },
+      expect.any(Function)
+    );
+  });
+
+  it('should throw for unsupported models', () => {
+    expect(() => gptModel('unsupported-model', {} as OpenAI)).toThrowError(
+      'Unsupported model: unsupported-model'
+    );
   });
 });
