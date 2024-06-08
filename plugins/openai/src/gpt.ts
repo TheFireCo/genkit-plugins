@@ -318,7 +318,7 @@ const finishReasonMap: Record<
  * @param toolCall The OpenAI tool call to convert.
  * @returns The converted Genkit ToolRequestPart.
  */
-function fromOpenAiToolCall(
+export function fromOpenAiToolCall(
   toolCall:
     | ChatCompletionMessageToolCall
     | ChatCompletionChunk.Choice.Delta.ToolCall
@@ -344,8 +344,8 @@ function fromOpenAiToolCall(
  * @param jsonMode Whether the event is a JSON response.
  * @returns The converted Genkit CandidateData object.
  */
-function fromOpenAiChoice(
-  choice: ChatCompletion['choices'][0],
+export function fromOpenAiChoice(
+  choice: ChatCompletion.Choice,
   jsonMode = false
 ): CandidateData {
   const toolRequestParts = choice.message.tool_calls?.map(fromOpenAiToolCall);
@@ -374,8 +374,8 @@ function fromOpenAiChoice(
  * @param jsonMode Whether the event is a JSON response.
  * @returns The converted Genkit CandidateData object.
  */
-function fromOpenAiChunkChoice(
-  choice: ChatCompletionChunk['choices'][0],
+export function fromOpenAiChunkChoice(
+  choice: ChatCompletionChunk.Choice,
   jsonMode = false
 ): CandidateData {
   const toolRequestParts = choice.delta.tool_calls?.map(fromOpenAiToolCall);
