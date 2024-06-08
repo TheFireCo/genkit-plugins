@@ -164,7 +164,7 @@ export const SUPPORTED_GPT_MODELS = {
   'gpt-3.5-turbo': gpt35Turbo,
 };
 
-function toOpenAIRole(role: Role): ChatCompletionRole {
+export function toOpenAIRole(role: Role): ChatCompletionRole {
   switch (role) {
     case 'user':
       return 'user';
@@ -220,7 +220,7 @@ export function toOpenAiTextAndMedia(
     };
   }
   throw Error(
-    `Unsupported genkit part fields encountered for current message role: ${part}.`
+    `Unsupported genkit part fields encountered for current message role: ${JSON.stringify(part)}.`
   );
 }
 
@@ -253,25 +253,24 @@ export function toOpenAiMessages(
           content: msg.text(),
         });
         break;
-      case 'assistant':
+      case 'assistant': {
         const toolCalls: ChatCompletionMessageToolCall[] = msg.content
-          .filter((part) => part.toolRequest)
-          .map((part) => {
-            if (!part.toolRequest) {
-              throw Error(
-                'Mapping genkit message to openai tool call content part but message.toolRequest not provided.'
-              );
-            }
-            return {
-              id: part.toolRequest.ref || '',
-              type: 'function',
-              function: {
-                name: part.toolRequest.name,
-                arguments: JSON.stringify(part.toolRequest.input),
-              },
-            };
-          });
-        if (toolCalls?.length > 0) {
+          .filter(
+            (
+              part
+            ): part is Part & {
+              toolRequest: NonNullable<Part['toolRequest']>;
+            } => Boolean(part.toolRequest)
+          )
+          .map((part) => ({
+            id: part.toolRequest.ref ?? '',
+            type: 'function',
+            function: {
+              name: part.toolRequest.name,
+              arguments: JSON.stringify(part.toolRequest.input),
+            },
+          }));
+        if (toolCalls.length > 0) {
           openAiMsgs.push({
             role: role,
             tool_calls: toolCalls,
@@ -283,12 +282,13 @@ export function toOpenAiMessages(
           });
         }
         break;
-      case 'tool':
+      }
+      case 'tool': {
         const toolResponseParts = msg.toolResponseParts();
         toolResponseParts.map((part) => {
           openAiMsgs.push({
             role: role,
-            tool_call_id: part.toolResponse.ref || '',
+            tool_call_id: part.toolResponse.ref ?? '',
             content:
               typeof part.toolResponse.output === 'string'
                 ? part.toolResponse.output
@@ -296,8 +296,7 @@ export function toOpenAiMessages(
           });
         });
         break;
-      default:
-        throw new Error('unrecognized role');
+      }
     }
   }
   return openAiMsgs;
