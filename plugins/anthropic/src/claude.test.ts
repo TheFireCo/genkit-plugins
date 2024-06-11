@@ -20,8 +20,11 @@ import {
   type Part,
   type GenerateRequest,
   type MessageData,
+  ToolDefinition,
   CandidateData,
+  Role,
 } from '@genkit-ai/ai/model';
+import * as GenkitAiModel from '@genkit-ai/ai/model';
 import {
   type Message,
   type MessageParam,
@@ -30,12 +33,103 @@ import {
 } from '@anthropic-ai/sdk/resources/messages.mjs';
 import {
   AnthropicConfigSchema,
+  claude3Haiku,
+  claudeModel,
+  claudeRunner,
   fromAnthropicContentBlockChunk,
   fromAnthropicResponse,
   fromAnthropicStopReason,
+  toAnthropicMessageContent,
   toAnthropicMessages,
   toAnthropicRequestBody,
+  toAnthropicRole,
+  toAnthropicTool,
+  toAnthropicToolResponseContent,
 } from './claude';
+import Anthropic from '@anthropic-ai/sdk';
+
+jest.mock('@genkit-ai/ai/model', () => ({
+  ...jest.requireActual('@genkit-ai/ai/model'),
+  defineModel: jest.fn(),
+}));
+
+describe('toAnthropicRole', () => {
+  const testCases: {
+    genkitRole: Role;
+    toolMessageType?: 'tool_use' | 'tool_result';
+    expectedAnthropicRole: MessageParam['role'];
+  }[] = [
+    {
+      genkitRole: 'user',
+      expectedAnthropicRole: 'user',
+    },
+    {
+      genkitRole: 'model',
+      expectedAnthropicRole: 'assistant',
+    },
+    {
+      genkitRole: 'tool',
+      toolMessageType: 'tool_use',
+      expectedAnthropicRole: 'assistant',
+    },
+    {
+      genkitRole: 'tool',
+      toolMessageType: 'tool_result',
+      expectedAnthropicRole: 'user',
+    },
+  ];
+
+  for (const test of testCases) {
+    it(`should map Genkit "${test.genkitRole}" role to Anthropic "${test.expectedAnthropicRole}" role${
+      test.toolMessageType
+        ? ` when toolMessageType is "${test.toolMessageType}"`
+        : ''
+    }`, () => {
+      const actualOutput = toAnthropicRole(
+        test.genkitRole,
+        test.toolMessageType
+      );
+      expect(actualOutput).toBe(test.expectedAnthropicRole);
+    });
+  }
+
+  it('should throw an error for unknown roles', () => {
+    expect(() => toAnthropicRole('unknown' as Role)).toThrowError(
+      "role unknown doesn't map to an Anthropic role."
+    );
+  });
+});
+
+describe('toAnthropicToolResponseContent', () => {
+  it('should throw an error for unknown parts', () => {
+    const part: Part = { data: 'hi' };
+    expect(() => toAnthropicToolResponseContent(part)).toThrowError(
+      `Invalid genkit part provided to toAnthropicToolResponseContent: {"data":"hi"}`
+    );
+  });
+});
+
+describe('toAnthropicMessageContent', () => {
+  it('should throw if a media part contains invalid media', () => {
+    expect(() =>
+      toAnthropicMessageContent({
+        media: {
+          url: '',
+        },
+      })
+    ).toThrowError(
+      'Invalid genkit part media provided to toAnthropicMessageContent: {"url":""}'
+    );
+  });
+
+  it('should throw if the provided part is invalid', () => {
+    expect(() =>
+      toAnthropicMessageContent({ fake: 'part' } as Part)
+    ).toThrowError(
+      'Unsupported genkit part fields encountered for current message role: {"fake":"part"}'
+    );
+  });
+});
 
 describe('toAnthropicMessages', () => {
   const testCases: {
@@ -309,6 +403,34 @@ describe('toAnthropicMessages', () => {
       expect(actualOutput).toStrictEqual(test.expectedOutput);
     });
   }
+});
+
+describe('toAnthropicTool', () => {
+  it('should transform Genkit tool definition to an Anthropic tool', () => {
+    const tool: ToolDefinition = {
+      name: 'tellAJoke',
+      description: 'Tell a joke',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          topic: { type: 'string' },
+        },
+        required: ['topic'],
+      },
+    };
+    const actualOutput = toAnthropicTool(tool);
+    expect(actualOutput).toStrictEqual({
+      name: 'tellAJoke',
+      description: 'Tell a joke',
+      input_schema: {
+        type: 'object',
+        properties: {
+          topic: { type: 'string' },
+        },
+        required: ['topic'],
+      },
+    });
+  });
 });
 
 describe('fromAnthropicContentBlockChunk', () => {
@@ -635,4 +757,130 @@ describe('toAnthropicRequestBody', () => {
       expect(actualOutput).toStrictEqual(test.expectedOutput);
     });
   }
+
+  it('should throw if model is not supported', () => {
+    expect(() =>
+      toAnthropicRequestBody('fake-model', {
+        messages: [],
+      })
+    ).toThrowError('Unsupported model: fake-model');
+  });
+
+  it('should throw if output format is not text', () => {
+    expect(() =>
+      toAnthropicRequestBody('claude-3-haiku', {
+        messages: [],
+        tools: [],
+        output: { format: 'media' },
+      })
+    ).toThrowError(
+      'Only text output format is supported for Claude models currently'
+    );
+  });
+});
+
+describe('claudeRunner', () => {
+  it('should correctly run non-streaming requests', async () => {
+    const anthropicClient = {
+      messages: {
+        create: jest.fn(async () => ({
+          content: [{ type: 'text', text: 'response' }],
+          usage: {
+            input_tokens: 10,
+            output_tokens: 20,
+          },
+        })),
+      },
+    };
+    const runner = claudeRunner(
+      'claude-3-haiku',
+      anthropicClient as unknown as Anthropic
+    );
+    await runner({ messages: [] });
+    expect(anthropicClient.messages.create).toHaveBeenCalledWith({
+      model: 'claude-3-haiku-20240307',
+      max_tokens: 4096,
+    });
+  });
+
+  it('should correctly run streaming requests', async () => {
+    const anthropicClient = {
+      messages: {
+        stream: jest.fn(
+          () =>
+            // Simluate Anthropic SDK request streaming
+            new (class {
+              isFirstRequest = true;
+              [Symbol.asyncIterator]() {
+                return {
+                  next: async () => {
+                    const returnValue = this.isFirstRequest
+                      ? {
+                          value: {
+                            type: 'content_block_start',
+                            content_block: {
+                              type: 'text',
+                              text: 'res',
+                            },
+                          },
+                          done: false,
+                        }
+                      : { done: true };
+                    this.isFirstRequest = false;
+                    return returnValue;
+                  },
+                };
+              }
+              async finalMessage() {
+                return {
+                  content: [{ type: 'text', text: 'response' }],
+                  usage: {
+                    input_tokens: 10,
+                    output_tokens: 20,
+                  },
+                };
+              }
+            })()
+        ),
+      },
+    };
+    const streamingCallback = jest.fn();
+    const runner = claudeRunner(
+      'claude-3-haiku',
+      anthropicClient as unknown as Anthropic
+    );
+    await runner({ messages: [] }, streamingCallback);
+    expect(anthropicClient.messages.stream).toHaveBeenCalledWith({
+      model: 'claude-3-haiku-20240307',
+      max_tokens: 4096,
+      stream: true,
+    });
+  });
+});
+
+describe('claudeModel', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should correctly define supported GPT models', () => {
+    jest
+      .spyOn(GenkitAiModel, 'defineModel')
+      .mockImplementation((() => ({})) as any);
+    claudeModel('claude-3-haiku', {} as Anthropic);
+    expect(GenkitAiModel.defineModel).toHaveBeenCalledWith(
+      {
+        name: claude3Haiku.name,
+        ...claude3Haiku.info,
+        configSchema: claude3Haiku.configSchema,
+      },
+      expect.any(Function)
+    );
+  });
+
+  it('should throw for unsupported models', () => {
+    expect(() =>
+      claudeModel('unsupported-model', {} as Anthropic)
+    ).toThrowError('Unsupported model: unsupported-model');
+  });
 });
