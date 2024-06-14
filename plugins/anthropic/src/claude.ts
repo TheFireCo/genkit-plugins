@@ -16,6 +16,7 @@
 
 import { Message as GenkitMessage } from '@genkit-ai/ai';
 import {
+  GenerateResponseChunkData,
   GenerateResponseData,
   GenerationCommonConfigSchema,
   ModelAction,
@@ -44,6 +45,7 @@ import {
   type MessageStreamEvent,
   type ToolUseBlockParam,
 } from '@anthropic-ai/sdk/resources/messages.mjs';
+import { StreamingCallback } from '@genkit-ai/core';
 
 export const AnthropicConfigSchema = GenerationCommonConfigSchema.extend({
   tool_choice: z
@@ -134,7 +136,7 @@ export const SUPPORTED_CLAUDE_MODELS: Record<
  * @returns The corresponding Anthropic role.
  * @throws Error if the role doesn't map to an Anthropic role.
  */
-function toAnthropicRole(
+export function toAnthropicRole(
   role: Role,
   toolMessageType?: 'tool_use' | 'tool_result'
 ): MessageParam['role'] {
@@ -236,10 +238,10 @@ export function toAnthropicMessageContent(
   }
   if (part.media) {
     const { data, contentType } =
-      extractDataFromBase64Url(part.media.url) || {};
+      extractDataFromBase64Url(part.media.url) ?? {};
     if (!data) {
       throw Error(
-        `Invalid genkit part media provided to toAnthropicMessageContent: ${part.media}.`
+        `Invalid genkit part media provided to toAnthropicMessageContent: ${JSON.stringify(part.media)}.`
       );
     }
     return {
@@ -268,7 +270,7 @@ export function toAnthropicMessageContent(
     };
   }
   throw Error(
-    `Unsupported genkit part fields encountered for current message role: ${part}.`
+    `Unsupported genkit part fields encountered for current message role: ${JSON.stringify(part)}.`
   );
 }
 
@@ -313,16 +315,6 @@ export function toAnthropicTool(tool: ToolDefinition): Tool {
   };
 }
 
-const finishReasonMap: Record<
-  NonNullable<Message['stop_reason']>,
-  CandidateData['finishReason']
-> = {
-  end_turn: 'stop',
-  max_tokens: 'length',
-  stop_sequence: 'stop',
-  tool_use: 'stop',
-};
-
 /**
  * Converts an Anthropic content block to a Genkit Part object.
  * @param contentBlock The Anthropic content block to convert.
@@ -346,7 +338,7 @@ function fromAnthropicContentBlock(contentBlock: ContentBlock): Part {
  * @returns The converted Genkit Part object if the event is a content block
  *          start or delta, otherwise undefined.
  */
-function fromAnthropicContentBlockChunk(
+export function fromAnthropicContentBlockChunk(
   event: MessageStreamEvent
 ): Part | undefined {
   if (
@@ -370,7 +362,7 @@ function fromAnthropicContentBlockChunk(
       };
 }
 
-function fromAnthropicStopReason(
+export function fromAnthropicStopReason(
   reason: Message['stop_reason']
 ): CandidateData['finishReason'] {
   switch (reason) {
@@ -425,7 +417,7 @@ export function toAnthropicRequestBody(
   const model = SUPPORTED_CLAUDE_MODELS[modelName];
   if (!model) throw new Error(`Unsupported model: ${modelName}`);
   const { system, messages } = toAnthropicMessages(request.messages);
-  const mappedModelName = request.config?.version || model.version || modelName;
+  const mappedModelName = request.config?.version ?? model.version ?? modelName;
   const body: MessageCreateParams = {
     system,
     messages,
@@ -454,6 +446,38 @@ export function toAnthropicRequestBody(
 }
 
 /**
+ * Creates the runner used by Genkit to interact with the Claude model.
+ * @param name The name of the Claude model.
+ * @param client The Anthropic client instance.
+ * @returns The runner that Genkit will call when the model is invoked.
+ */
+export function claudeRunner(name: string, client: Anthropic) {
+  return async (
+    request: GenerateRequest<typeof AnthropicConfigSchema>,
+    streamingCallback?: StreamingCallback<GenerateResponseChunkData>
+  ): Promise<GenerateResponseData> => {
+    let response: Message;
+    const body = toAnthropicRequestBody(name, request, !!streamingCallback);
+    if (streamingCallback) {
+      const stream = client.messages.stream(body);
+      for await (const chunk of stream) {
+        const c = fromAnthropicContentBlockChunk(chunk);
+        if (c) {
+          streamingCallback({
+            index: 0,
+            content: [c],
+          });
+        }
+      }
+      response = await stream.finalMessage();
+    } else {
+      response = (await client.messages.create(body)) as Message;
+    }
+    return fromAnthropicResponse(response);
+  };
+}
+
+/**
  * Defines a Claude model with the given name and Anthropic client.
  * @param name The name of the Claude model.
  * @param client The Anthropic client instance.
@@ -474,25 +498,6 @@ export function claudeModel(
       ...model.info,
       configSchema: model.configSchema,
     },
-    async (request, streamingCallback) => {
-      let response: Message;
-      const body = toAnthropicRequestBody(name, request, !!streamingCallback);
-      if (streamingCallback) {
-        const stream = client.messages.stream(body);
-        for await (const chunk of stream) {
-          const c = fromAnthropicContentBlockChunk(chunk);
-          if (c) {
-            streamingCallback({
-              index: 0,
-              content: [c],
-            });
-          }
-        }
-        response = await stream.finalMessage();
-      } else {
-        response = (await client.messages.create(body)) as Message;
-      }
-      return fromAnthropicResponse(response);
-    }
+    claudeRunner(name, client)
   );
 }
