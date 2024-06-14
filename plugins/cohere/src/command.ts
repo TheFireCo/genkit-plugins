@@ -148,34 +148,40 @@ function toCohereRole(role: Role): Exclude<Cohere.Message['role'], 'TOOL'> {
   }
 }
 
-function zodTypeToPythonType(zodType: z.ZodTypeAny): string {
-  if (zodType instanceof z.ZodString) {
-    return 'str';
-  } else if (zodType instanceof z.ZodNumber) {
-    return 'float';
-  } else if (zodType instanceof z.ZodBoolean) {
-    return 'bool';
-  } else if (zodType instanceof z.ZodArray) {
-    return 'list';
-  } else if (zodType instanceof z.ZodObject) {
-    return 'dict';
-  } else {
-    throw new Error(`Unsupported Zod type: ${zodType.constructor.name}`);
+export function jsonSchemaToPythonType(schema: Record<string, any>): string {
+  switch (schema.type) {
+    case 'string':
+      return 'str';
+    case 'number':
+      return 'float';
+    case 'integer':
+      return 'int';
+    case 'boolean':
+      return 'bool';
+    case 'array':
+      return 'List';
+    case 'object':
+      return 'Dict';
+    case 'null':
+      return 'None';
+    default:
+      throw new Error(
+        `Unsupported JSON schema type: ${JSON.stringify(schema)}`
+      );
   }
 }
 
-function toCohereTool(tool: ToolDefinition): Cohere.Tool {
-  const parameterDefinitions: Record<
-    string,
-    Cohere.ToolParameterDefinitionsValue
-  > = {};
-
-  for (const [key, value] of Object.entries(tool.inputSchema)) {
-    parameterDefinitions[key] = {
-      type: zodTypeToPythonType(value),
-      required: !value.isOptional(),
-    };
-  }
+export function toCohereTool(tool: ToolDefinition): Cohere.Tool {
+  const parameterDefinitions =
+    Object.fromEntries<Cohere.ToolParameterDefinitionsValue>(
+      Object.entries(tool.inputSchema.properties).map(([key, value]) => [
+        key,
+        {
+          type: jsonSchemaToPythonType(value as Record<string, any>),
+          required: tool.inputSchema.required?.includes(key) || false,
+        },
+      ])
+    );
 
   return {
     name: tool.name,
