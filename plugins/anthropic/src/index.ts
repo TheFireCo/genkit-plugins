@@ -17,13 +17,14 @@
 import { genkitPlugin, type Plugin } from '@genkit-ai/core';
 import Anthropic from '@anthropic-ai/sdk';
 import {
+  claude35Sonnet,
   claude3Opus,
   claude3Sonnet,
   claude3Haiku,
   claudeModel,
   SUPPORTED_CLAUDE_MODELS,
 } from './claude.js';
-export { claude3Opus, claude3Sonnet, claude3Haiku };
+export { claude35Sonnet, claude3Opus, claude3Sonnet, claude3Haiku };
 
 export interface PluginOptions {
   apiKey?: string;
@@ -37,6 +38,7 @@ export interface PluginOptions {
  * environment variables. It initializes the Anthropic client and makes available the Claude models for use.
  *
  * Exports:
+ * - claude35Sonnet: Reference to the Claude 3.5 Sonnet model.
  * - claude3Haiku: Reference to the Claude 3 Haiku model.
  * - claude3Sonnet: Reference to the Claude 3 Sonnet model.
  * - claude3Opus: Reference to the Claude 3 Opus model.

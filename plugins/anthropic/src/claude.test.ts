@@ -649,6 +649,39 @@ describe('toAnthropicRequestBody', () => {
     expectedOutput: MessageCreateParams;
   }[] = [
     {
+      should: '(claude-3-5-sonnet) handles request with text messages',
+      modelName: 'claude-3-5-sonnet',
+      genkitRequest: {
+        messages: [
+          { role: 'user', content: [{ text: 'Tell a joke about dogs.' }] },
+        ],
+        output: { format: 'text' },
+        config: {
+          metadata: {
+            user_id: 'exampleUser123',
+          },
+        },
+      },
+      expectedOutput: {
+        max_tokens: 4096,
+        messages: [
+          {
+            content: [
+              {
+                text: 'Tell a joke about dogs.',
+                type: 'text',
+              },
+            ],
+            role: 'user',
+          },
+        ],
+        model: 'claude-3-5-sonnet-20240620',
+        metadata: {
+          user_id: 'exampleUser123',
+        },
+      },
+    },
+    {
       should: '(claude-3-opus) handles request with text messages',
       modelName: 'claude-3-opus',
       genkitRequest: {
