@@ -33,7 +33,7 @@ Install the plugin in your project with your favorite package manager:
 ## Supported models
 
 The plugin supports the most recent Anthropic models:
-**Claude 3 Opus**, **Claude 3 Sonnet**, and **Claude 3 Haiku**.
+**Claude 3.5 Sonnet**, **Claude 3 Opus**, **Claude 3 Sonnet**, and **Claude 3 Haiku**.
 
 ## Usage
 
