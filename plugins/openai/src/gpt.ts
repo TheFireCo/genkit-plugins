@@ -48,6 +48,8 @@ import z from 'zod';
 const MODELS_SUPPORTING_OPENAI_RESPONSE_FORMAT = [
   'gpt-4o',
   'gpt-4o-2024-05-13',
+  'gpt-4o-mini',
+  'gpt-4o-mini-2024-07-18',
   'gpt-4-turbo',
   'gpt-4-turbo-2024-04-09',
   'gpt-4-turbo-preview',
@@ -78,6 +80,22 @@ export const gpt4o = modelRef({
   info: {
     versions: ['gpt-4o', 'gpt-4o-2024-05-13'],
     label: 'OpenAI - GPT-4o',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: true,
+      systemRole: true,
+      output: ['text', 'json'],
+    },
+  },
+  configSchema: OpenAiConfigSchema,
+});
+
+export const gpt4oMini = modelRef({
+  name: 'openai/gpt-4o-mini',
+  info: {
+    versions: ['gpt-4o-mini', 'gpt-4o-mini-2024-07-18'],
+    label: 'OpenAI - GPT-4o mini',
     supports: {
       multiturn: true,
       tools: true,
@@ -161,6 +179,7 @@ export const gpt35Turbo = modelRef({
 
 export const SUPPORTED_GPT_MODELS = {
   'gpt-4o': gpt4o,
+  'gpt-4o-mini': gpt4oMini,
   'gpt-4-turbo': gpt4Turbo,
   'gpt-4-vision': gpt4Vision,
   'gpt-4': gpt4,
