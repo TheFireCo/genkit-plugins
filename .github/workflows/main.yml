@@ -25,7 +25,7 @@ jobs:
     - run: npm run build
     - run: npm run test
     - name: SonarCloud Scan
-      if: ${{ secrets.SONAR_TOKEN }}
+      if: env.SONAR_TOKEN != null
       uses: SonarSource/sonarcloud-github-action@v2
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
