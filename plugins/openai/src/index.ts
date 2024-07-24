@@ -30,6 +30,7 @@ import {
   gpt4Turbo,
   gpt4Vision,
   gpt4o,
+  gpt4oMini,
   gptModel,
   SUPPORTED_GPT_MODELS,
 } from './gpt.js';
@@ -42,6 +43,7 @@ export {
   gpt4Turbo,
   gpt4Vision,
   gpt4o,
+  gpt4oMini,
   tts1,
   tts1Hd,
   whisper1,
@@ -55,14 +57,17 @@ export interface PluginOptions {
 }
 
 /**
- * This module provides an interface to the OpenAI models through the Genkit plugin system.
- * It allows users to interact with various models by providing an API key and optional configuration.
+ * This module provides an interface to the OpenAI models through the Genkit
+ * plugin system. It allows users to interact with various models by providing
+ * an API key and optional configuration.
  *
- * The main export is the `openai` plugin, which can be configured with an API key either directly or through
- * environment variables. It initializes the OpenAI client and makes available the models for use.
+ * The main export is the `openai` plugin, which can be configured with an API
+ * key either directly or through environment variables. It initializes the
+ * OpenAI client and makes available the models for use.
  *
  * Exports:
  * - gpt4o: Reference to the GPT-4o model.
+ * - gpt4oMini: Reference to the GPT-4o-mini model.
  * - gpt4Turbo: Reference to the GPT-4 Turbo model.
  * - gpt4Vision: Reference to the GPT-4 Vision model.
  * - gpt4: Reference to the GPT-4 model.
@@ -77,7 +82,9 @@ export interface PluginOptions {
  * - openai: The main plugin function to interact with OpenAI.
  *
  * Usage:
- * To use the models, initialize the openai plugin inside `configureGenkit` and pass the configuration options. If no API key is provided in the options, the environment variable `OPENAI_API_KEY` must be set.
+ * To use the models, initialize the openai plugin inside `configureGenkit` and
+ * pass the configuration options. If no API key is provided in the options, the
+ * environment variable `OPENAI_API_KEY` must be set.
  *
  * Example:
  * ```
