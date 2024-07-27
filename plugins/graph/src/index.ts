@@ -43,21 +43,21 @@ export function defineGraph<
     authPolicy?: FlowAuthPolicy<InputSchema>;
     middleware?: express.RequestHandler[];
   },
-  init: (
+  entrypoint: (
     input: z.infer<InputSchema>
-  ) => Promise<z.infer<StateSchema>> | z.infer<StateSchema>
+  ) =>
+    | Promise<z.infer<StateReturnSchema<StateSchema>>>
+    | z.infer<StateReturnSchema<StateSchema>>
 ): {
   flow: Flow<InputSchema, OutputSchema>;
   addNode: (
     flow: Flow<StateSchema, StateReturnSchema<StateSchema> | OutputSchema>
   ) => void;
-  setEntrypoint: (name: string) => void;
 } {
   const nodes: Record<
     string,
     Flow<StateSchema, StateReturnSchema<StateSchema> | OutputSchema>
   > = {};
-  let entrypoint: keyof typeof nodes | undefined;
 
   const addNode = (
     flow: Flow<StateSchema, StateReturnSchema<StateSchema> | OutputSchema>
@@ -69,14 +69,6 @@ export function defineGraph<
     nodes[flow.name] = flow;
   };
 
-  const setEntrypoint = (name: string) => {
-    if (!nodes[name]) {
-      throw new Error(`Node ${name} does not exist`);
-    }
-
-    entrypoint = name;
-  };
-
   const flow = defineFlow<InputSchema, OutputSchema>(
     {
       name: config.name,
@@ -86,15 +78,16 @@ export function defineGraph<
       middleware: config.middleware,
     },
     async (input) => {
-      if (entrypoint === undefined) {
-        throw new Error('No entrypoint defined');
-      }
+      let { state, nextNode } = await entrypoint(input);
 
-      let state: z.infer<StateSchema> = await init(input);
+      let currentNode = nextNode;
 
-      let flowName = entrypoint;
       while (true) {
-        const result = await runFlow(nodes[flowName], state);
+        if (!nodes[currentNode]) {
+          throw new Error(`Node ${currentNode} does not exist`);
+        }
+
+        const result = await runFlow(nodes[currentNode], state);
 
         let parseResult = config.outputSchema!.safeParse(result);
 
@@ -106,7 +99,7 @@ export function defineGraph<
 
         if (parseResult.success) {
           state = (result as z.infer<StateReturnSchema<StateSchema>>).state!;
-          flowName = (result as z.infer<StateReturnSchema<StateSchema>>)
+          currentNode = (result as z.infer<StateReturnSchema<StateSchema>>)
             .nextNode;
           continue;
         } else {
@@ -121,6 +114,5 @@ export function defineGraph<
   return {
     flow,
     addNode,
-    setEntrypoint,
   };
 }
