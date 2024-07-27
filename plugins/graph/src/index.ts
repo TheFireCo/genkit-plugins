@@ -30,16 +30,24 @@ type StateReturnSchema<T extends z.ZodTypeAny> = ReturnType<
 
 export function defineGraph<
   StateSchema extends z.ZodTypeAny = z.ZodTypeAny,
+  InputSchema extends z.ZodTypeAny = z.ZodTypeAny,
   OutputSchema extends z.ZodTypeAny = z.ZodTypeAny,
->(config: {
-  name: string;
-  stateSchema?: StateSchema;
-  outputSchema?: OutputSchema;
-  experimentalDurable?: boolean;
-  authPolicy?: FlowAuthPolicy<StateSchema>;
-  middleware?: express.RequestHandler[];
-}): {
-  graph: Flow<StateSchema, OutputSchema>;
+>(
+  config: {
+    name: string;
+    stateSchema?: StateSchema;
+    inputSchema?: InputSchema;
+    outputSchema?: OutputSchema;
+    initialState?: z.infer<StateSchema>;
+    experimentalDurable?: boolean;
+    authPolicy?: FlowAuthPolicy<InputSchema>;
+    middleware?: express.RequestHandler[];
+  },
+  init: (
+    input: z.infer<InputSchema>
+  ) => Promise<z.infer<StateSchema>> | z.infer<StateSchema>
+): {
+  flow: Flow<InputSchema, OutputSchema>;
   addNode: (
     flow: Flow<StateSchema, StateReturnSchema<StateSchema> | OutputSchema>
   ) => void;
@@ -69,10 +77,10 @@ export function defineGraph<
     entrypoint = name;
   };
 
-  const graph = defineFlow<StateSchema, OutputSchema>(
+  const flow = defineFlow<InputSchema, OutputSchema>(
     {
       name: config.name,
-      inputSchema: config.stateSchema,
+      inputSchema: config.inputSchema,
       outputSchema: config.outputSchema,
       authPolicy: config.authPolicy,
       middleware: config.middleware,
@@ -82,7 +90,7 @@ export function defineGraph<
         throw new Error('No entrypoint defined');
       }
 
-      let state = input;
+      let state: z.infer<StateSchema> = await init(input);
 
       let flowName = entrypoint;
       while (true) {
@@ -111,7 +119,7 @@ export function defineGraph<
   );
 
   return {
-    graph,
+    flow,
     addNode,
     setEntrypoint,
   };
