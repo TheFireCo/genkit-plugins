@@ -1,5 +1,3 @@
-![Firebase Genkit + Graph Workflows](https://github.com/TheFireCo/genkit-plugins/blob/main/assets/genkit-graphs.png?raw=true)
-
 <h1 align="center">Firebase Genkit <> Graph Workflows Plugin</h1>
 
 <h4 align="center">Graph Workflows Community Plugin for Google Firebase Genkit</h4>
