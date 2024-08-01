@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { defineFlow, Flow, FlowAuthPolicy, runFlow } from '@genkit-ai/flow';
+import { defineFlow, streamFlow, Flow, FlowAuthPolicy } from '@genkit-ai/flow';
 import * as express from 'express';
 import * as z from 'zod';
 
@@ -32,13 +32,14 @@ export function defineGraph<
   StateSchema extends z.ZodTypeAny = z.ZodTypeAny,
   InputSchema extends z.ZodTypeAny = z.ZodTypeAny,
   OutputSchema extends z.ZodTypeAny = z.ZodTypeAny,
+  StreamSchema extends z.ZodTypeAny = z.ZodTypeAny,
 >(
   config: {
     name: string;
     stateSchema?: StateSchema;
     inputSchema?: InputSchema;
+    streamSchema?: StreamSchema;
     outputSchema?: OutputSchema;
-    initialState?: z.infer<StateSchema>;
     experimentalDurable?: boolean;
     authPolicy?: FlowAuthPolicy<InputSchema>;
     middleware?: express.RequestHandler[];
@@ -51,16 +52,29 @@ export function defineGraph<
 ): {
   flow: Flow<InputSchema, OutputSchema>;
   addNode: (
-    flow: Flow<StateSchema, StateReturnSchema<StateSchema> | OutputSchema>
+    flow: Flow<
+      StateSchema,
+      StateReturnSchema<StateSchema> | OutputSchema,
+      StreamSchema
+    >
   ) => void;
+  removeNode: (name: string) => void;
 } {
   const nodes: Record<
     string,
-    Flow<StateSchema, StateReturnSchema<StateSchema> | OutputSchema>
+    Flow<
+      StateSchema,
+      StateReturnSchema<StateSchema> | OutputSchema,
+      StreamSchema
+    >
   > = {};
 
   const addNode = (
-    flow: Flow<StateSchema, StateReturnSchema<StateSchema> | OutputSchema>
+    flow: Flow<
+      StateSchema,
+      StateReturnSchema<StateSchema> | OutputSchema,
+      StreamSchema
+    >
   ) => {
     if (nodes[flow.name]) {
       throw new Error(`Node ${flow.name} already exists`);
@@ -69,15 +83,24 @@ export function defineGraph<
     nodes[flow.name] = flow;
   };
 
-  const flow = defineFlow<InputSchema, OutputSchema>(
+  const removeNode = (name: keyof typeof nodes) => {
+    if (nodes[name]) {
+      throw new Error(`Node ${name} already exists`);
+    }
+
+    delete nodes[name];
+  };
+
+  const flow = defineFlow<InputSchema, OutputSchema, StreamSchema>(
     {
       name: config.name,
       inputSchema: config.inputSchema,
+      streamSchema: config.streamSchema,
       outputSchema: config.outputSchema,
       authPolicy: config.authPolicy,
       middleware: config.middleware,
     },
-    async (input) => {
+    async (input, streamingCallback) => {
       let { state, nextNode } = await entrypoint(input);
 
       let currentNode = nextNode;
@@ -87,8 +110,15 @@ export function defineGraph<
           throw new Error(`Node ${currentNode} does not exist`);
         }
 
-        const result = await runFlow(nodes[currentNode], state);
+        const { stream, output } = streamFlow(nodes[currentNode], state);
 
+        if (streamingCallback) {
+          for await (const chunk of stream()) {
+            streamingCallback(chunk);
+          }
+        }
+
+        const result = await output();
         let parseResult = config.outputSchema!.safeParse(result);
 
         if (parseResult.success) {
@@ -114,5 +144,6 @@ export function defineGraph<
   return {
     flow,
     addNode,
+    removeNode,
   };
 }
