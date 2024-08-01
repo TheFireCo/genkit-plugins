@@ -50,7 +50,7 @@ export function defineGraph<
     | Promise<z.infer<StateReturnSchema<StateSchema>>>
     | z.infer<StateReturnSchema<StateSchema>>
 ): {
-  flow: Flow<InputSchema, OutputSchema>;
+  executor: Flow<InputSchema, OutputSchema>;
   addNode: (
     flow: Flow<
       StateSchema,
@@ -91,7 +91,7 @@ export function defineGraph<
     delete nodes[name];
   };
 
-  const flow = defineFlow<InputSchema, OutputSchema, StreamSchema>(
+  const executor = defineFlow<InputSchema, OutputSchema, StreamSchema>(
     {
       name: config.name,
       inputSchema: config.inputSchema,
@@ -142,7 +142,7 @@ export function defineGraph<
   );
 
   return {
-    flow,
+    executor,
     addNode,
     removeNode,
   };
