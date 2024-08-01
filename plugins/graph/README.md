@@ -55,7 +55,7 @@ import { z } from 'zod';
 Use the `defineGraph` function to create a new graph:
 
 ```typescript
-const { executor, addNode, removeNode } = defineGraph(
+const graph = defineGraph(
   {
     name: 'MyGraph',
     stateSchema: z.object({
@@ -94,7 +94,7 @@ const { executor, addNode, removeNode } = defineGraph(
 Use the `addNode` function to add nodes to your graph:
 
 ```typescript
-addNode(
+graph.addNode(
   defineFlow(
     {
       name: 'firstNode',
@@ -112,7 +112,7 @@ addNode(
   )
 );
 
-addNode(
+graph.addNode(
   defineFlow(
     {
       name: 'secondNode',
@@ -152,7 +152,7 @@ const result = await runFlow(flow, {
 ```typescript
 // ...configure Genkit (as shown above)...
 
-const { executor, addNode } = defineGraph(
+const graph = defineGraph(
   {
     name: 'MultiStepGraph',
     inputSchema: z.object({ text: z.string(), iterations: z.number() }),
@@ -166,7 +166,7 @@ const { executor, addNode } = defineGraph(
   }
 );
 
-addNode(
+graph.addNode(
   defineFlow(
     {
       name: 'processText',
@@ -184,7 +184,7 @@ addNode(
   )
 );
 
-addNode(
+graph.addNode(
   defineFlow(
     {
       name: 'finalizeOutput',
@@ -196,7 +196,10 @@ addNode(
 );
 
 // Run the graph
-const result = await runFlow(executor, { text: 'hello world', iterations: 3 });
+const result = await runFlow(graph.executor, {
+  text: 'hello world',
+  iterations: 3,
+});
 console.log(result); // Outputs: "Processed 3 times: HELLO WORLD"
 ```
 
@@ -207,7 +210,7 @@ console.log(result); // Outputs: "Processed 3 times: HELLO WORLD"
 You can use the `streamingCallback` function to handle streaming data from nodes:
 
 ```typescript
-const { executor, addNode } = defineGraph(
+const graph = defineGraph(
   {
     name: 'StreamingGraph',
     inputSchema: z.string(),
@@ -221,7 +224,7 @@ const { executor, addNode } = defineGraph(
   }
 );
 
-addNode(
+graph.addNode(
   defineFlow(
     {
       name: 'streamingNode',
