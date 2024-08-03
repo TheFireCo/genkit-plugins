@@ -4,7 +4,7 @@
 
 <div align="center">
    <img alt="Github lerna version" src="https://img.shields.io/github/lerna-json/v/TheFireCo/genkit-plugins?label=version">
-   <img alt="NPM Downloads" src="https://img.shields.io/npm/dw/genkitx-graphs">
+   <img alt="NPM Downloads" src="https://img.shields.io/npm/dw/genkitx-graph">
    <img alt="GitHub Org's stars" src="https://img.shields.io/github/stars/TheFireCo?style=social">
    <img alt="GitHub License" src="https://img.shields.io/github/license/TheFireCo/genkit-plugins">
    <img alt="Static Badge" src="https://img.shields.io/badge/yes-a?label=maintained">
@@ -16,20 +16,20 @@
    <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/TheFireCo/genkit-plugins">
 </div>
 
-**`genkitx-graphs`** is a community plugin for creating graph-based workflows with
+**`genkitx-graph`** is a community plugin for creating graph-based workflows with
 [Firebase Genkit](https://github.com/firebase/genkit). Built by [**The Fire Company**](https://github.com/TheFireCo). 🔥
 
 ## Installation
 
 Install the plugin in your project with your favorite package manager:
 
-- `npm install genkitx-graphs`
-- `yarn add genkitx-graphs`
-- `pnpm add genkitx-graphs`
+- `npm install genkitx-graph`
+- `yarn add genkitx-graph`
+- `pnpm add genkitx-graph`
 
 ## Introduction
 
-genkitx-graphs is a TypeScript plugin for Firebase Genkit that enables developers to easily build graph-based workflows for AI agents. This plugin provides a powerful and flexible way to create complex, multi-step processes with branching logic and state management.
+genkitx-graph is a TypeScript plugin for Firebase Genkit that enables developers to easily build graph-based workflows for AI agents. This plugin provides a powerful and flexible way to create complex, multi-step processes with branching logic and state management.
 
 ## Key Concepts
 
