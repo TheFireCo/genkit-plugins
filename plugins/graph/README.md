@@ -147,6 +147,46 @@ const result = await runFlow(flow, {
 
 **If any node returns an object conforming to the `Graph`'s `outputSchema` then that value is returned as the `Graph`'s output and the execution finishes**
 
+### Cleanup before finish
+
+We can execute any arbitrary function before the graph exution finishes using the `beforeFinish` callback in `defineGraph`:
+
+```typescript
+const graph = defineGraph(
+  {
+    name: 'MyGraph',
+    stateSchema: z.object({
+      // Define your state schema here
+    }),
+    inputSchema: z.object({
+      // Define your input schema here
+    }),
+    outputSchema: z.object({
+      // Define your output schema here
+    }),
+    streamSchema: z.object({
+      // Define your stream schema here (optional)
+    }),
+  },
+  async (input) => {
+    // Define your entrypoint logic here
+    return {
+      state: {
+        /* initial state */
+      },
+      nextNode: 'firstNode',
+    };
+  }
+  async (state, output) => {
+    // Do anything with graph state and output
+  }
+);
+```
+
+The most common usage of `beforeFinish` is storing the graph state and output in a database.
+
+Together with `entrypoint` callback this enables graphs to have memory like a chat history.
+
 ### Basic example
 
 ```typescript
