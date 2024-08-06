@@ -48,7 +48,11 @@ export function defineGraph<
     input: z.infer<InputSchema>
   ) =>
     | Promise<z.infer<StateReturnSchema<StateSchema>>>
-    | z.infer<StateReturnSchema<StateSchema>>
+    | z.infer<StateReturnSchema<StateSchema>>,
+  beforeFinish?: (
+    state: z.infer<StateSchema>,
+    output: z.infer<OutputSchema>
+  ) => Promise<void> | void
 ): {
   executor: Flow<InputSchema, OutputSchema>;
   addNode: (
@@ -122,7 +126,9 @@ export function defineGraph<
         let parseResult = config.outputSchema!.safeParse(result);
 
         if (parseResult.success) {
-          return result as z.infer<OutputSchema>;
+          await beforeFinish?.(state, result);
+
+          return result;
         }
 
         parseResult = config.stateSchema!.safeParse(result);
@@ -134,7 +140,7 @@ export function defineGraph<
           continue;
         } else {
           throw new Error(
-            'Invalid output: outputSchema does not satisfy stateSchema or outputSchema'
+            'Invalid output: Output does not satisfy stateSchema or outputSchema'
           );
         }
       }
