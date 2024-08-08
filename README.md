@@ -36,6 +36,10 @@ This repository contains community plugins for
 - [`genkitx-convex`](plugins/convex/README.md) - Plugin for Convex Vector Stores
 - [`genkitx-hnsw`](plugins/hnsw/README.md) - Plugin for HNSW Vector Stores
 
+### Other Plugins
+
+- [`genkitx-graph`](plugins/graph/README.md) - Plugin for building Graph workflows
+
 ## Installation
 
 Install the plugin in your project with your favorite package manager. For example, for `genkitx-openai`:
@@ -63,7 +67,7 @@ Want to contribute to the project? That's awesome! Head over to our [Contributio
 
 ## Need support?
 
-> [!NOTE]  
+> [!NOTE]
 > This repository depends on Google's Firebase Genkit. For issues and questions related to Genkit, please refer to instructions available in [Genkit's repository](https://github.com/firebase/genkit).
 
 Reach out by opening a discussion on [Github Discussions](https://github.com/TheFireCo/genkit-plugins/discussions).
