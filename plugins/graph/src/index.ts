@@ -24,7 +24,7 @@ const StateReturnSchema = <T extends z.ZodTypeAny>(stateSchema: T) => {
     nextNode: z.string(),
   });
 };
-type StateReturnSchema<T extends z.ZodTypeAny> = ReturnType<
+export type StateReturnSchema<T extends z.ZodTypeAny> = ReturnType<
   typeof StateReturnSchema<T>
 >;
 
