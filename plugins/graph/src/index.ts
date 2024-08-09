@@ -18,15 +18,36 @@ import { defineFlow, streamFlow, Flow, FlowAuthPolicy } from '@genkit-ai/flow';
 import * as express from 'express';
 import * as z from 'zod';
 
-const StateReturnSchema = <T extends z.ZodTypeAny>(stateSchema: T) => {
+export const StateReturnSchema = <S extends z.ZodTypeAny>(stateSchema: S) => {
   return z.object({
     state: stateSchema,
     nextNode: z.string(),
   });
 };
-type StateReturnSchema<T extends z.ZodTypeAny> = ReturnType<
-  typeof StateReturnSchema<T>
+
+type StateReturnSchema<S extends z.ZodTypeAny> = ReturnType<
+  typeof StateReturnSchema<S>
 >;
+
+export const FlowOutputSchema = <
+  S extends z.ZodTypeAny,
+  O extends z.ZodTypeAny,
+>(
+  stateSchema: S,
+  outputSchema: O
+) => {
+  return z
+    .object({
+      state: stateSchema,
+      nextNode: z.string(),
+    })
+    .or(outputSchema);
+};
+
+type FlowOutputSchema<
+  S extends z.ZodTypeAny,
+  O extends z.ZodTypeAny,
+> = ReturnType<typeof FlowOutputSchema<S, O>>;
 
 export function defineGraph<
   StateSchema extends z.ZodTypeAny = z.ZodTypeAny,
@@ -58,7 +79,7 @@ export function defineGraph<
   addNode: (
     flow: Flow<
       StateSchema,
-      StateReturnSchema<StateSchema> | OutputSchema,
+      FlowOutputSchema<StateSchema, OutputSchema>,
       StreamSchema
     >
   ) => void;
@@ -66,17 +87,13 @@ export function defineGraph<
 } {
   const nodes: Record<
     string,
-    Flow<
-      StateSchema,
-      StateReturnSchema<StateSchema> | OutputSchema,
-      StreamSchema
-    >
+    Flow<StateSchema, FlowOutputSchema<StateSchema, OutputSchema>, StreamSchema>
   > = {};
 
   const addNode = (
     flow: Flow<
       StateSchema,
-      StateReturnSchema<StateSchema> | OutputSchema,
+      FlowOutputSchema<StateSchema, OutputSchema>,
       StreamSchema
     >
   ) => {
