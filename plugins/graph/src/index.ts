@@ -124,7 +124,7 @@ export function defineGraph<
     async (input, streamingCallback) => {
       let { state, nextNode } = await entrypoint(input);
 
-      let currentNode = nextNode;
+      let currentNode: string = nextNode;
 
       while (true) {
         if (!nodes[currentNode]) {
@@ -140,24 +140,27 @@ export function defineGraph<
         }
 
         const result = await output();
-        let parseResult = config.outputSchema!.safeParse(result);
+
+        let parseResult = StateReturnSchema(
+          config.stateSchema ?? z.any()
+        ).safeParse(result);
+
+        if (parseResult.success) {
+          state = (result as z.infer<StateReturnSchema<StateSchema>>).state;
+          currentNode = (result as z.infer<StateReturnSchema<StateSchema>>)
+            .nextNode;
+          continue;
+        }
+
+        parseResult = (config.outputSchema ?? z.any()).safeParse(result);
 
         if (parseResult.success) {
           await beforeFinish?.(state, result);
 
           return result;
-        }
-
-        parseResult = config.stateSchema!.safeParse(result);
-
-        if (parseResult.success) {
-          state = (result as z.infer<StateReturnSchema<StateSchema>>).state!;
-          currentNode = (result as z.infer<StateReturnSchema<StateSchema>>)
-            .nextNode;
-          continue;
         } else {
           throw new Error(
-            'Invalid output: Output does not satisfy stateSchema or outputSchema'
+            `Invalid output: Output of node ${currentNode} does not satisfy StateSchema or OutputSchema`
           );
         }
       }
