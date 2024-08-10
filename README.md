@@ -94,6 +94,7 @@ This repository is proudly maintained by the team at [**The Fire Company**](http
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/retzd"><img src="https://avatars.githubusercontent.com/u/29590303?v=4?s=100" width="100px;" alt="Surahutomo Aziz Pradana"/><br /><sub><b>Surahutomo Aziz Pradana</b></sub></a><br /><a href="#code-retzd-tech" title="Code">💻</a> <a href="#doc-retzd-tech" title="Documentation">📖</a> <a href="#test-retzd-tech" title="Tests">⚠️</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/debkanchan"><img src="https://avatars.githubusercontent.com/u/11326669?v=4?s=100" width="100px;" alt="DK"/><br /><sub><b>DK</b></sub></a><br /><a href="#code-debkanchan" title="Code">💻</a> <a href="#doc-debkanchan" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>
