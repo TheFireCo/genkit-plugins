@@ -22,7 +22,7 @@
     "@genkit-ai/ai": "0.5.0",
     "@genkit-ai/core": "0.5.0",
     "@genkit-ai/dotprompt": "0.5.0",
-    "@genkit-ai/flow": "0.5.0",
+    "@genkit-ai/flow": "0.5.11",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "genkitx-anthropic": "^0.10.1",
