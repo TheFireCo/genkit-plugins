@@ -376,7 +376,7 @@ export function fromOpenAiChoice(
     finishReason: finishReasonMap[choice.finish_reason] || 'other',
     message: {
       role: 'model',
-      content: toolRequestParts
+      content: toolRequestParts && toolRequestParts.length > 0
         ? // Note: Not sure why I have to cast here exactly.
           // Otherwise it thinks toolRequest must be 'undefined' if provided
           (toolRequestParts as ToolRequestPart[])
