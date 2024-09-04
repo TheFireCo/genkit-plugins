@@ -1,6 +1,6 @@
 node_modules/
 .nx/
-lib/
+# lib/
 .env
 .vscode/launch.json
 plugins/.DS_Store
