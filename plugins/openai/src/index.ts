@@ -54,12 +54,12 @@ export {
   textEmbeddingAda002,
 };
 
-export type OpenAICustomModelActionn = <CustomOptionsSchema extends z.ZodTypeAny = z.ZodTypeAny>(client: OpenAI) => ModelAction<CustomOptionsSchema>
+export type OpenAICustomModelAction = <CustomOptionsSchema extends z.ZodTypeAny = z.ZodTypeAny>(client: OpenAI) => ModelAction<CustomOptionsSchema>
 
 export interface PluginOptions {
   apiKey?: string;
   baseURL?: string;
-  customModels?: Array<OpenAICustomModelActionn>;
+  customModels?: Array<OpenAICustomModelAction>;
 }
 
 /**
