@@ -14,22 +14,27 @@
  * limitations under the License.
  */
 
-import { describe, it, expect } from '@jest/globals';
 import {
-  type GenerateResponseData,
-  type Part,
-  type GenerateRequest,
-  type MessageData,
-  ToolDefinition,
-  CandidateData,
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+  jest,
+} from '@jest/globals';
+import {
+  GenerateResponseData,
+  Part,
+  GenerateRequest,
+  MessageData,
   Role,
-} from '@genkit-ai/ai/model';
-import * as GenkitAiModel from '@genkit-ai/ai/model';
+  Genkit,
+} from 'genkit';
 import {
-  type Message,
-  type MessageParam,
-  type MessageCreateParams,
-  type MessageStreamEvent,
+  Message,
+  MessageParam,
+  MessageCreateParams,
+  MessageStreamEvent,
 } from '@anthropic-ai/sdk/resources/messages.mjs';
 import {
   AnthropicConfigSchema,
@@ -47,11 +52,7 @@ import {
   toAnthropicToolResponseContent,
 } from './claude';
 import Anthropic from '@anthropic-ai/sdk';
-
-jest.mock('@genkit-ai/ai/model', () => ({
-  ...jest.requireActual('@genkit-ai/ai/model'),
-  defineModel: jest.fn(),
-}));
+import { CandidateData, ToolDefinition } from 'genkit/model';
 
 describe('toAnthropicRole', () => {
   const testCases: {
@@ -102,7 +103,7 @@ describe('toAnthropicRole', () => {
 
 describe('toAnthropicToolResponseContent', () => {
   it('should throw an error for unknown parts', () => {
-    const part: Part = { data: 'hi' };
+    const part: Part = { data: 'hi' } as Part;
     expect(() => toAnthropicToolResponseContent(part)).toThrowError(
       `Invalid genkit part provided to toAnthropicToolResponseContent: {"data":"hi"}`
     );
@@ -397,6 +398,7 @@ describe('toAnthropicMessages', () => {
       },
     },
   ];
+
   for (const test of testCases) {
     it(test.should, () => {
       const actualOutput = toAnthropicMessages(test.inputMessages);
@@ -795,7 +797,7 @@ describe('toAnthropicRequestBody', () => {
     expect(() =>
       toAnthropicRequestBody('fake-model', {
         messages: [],
-      })
+      } as GenerateRequest<typeof AnthropicConfigSchema>)
     ).toThrowError('Unsupported model: fake-model');
   });
 
@@ -805,7 +807,7 @@ describe('toAnthropicRequestBody', () => {
         messages: [],
         tools: [],
         output: { format: 'media' },
-      })
+      } as GenerateRequest<typeof AnthropicConfigSchema>)
     ).toThrowError(
       'Only text output format is supported for Claude models currently'
     );
@@ -841,7 +843,7 @@ describe('claudeRunner', () => {
       messages: {
         stream: jest.fn(
           () =>
-            // Simluate Anthropic SDK request streaming
+            // Simulate Anthropic SDK request streaming
             new (class {
               isFirstRequest = true;
               [Symbol.asyncIterator]() {
@@ -892,16 +894,22 @@ describe('claudeRunner', () => {
 });
 
 describe('claudeModel', () => {
+  let ai: Genkit;
+
+  beforeEach(() => {
+    ai = {
+      defineModel: jest.fn(),
+    } as unknown as Genkit;
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should correctly define supported GPT models', () => {
-    jest
-      .spyOn(GenkitAiModel, 'defineModel')
-      .mockImplementation((() => ({})) as any);
-    claudeModel('claude-3-haiku', {} as Anthropic);
-    expect(GenkitAiModel.defineModel).toHaveBeenCalledWith(
+  it('should correctly define supported Claude models', () => {
+    jest.spyOn(ai, 'defineModel').mockImplementation((() => ({})) as any);
+    claudeModel(ai, 'claude-3-haiku', {} as Anthropic);
+    expect(ai.defineModel).toHaveBeenCalledWith(
       {
         name: claude3Haiku.name,
         ...claude3Haiku.info,
@@ -913,7 +921,7 @@ describe('claudeModel', () => {
 
   it('should throw for unsupported models', () => {
     expect(() =>
-      claudeModel('unsupported-model', {} as Anthropic)
+      claudeModel(ai, 'unsupported-model', {} as Anthropic)
     ).toThrowError('Unsupported model: unsupported-model');
   });
 });
