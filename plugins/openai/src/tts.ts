@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2024 The Fire Company
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import { Message } from '@genkit-ai/ai';
 import {
+  GenerateRequest,
+  GenerateResponseData,
   GenerationCommonConfigSchema,
-  defineModel,
-  modelRef,
-  type GenerateRequest,
-  type GenerateResponseData,
-  type ModelAction,
-} from '@genkit-ai/ai/model';
+  Genkit,
+  Message,
+} from 'genkit';
+import { ModelAction, modelRef } from 'genkit/model';
 import OpenAI from 'openai';
 import { type SpeechCreateParams } from 'openai/resources/audio/index.mjs';
 import { z } from 'zod';
@@ -89,7 +87,7 @@ function toTTSRequest(
   const mappedModelName = request.config?.version || modelName;
   const options: SpeechCreateParams = {
     model: mappedModelName,
-    input: new Message(request.messages[0]).text(),
+    input: new Message(request.messages[0]).text,
     voice: request.config?.voice ?? 'alloy',
     speed: request.config?.speed,
     response_format: request.config?.response_format,
@@ -129,6 +127,7 @@ function toGenerateResponse(
 }
 
 export function ttsModel(
+  ai: Genkit,
   name: string,
   client: OpenAI
 ): ModelAction<typeof TTSConfigSchema> {
@@ -136,7 +135,7 @@ export function ttsModel(
   const model = SUPPORTED_TTS_MODELS[name];
   if (!model) throw new Error(`Unsupported model: ${name}`);
 
-  return defineModel<typeof TTSConfigSchema>(
+  return ai.defineModel<typeof TTSConfigSchema>(
     {
       name: modelId,
       ...model.info,

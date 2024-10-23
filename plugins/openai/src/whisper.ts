@@ -1,5 +1,5 @@
+/* Copyright 2024 The Fire Company
 /**
- * Copyright 2024 The Fire Company
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,23 @@
  * limitations under the License.
  */
 
-import { Message } from '@genkit-ai/ai';
+// import { Message } from '@genkit-ai/ai';
+// import {
+//   GenerationCommonConfigSchema,
+//   defineModel,
+//   modelRef,
+//   type GenerateRequest,
+//   type GenerateResponseData,
+//   type ModelAction,
+// } from '@genkit-ai/ai/model';
 import {
+  GenerateRequest,
+  GenerateResponseData,
   GenerationCommonConfigSchema,
-  defineModel,
-  modelRef,
-  type GenerateRequest,
-  type GenerateResponseData,
-  type ModelAction,
-} from '@genkit-ai/ai/model';
+  Genkit,
+  Message,
+} from 'genkit';
+import { ModelAction, modelRef } from 'genkit/model';
 import OpenAI from 'openai';
 import {
   type TranscriptionCreateParams,
@@ -57,7 +65,7 @@ function toWhisper1Request(
   request: GenerateRequest<typeof Whisper1ConfigSchema>
 ): TranscriptionCreateParams {
   const message = new Message(request.messages[0]);
-  const media = message.media();
+  const media = message.media;
   if (!media?.url) {
     throw new Error('No media found in the request');
   }
@@ -73,7 +81,7 @@ function toWhisper1Request(
   const options: TranscriptionCreateParams = {
     model: 'whisper-1',
     file: mediaFile,
-    prompt: message.text(),
+    prompt: message.text,
     temperature: request.config?.temperature,
     language: request.config?.language,
     timestamp_granularities: request.config?.timestamp_granularities,
@@ -125,9 +133,10 @@ function toGenerateResponse(
 }
 
 export function whisper1Model(
+  ai: Genkit,
   client: OpenAI
 ): ModelAction<typeof Whisper1ConfigSchema> {
-  return defineModel<typeof Whisper1ConfigSchema>(
+  return ai.defineModel<typeof Whisper1ConfigSchema>(
     {
       name: whisper1.name,
       ...whisper1.info,
