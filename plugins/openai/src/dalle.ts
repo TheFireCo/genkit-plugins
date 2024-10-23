@@ -13,16 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import { Message } from '@genkit-ai/ai';
 import {
+  GenerateRequest,
+  GenerateResponseData,
   GenerationCommonConfigSchema,
-  defineModel,
-  modelRef,
-  type GenerateRequest,
-  type GenerateResponseData,
-  type ModelAction,
-} from '@genkit-ai/ai/model';
+  Genkit,
+  Message,
+} from 'genkit';
+import { ModelAction, modelRef } from 'genkit/model';
 import OpenAI from 'openai';
 import {
   type ImageGenerateParams,
@@ -58,7 +56,7 @@ function toDallE3Request(
 ): ImageGenerateParams {
   const options = {
     model: 'dall-e-3',
-    prompt: new Message(request.messages[0]).text(),
+    prompt: new Message(request.messages[0]).text,
     n: request.candidates || 1,
     size: request.config?.size,
     style: request.config?.style,
@@ -97,9 +95,10 @@ function toGenerateResponse(result: ImagesResponse): GenerateResponseData {
 }
 
 export function dallE3Model(
+  ai: Genkit,
   client: OpenAI
 ): ModelAction<typeof DallE3ConfigSchema> {
-  return defineModel<typeof DallE3ConfigSchema>(
+  return ai.defineModel<typeof DallE3ConfigSchema>(
     {
       name: dallE3.name,
       ...dallE3.info,

@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-import { defineEmbedder, embedderRef } from '@genkit-ai/ai/embedder';
+// import { defineEmbedder, embedderRef } from '@genkit-ai/ai/embedder';
+
 import OpenAI from 'openai';
 import { z } from 'zod';
 import { type PluginOptions } from './index.js';
+import { embedderRef, Genkit } from 'genkit';
 
 export const TextEmbeddingConfigSchema = z.object({
   dimensions: z.number().optional(),
@@ -72,7 +74,11 @@ export const SUPPORTED_EMBEDDING_MODELS = {
   'text-embedding-ada-002': textEmbeddingAda002,
 };
 
-export function openaiEmbedder(name: string, options?: PluginOptions) {
+export function openaiEmbedder(
+  ai: Genkit,
+  name: string,
+  options?: PluginOptions
+) {
   let apiKey = options?.apiKey || process.env.OPENAI_API_KEY;
   if (!apiKey)
     throw new Error(
@@ -82,7 +88,7 @@ export function openaiEmbedder(name: string, options?: PluginOptions) {
   if (!model) throw new Error(`Unsupported model: ${name}`);
 
   const client = new OpenAI({ apiKey });
-  return defineEmbedder(
+  return ai.defineEmbedder(
     {
       info: model.info!,
       configSchema: TextEmbeddingConfigSchema,
@@ -91,7 +97,7 @@ export function openaiEmbedder(name: string, options?: PluginOptions) {
     async (input, options) => {
       const embeddings = await client.embeddings.create({
         model: name,
-        input: input.map((d) => d.text()),
+        input: input.map((d) => d.text),
         dimensions: options?.dimensions,
         encoding_format: options?.encodingFormat,
       });
