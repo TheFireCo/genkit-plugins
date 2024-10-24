@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { genkitPlugin, Plugin } from '@genkit-ai/core';
+import { Genkit } from 'genkit';
+import { genkitPlugin } from 'genkit/plugin';
 import { CohereClient } from 'cohere-ai';
 import {
   cohereEmbedder,
@@ -39,26 +40,22 @@ export interface PluginOptions {
   apiKey?: string;
 }
 
-export const cohere: Plugin<[PluginOptions] | []> = genkitPlugin(
-  'cohere',
-  async (options?: PluginOptions) => {
+export const cohere = (options?: PluginOptions) =>
+  genkitPlugin('cohere', async (ai: Genkit) => {
     let apiKey = options?.apiKey || process.env.COHERE_API_KEY;
     if (!apiKey)
       throw new Error(
         'Please pass in the API key or set the COHERE_API_KEY environment variable'
       );
     const client = new CohereClient({ token: apiKey });
-    return {
-      models: [
-        ...Object.keys(SUPPORTED_COMMAND_MODELS).map((name) =>
-          commandModel(name, client)
-        ),
-      ],
-      embedders: Object.keys(SUPPORTED_EMBEDDING_MODELS).map((name) =>
-        cohereEmbedder(name, options)
-      ),
-    };
-  }
-);
+
+    for (const name of Object.keys(SUPPORTED_COMMAND_MODELS)) {
+      commandModel(ai, name, client);
+    }
+
+    for (const name of Object.keys(SUPPORTED_EMBEDDING_MODELS)) {
+      cohereEmbedder(ai, name, options);
+    }
+  });
 
 export default cohere;
