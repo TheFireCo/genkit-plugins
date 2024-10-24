@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { defineEmbedder, embedderRef } from '@genkit-ai/ai/embedder';
+import { Genkit } from 'genkit';
+import { embedderRef } from 'genkit/embedder';
 import { z } from 'zod';
 import { PluginOptions } from '.';
 import { CohereClient } from 'cohere-ai';
@@ -104,7 +105,11 @@ export const SUPPORTED_EMBEDDING_MODELS = {
   'embed-multilingual-light-v3.0': embedMultilingualLight3,
 };
 
-export function cohereEmbedder(name: string, options?: PluginOptions) {
+export function cohereEmbedder(
+  ai: Genkit,
+  name: string,
+  options?: PluginOptions
+) {
   let apiKey = options?.apiKey || process.env.COHERE_API_KEY;
   if (!apiKey)
     throw new Error(
@@ -112,9 +117,8 @@ export function cohereEmbedder(name: string, options?: PluginOptions) {
     );
   const model = SUPPORTED_EMBEDDING_MODELS[name];
   if (!model) throw new Error(`Unsupported model: ${name}`);
-
   const client = new CohereClient({ token: apiKey });
-  return defineEmbedder(
+  return ai.defineEmbedder(
     {
       info: model.info!,
       configSchema: TextEmbeddingConfigSchema,
@@ -124,7 +128,7 @@ export function cohereEmbedder(name: string, options?: PluginOptions) {
       const embeddings = await client.embed({
         model: name,
         texts: input.map((d) => {
-          return d.text();
+          return d.text;
         }),
         inputType: options?.inputType ? options.inputType : 'search_document',
         embeddingTypes: options?.embeddingTypes
