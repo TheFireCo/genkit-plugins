@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-import { Message as GenkitMessage, ModelReference } from 'genkit';
-import {
+import { Message as GenkitMessage, z } from 'genkit';
+import type {
   GenerateResponseData,
-  GenerationCommonConfigSchema,
   GenerateRequest,
   MessageData,
   Part,
   Role,
   StreamingCallback,
   Genkit,
+  ModelReference,
 } from 'genkit';
-import {
+import { GenerationCommonConfigSchema } from 'genkit';
+import type {
   CandidateData,
   GenerateResponseChunkData,
   ModelAction,
-  modelRef,
   ToolDefinition,
 } from 'genkit/model';
-import Anthropic from '@anthropic-ai/sdk';
-import z from 'zod';
-import {
+import { modelRef } from 'genkit/model';
+import type Anthropic from '@anthropic-ai/sdk';
+import type {
   ImageBlockParam,
   TextBlock,
   TextBlockParam,

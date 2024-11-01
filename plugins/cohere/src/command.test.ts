@@ -18,7 +18,8 @@ import { describe, it, expect } from '@jest/globals';
 import z from 'zod';
 import { genkit } from 'genkit'; // Initialize genkit without plugins
 import { toToolDefinition } from 'genkit/tool';
-import { ToolDefinition } from 'genkit/model';
+import type { ToolDefinition } from 'genkit/model';
+
 import { toCohereTool, jsonSchemaToPythonType } from './command';
 
 describe('jsonSchemaToPythonType', () => {

@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-import { CandidateData } from 'genkit/model';
-import {
-  Message,
+import type { CandidateData } from 'genkit/model';
+import type {
   StreamingCallback,
   GenerateRequest,
   GenerateResponseData,
-  GenerationCommonConfigSchema,
   Genkit,
   MessageData,
   ModelReference,
@@ -28,13 +26,14 @@ import {
   Role,
   ToolRequestPart,
 } from 'genkit';
-import {
+import { Message, GenerationCommonConfigSchema, z } from 'genkit';
+import type {
   GenerateResponseChunkData,
   ModelAction,
-  modelRef,
   ToolDefinition,
 } from 'genkit/model';
-import OpenAI from 'openai';
+import { modelRef } from 'genkit/model';
+import type OpenAI from 'openai';
 import {
   type ChatCompletion,
   type ChatCompletionChunk,
@@ -46,7 +45,6 @@ import {
   type ChatCompletionTool,
   type CompletionChoice,
 } from 'openai/resources/index.mjs';
-import z from 'zod';
 
 const MODELS_SUPPORTING_OPENAI_RESPONSE_FORMAT = [
   'gpt-4o',

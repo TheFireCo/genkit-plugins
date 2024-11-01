@@ -14,28 +14,20 @@
  * limitations under the License.
  */
 
-import { Genkit } from 'genkit';
+import type { Genkit } from 'genkit';
 import { genkitPlugin } from 'genkit/plugin';
 import { CohereClient } from 'cohere-ai';
-import {
-  cohereEmbedder,
-  SUPPORTED_EMBEDDING_MODELS,
+
+import { cohereEmbedder, SUPPORTED_EMBEDDING_MODELS } from './embedder';
+import { commandModel, SUPPORTED_COMMAND_MODELS } from './command';
+
+export { command, commandLight, commandR, commandRPlus } from './command';
+export {
   embedEnglish3,
   embedEnglishLight3,
   embedMultilingual3,
   embedMultilingualLight3,
 } from './embedder';
-import {
-  command,
-  commandLight,
-  commandR,
-  commandRPlus,
-  commandModel,
-  SUPPORTED_COMMAND_MODELS,
-} from './command';
-
-export { command, commandLight, commandR, commandRPlus };
-
 export interface PluginOptions {
   apiKey?: string;
 }

@@ -13,17 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {
-  GenerateRequest,
-  GenerateResponseData,
-  GenerationCommonConfigSchema,
-  Genkit,
-  Message,
-} from 'genkit';
-import { ModelAction, modelRef } from 'genkit/model';
-import OpenAI from 'openai';
+import type { GenerateRequest, GenerateResponseData, Genkit } from 'genkit';
+import { GenerationCommonConfigSchema, Message, z } from 'genkit';
+import type { ModelAction } from 'genkit/model';
+import { modelRef } from 'genkit/model';
+import type OpenAI from 'openai';
 import { type SpeechCreateParams } from 'openai/resources/audio/index.mjs';
-import { z } from 'zod';
 
 export const TTSConfigSchema = GenerationCommonConfigSchema.extend({
   voice: z

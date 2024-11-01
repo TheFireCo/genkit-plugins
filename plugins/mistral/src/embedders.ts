@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Genkit, embedderRef } from 'genkit';
-import { z } from 'zod';
+import type { Genkit } from 'genkit';
+import { embedderRef, z } from 'genkit';
 
 export const TextEmbeddingConfigSchema = z.object({
   embeddingTypes: z.literal('float'),

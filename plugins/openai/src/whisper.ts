@@ -13,20 +13,15 @@
  * limitations under the License.
  */
 
-import {
-  GenerateRequest,
-  GenerateResponseData,
-  GenerationCommonConfigSchema,
-  Genkit,
-  Message,
-} from 'genkit';
-import { ModelAction, modelRef } from 'genkit/model';
-import OpenAI from 'openai';
+import type { GenerateRequest, GenerateResponseData, Genkit } from 'genkit';
+import { GenerationCommonConfigSchema, Message, z } from 'genkit';
+import type { ModelAction } from 'genkit/model';
+import { modelRef } from 'genkit/model';
+import type OpenAI from 'openai';
 import {
   type TranscriptionCreateParams,
   type Transcription,
 } from 'openai/resources/audio/index.mjs';
-import { z } from 'zod';
 
 export const Whisper1ConfigSchema = GenerationCommonConfigSchema.extend({
   language: z.string().optional(),

@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-import { Genkit } from 'genkit';
+import type { Genkit } from 'genkit';
+import { z } from 'genkit';
 import { embedderRef } from 'genkit/embedder';
-import { z } from 'zod';
-import { PluginOptions } from '.';
 import { CohereClient } from 'cohere-ai';
+
+import type { PluginOptions } from '.';
 
 export const TextEmbeddingConfigSchema = z.object({
   // Its difficult with the schema to make this an array therefore its only a single string for now

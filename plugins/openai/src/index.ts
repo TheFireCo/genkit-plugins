@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Genkit } from 'genkit';
+import type { Genkit } from 'genkit';
 import { genkitPlugin } from 'genkit/plugin';
 import OpenAI from 'openai';
+
 import { dallE3, dallE3Model } from './dalle.js';
 import {
   openaiEmbedder,

@@ -22,7 +22,7 @@ import {
   afterEach,
   jest,
 } from '@jest/globals';
-import {
+import type {
   GenerateResponseData,
   Part,
   GenerateRequest,
@@ -30,14 +30,17 @@ import {
   Role,
   Genkit,
 } from 'genkit';
-import {
+import type {
   Message,
   MessageParam,
   MessageCreateParams,
   MessageStreamEvent,
 } from '@anthropic-ai/sdk/resources/messages.mjs';
+import type Anthropic from '@anthropic-ai/sdk';
+import type { CandidateData, ToolDefinition } from 'genkit/model';
+
+import type { AnthropicConfigSchema } from './claude';
 import {
-  AnthropicConfigSchema,
   claude3Haiku,
   claudeModel,
   claudeRunner,
@@ -51,8 +54,6 @@ import {
   toAnthropicTool,
   toAnthropicToolResponseContent,
 } from './claude';
-import Anthropic from '@anthropic-ai/sdk';
-import { CandidateData, ToolDefinition } from 'genkit/model';
 
 describe('toAnthropicRole', () => {
   const testCases: {

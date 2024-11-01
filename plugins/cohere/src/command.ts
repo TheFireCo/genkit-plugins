@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-import { Message, Genkit, GenerationCommonConfigSchema } from 'genkit';
-import { GenerateRequest, MessageData, Role, ToolRequestPart } from 'genkit';
-import {
-  ModelAction,
-  modelRef,
-  ToolDefinition,
-  CandidateData,
-} from 'genkit/model';
-import { Cohere, CohereClient } from 'cohere-ai';
-import { ChatStreamEndEventFinishReason } from 'cohere-ai/api';
-
-import z from 'zod';
+import type { Genkit } from 'genkit';
+import { Message, GenerationCommonConfigSchema, z } from 'genkit';
+import type {
+  GenerateRequest,
+  MessageData,
+  Role,
+  ToolRequestPart,
+} from 'genkit';
+import type { ModelAction, ToolDefinition, CandidateData } from 'genkit/model';
+import { modelRef } from 'genkit/model';
+import type { CohereClient } from 'cohere-ai';
+import { Cohere } from 'cohere-ai';
+import type { ChatStreamEndEventFinishReason } from 'cohere-ai/api';
 
 export const CohereConfigSchema = GenerationCommonConfigSchema.extend({
   frequencyPenalty: z.number().min(-2).max(2).optional(),

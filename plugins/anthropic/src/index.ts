@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import { Genkit } from 'genkit';
+import type { Genkit } from 'genkit';
 import { genkitPlugin } from 'genkit/plugin';
 import Anthropic from '@anthropic-ai/sdk';
+
 import {
   claude35Sonnet,
   claude3Opus,

@@ -13,20 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {
-  GenerateRequest,
-  GenerateResponseData,
-  GenerationCommonConfigSchema,
-  Genkit,
-  Message,
-} from 'genkit';
-import { ModelAction, modelRef } from 'genkit/model';
-import OpenAI from 'openai';
+import type { GenerateRequest, GenerateResponseData, Genkit } from 'genkit';
+import { GenerationCommonConfigSchema, Message, z } from 'genkit';
+import type { ModelAction } from 'genkit/model';
+import { modelRef } from 'genkit/model';
+import type OpenAI from 'openai';
 import {
   type ImageGenerateParams,
   type ImagesResponse,
 } from 'openai/resources/images.mjs';
-import { z } from 'zod';
 
 export const DallE3ConfigSchema = GenerationCommonConfigSchema.extend({
   size: z.enum(['1024x1024', '1792x1024', '1024x1792']).optional(),

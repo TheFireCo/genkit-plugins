@@ -15,15 +15,18 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import {
+import type {
   ChatCompletion,
   ChatCompletionChunk,
   ChatCompletionMessageToolCall,
   ChatCompletionRole,
 } from 'openai/resources/index.mjs';
+import type OpenAI from 'openai';
+import type { GenerateRequest, Genkit, MessageData, Part, Role } from 'genkit';
+import type { CandidateData } from 'genkit/model';
+
 import {
   gpt4o,
-  OpenAiConfigSchema,
   fromOpenAiChoice,
   fromOpenAiChunkChoice,
   fromOpenAiToolCall,
@@ -34,9 +37,7 @@ import {
   toOpenAiTextAndMedia,
   gptRunner,
 } from './gpt';
-import OpenAI from 'openai';
-import { GenerateRequest, Genkit, MessageData, Part, Role } from 'genkit';
-import { CandidateData } from 'genkit/model';
+import type { OpenAiConfigSchema } from './gpt';
 
 jest.mock('@genkit-ai/ai/model', () => ({
   ...jest.requireActual('@genkit-ai/ai/model'),

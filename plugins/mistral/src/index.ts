@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { Genkit } from 'genkit';
+import type { Genkit } from 'genkit';
 import { genkitPlugin } from 'genkit/plugin';
+
 import { mistralEmbedder, SUPPORTED_EMBEDDING_MODELS } from './embedders';
 import { SUPPORTED_MISTRAL_MODELS, mistralModel } from './mistral_llms';
 

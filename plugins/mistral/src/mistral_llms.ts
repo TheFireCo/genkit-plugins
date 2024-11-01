@@ -15,16 +15,15 @@
  */
 
 import { Message } from 'genkit';
-import {
+import type {
   CandidateData,
   GenerateRequest,
-  GenerationCommonConfigSchema,
   MessageData,
   ModelAction,
-  modelRef,
   Role,
   ToolDefinition,
 } from 'genkit/model';
+import { GenerationCommonConfigSchema, modelRef } from 'genkit/model';
 import type {
   Tool,
   Function,
@@ -34,7 +33,8 @@ import type {
   ChatRequest,
   ChatCompletionResponse,
 } from '@mistralai/mistralai';
-import { Genkit, z } from 'genkit';
+import type { Genkit } from 'genkit';
+import { z } from 'genkit';
 
 export const openMistral7B = modelRef({
   name: 'mistral/open-mistral-7b',
