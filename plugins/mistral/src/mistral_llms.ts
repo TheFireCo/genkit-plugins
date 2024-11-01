@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-import { Message } from '@genkit-ai/ai';
+import { Message } from 'genkit';
 import {
   CandidateData,
-  defineModel,
   GenerateRequest,
   GenerationCommonConfigSchema,
   MessageData,
   ModelAction,
   modelRef,
-  Part,
   Role,
   ToolDefinition,
-  ToolRequestPart,
-} from '@genkit-ai/ai/model';
+} from 'genkit/model';
 import type {
   Tool,
   Function,
@@ -37,8 +34,7 @@ import type {
   ChatRequest,
   ChatCompletionResponse,
 } from '@mistralai/mistralai';
-
-import z from 'zod';
+import { Genkit, z } from 'genkit';
 
 export const openMistral7B = modelRef({
   name: 'mistral/open-mistral-7b',
@@ -69,6 +65,7 @@ export const openMistral8x7B = modelRef({
       output: ['text', 'json'],
     },
   },
+  configSchema: GenerationCommonConfigSchema,
 });
 
 export const openMixtral8x22B = modelRef({
@@ -84,6 +81,7 @@ export const openMixtral8x22B = modelRef({
       output: ['text', 'json'],
     },
   },
+  configSchema: GenerationCommonConfigSchema,
 });
 
 export const openMistralSmall = modelRef({
@@ -105,7 +103,7 @@ export const openMistralSmall = modelRef({
 export const openMistralMedium = modelRef({
   name: 'mistral/mistral-medium-latest',
   info: {
-    versions: ['istral-medium-231'],
+    versions: ['mistral-medium-231'],
     label: 'Mistral - Mistral Medium',
     supports: {
       multiturn: true,
@@ -145,7 +143,7 @@ function toMistralRole(role: Role): string {
     case 'tool':
       return 'assistant';
     default:
-      throw new Error(`role ${role} doesn't map to an Mistral role.`);
+      throw new Error(`Role ${role} doesn't map to a Mistral role.`);
   }
 }
 
@@ -171,7 +169,7 @@ export function toMistralMessages(
     // In Mistral the Message comprises only role and content no need to differentiate between tool and message
     mistralMsgs.push({
       role: role,
-      content: msg.text(),
+      content: msg.text,
     });
   }
   return mistralMsgs;
@@ -222,9 +220,7 @@ function fromMistralChoice(
     message: {
       role: 'model',
       content: toolRequestParts
-        ? // Note: Not sure why I have to cast here exactly.
-          // Otherwise it thinks toolRequest must be 'undefined' if provided
-          (toolRequestParts as ToolRequestPart[])
+        ? toolRequestParts
         : [{ text: choice.message.content! }],
     },
     custom: {},
@@ -257,22 +253,24 @@ export function toMistralRequestBody(
   const mappedModelName = request.config?.version || model.version || modelName;
 
   let responseFormat;
-  if (request.output?.format !== 'json') {
+  if (request.output?.format === 'json') {
     responseFormat = { type: 'json_object' };
   } else {
     responseFormat = null;
   }
-  const body = {
+  const body: ChatRequest = {
     messages: mistralMessages,
     tools: request.tools?.map(toMistralTool),
     model: mappedModelName,
-    max_tokens: request.config?.maxOutputTokens,
+    maxTokens: request.config?.maxOutputTokens,
     temperature: request.config?.temperature,
-    top_p: request.config?.topP,
+    topP: request.config?.topP,
+    // TODO: Mistral API doesn't seem to support the field "n"?
+    // @ts-ignore
     n: request.candidates,
     stop_sequences: request.config?.stopSequences,
     responseFormat: responseFormat,
-  } as ChatRequest;
+  };
 
   for (const key in body) {
     if (!body[key] || (Array.isArray(body[key]) && !body[key].length))
@@ -282,6 +280,7 @@ export function toMistralRequestBody(
 }
 
 export function mistralModel(
+  ai: Genkit,
   name: string,
   client: any
 ): ModelAction<typeof GenerationCommonConfigSchema> {
@@ -290,7 +289,7 @@ export function mistralModel(
   const model = SUPPORTED_MISTRAL_MODELS[name];
   if (!model) throw new Error(`Unsupported model: ${name}`);
 
-  return defineModel(
+  return ai.defineModel(
     {
       name: modelId,
       ...model.info,

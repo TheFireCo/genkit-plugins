@@ -14,20 +14,21 @@
  * limitations under the License.
  */
 
-import { defineEmbedder, embedderRef } from '@genkit-ai/ai/embedder';
+import { Genkit, embedderRef } from 'genkit';
 import { z } from 'zod';
-import { PluginOptions } from '.';
 
 export const TextEmbeddingConfigSchema = z.object({
   embeddingTypes: z.literal('float'),
   encodingFormat: z.union([z.literal('float'), z.literal('base64')]).optional(),
 });
 
-export function mistralEmbedder(name: string, client: any) {
+export type TextEmbeddingConfig = z.infer<typeof TextEmbeddingConfigSchema>;
+
+export function mistralEmbedder(ai: Genkit, name: string, client: any) {
   const model = SUPPORTED_EMBEDDING_MODELS[name];
   if (!model) throw new Error(`Unsupported model: ${name}`);
 
-  return defineEmbedder(
+  ai.defineEmbedder(
     {
       info: model.info!,
       configSchema: TextEmbeddingConfigSchema,
@@ -36,9 +37,7 @@ export function mistralEmbedder(name: string, client: any) {
     async (input, _) => {
       const embeddings = await client.embeddings({
         model: name,
-        input: input.map((d) => {
-          return d.text();
-        }),
+        input: input.map((d) => d.text),
       });
       return {
         embeddings: embeddings.data.map((d) => ({ embedding: d.embedding })),
@@ -46,10 +45,6 @@ export function mistralEmbedder(name: string, client: any) {
     }
   );
 }
-
-export type TextEmbeddingGeckoConfig = z.infer<
-  typeof TextEmbeddingConfigSchema
->;
 
 export const mistralembed = embedderRef({
   name: 'mistral/mistral-embed',
