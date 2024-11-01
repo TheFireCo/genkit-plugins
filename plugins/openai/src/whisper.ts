@@ -1,6 +1,5 @@
-/* Copyright 2024 The Fire Company
 /**
- *
+ * Copyright 2024 The Fire Company
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,15 +13,6 @@
  * limitations under the License.
  */
 
-// import { Message } from '@genkit-ai/ai';
-// import {
-//   GenerationCommonConfigSchema,
-//   defineModel,
-//   modelRef,
-//   type GenerateRequest,
-//   type GenerateResponseData,
-//   type ModelAction,
-// } from '@genkit-ai/ai/model';
 import {
   GenerateRequest,
   GenerateResponseData,

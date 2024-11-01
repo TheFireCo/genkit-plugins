@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Message, ModelReference } from 'genkit';
+import { Message as GenkitMessage, ModelReference } from 'genkit';
 import {
   GenerateResponseData,
   GenerationCommonConfigSchema,
@@ -42,7 +42,7 @@ import {
   Tool,
   ToolResultBlockParam,
   ContentBlock,
-  Message as AnthropicMessage,
+  Message,
   MessageParam,
   MessageStreamEvent,
   ToolUseBlockParam,
@@ -289,6 +289,8 @@ export function toAnthropicMessageContent(
 
 /**
  * Converts a Genkit MessageData array to Anthropic system message and MessageParam array.
+ * @param messages The Genkit MessageData array to convert.
+ * @returns An object containing the optional Anthropic system message and the array of Anthropic MessageParam objects.
  */
 export function toAnthropicMessages(messages: MessageData[]): {
   system?: string;
@@ -299,7 +301,7 @@ export function toAnthropicMessages(messages: MessageData[]): {
   const messagesToIterate = system ? messages.slice(1) : messages;
   const anthropicMsgs: MessageParam[] = [];
   for (const message of messagesToIterate) {
-    const msg = new Message(message);
+    const msg = new GenkitMessage(message);
     const content = msg.content.map(toAnthropicMessageContent);
     const toolMessageType = content.find(
       (c) => c.type === 'tool_use' || c.type === 'tool_result'
@@ -315,6 +317,8 @@ export function toAnthropicMessages(messages: MessageData[]): {
 
 /**
  * Converts a Genkit ToolDefinition to an Anthropic Tool object.
+ * @param tool The Genkit ToolDefinition to convert.
+ * @returns The converted Anthropic Tool object.
  */
 export function toAnthropicTool(tool: ToolDefinition): Tool {
   return {
@@ -326,6 +330,11 @@ export function toAnthropicTool(tool: ToolDefinition): Tool {
 
 /**
  * Converts an Anthropic content block to a Genkit Part object.
+ * @param contentBlock The Anthropic content block to convert.
+ * @returns The converted Genkit Part object.
+ * @param event The Anthropic message stream event to convert.
+ * @returns The converted Genkit Part object if the event is a content block
+ *          start or delta, otherwise undefined.
  */
 function fromAnthropicContentBlock(contentBlock: ContentBlock): Part {
   return contentBlock.type === 'tool_use'
@@ -367,14 +376,16 @@ export function fromAnthropicContentBlockChunk(
 }
 
 export function fromAnthropicStopReason(
-  reason: AnthropicMessage['stop_reason']
+  reason: Message['stop_reason']
   // TODO: CandidateData is deprecated
 ): CandidateData['finishReason'] {
   switch (reason) {
     case 'max_tokens':
       return 'length';
     case 'end_turn':
+    // fall through
     case 'stop_sequence':
+    // fall through
     case 'tool_use':
       return 'stop';
     case null:
@@ -384,9 +395,7 @@ export function fromAnthropicStopReason(
   }
 }
 
-export function fromAnthropicResponse(
-  response: AnthropicMessage
-): GenerateResponseData {
+export function fromAnthropicResponse(response: Message): GenerateResponseData {
   return {
     candidates: [
       {
@@ -407,7 +416,12 @@ export function fromAnthropicResponse(
 }
 
 /**
- * Converts a Genkit request to an Anthropic API request body.
+ * Converts an Anthropic request to an Anthropic API request body.
+ * @param modelName The name of the Anthropic model to use.
+ * @param request The Genkit GenerateRequest to convert.
+ * @param stream Whether to stream the response.
+ * @returns The converted Anthropic API request body.
+ * @throws An error if the specified model is not supported or if an unsupported output format is requested.
  */
 export function toAnthropicRequestBody(
   modelName: string,
@@ -447,13 +461,16 @@ export function toAnthropicRequestBody(
 
 /**
  * Creates the runner used by Genkit to interact with the Claude model.
+ * @param name The name of the Claude model.
+ * @param client The Anthropic client instance.
+ * @returns The runner that Genkit will call when the model is invoked.
  */
 export function claudeRunner(name: string, client: Anthropic) {
   return async (
     request: GenerateRequest<typeof AnthropicConfigSchema>,
     streamingCallback?: StreamingCallback<GenerateResponseChunkData>
   ): Promise<GenerateResponseData> => {
-    let response: AnthropicMessage;
+    let response: Message;
     const body = toAnthropicRequestBody(name, request, !!streamingCallback);
     if (streamingCallback) {
       const stream = client.messages.stream(body);
@@ -468,7 +485,7 @@ export function claudeRunner(name: string, client: Anthropic) {
       }
       response = await stream.finalMessage();
     } else {
-      response = (await client.messages.create(body)) as AnthropicMessage;
+      response = (await client.messages.create(body)) as Message;
     }
     return fromAnthropicResponse(response);
   };
