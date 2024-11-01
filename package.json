@@ -17,6 +17,9 @@
     "**/*.{js,ts,json,md}": "prettier --write"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.5",
+    "genkit": "^0.9.0-dev.2",
     "husky": "^9.0.11",
     "lerna": "^8.1.2",
     "lint-staged": "^15.2.2",

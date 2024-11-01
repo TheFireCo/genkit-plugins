@@ -23,7 +23,6 @@ import {
   Part,
   Role,
   StreamingCallback,
-  ToolRequestPart,
   Genkit,
 } from 'genkit';
 import {

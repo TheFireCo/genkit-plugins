@@ -1,6 +1,6 @@
 {
   "compileOnSave": true,
-  "include": ["src", "index.ts", "prompts"],
+  "include": ["src"],
   "compilerOptions": {
     "module": "commonjs",
     "noImplicitReturns": true,
