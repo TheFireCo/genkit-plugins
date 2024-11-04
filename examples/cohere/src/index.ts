@@ -16,7 +16,7 @@
 
 import dotenv from 'dotenv';
 import { genkit, z } from 'genkit';
-import cohere, { command } from 'genkitx-cohere';
+import cohere, { command, embedEnglish3 } from 'genkitx-cohere';
 
 dotenv.config();
 
@@ -24,6 +24,8 @@ const ai = genkit({
   plugins: [cohere({ apiKey: process.env.COHERE_API_KEY })],
   model: command,
 });
+
+// genkit flow:run jokeFlow \"chicken\"
 
 export const jokeFlow = ai.defineFlow(
   {
@@ -35,6 +37,25 @@ export const jokeFlow = ai.defineFlow(
     const llmResponse = await ai.generate({
       prompt: `tell me a joke about ${subject}`,
     });
+
     return llmResponse.text;
+  }
+);
+
+//  genkit flow:run embedFlow \"hello world\"
+
+export const embedFlow = ai.defineFlow(
+  {
+    name: 'embedFlow',
+    inputSchema: z.string(),
+    outputSchema: z.string(),
+  },
+  async (text) => {
+    const embedding = await ai.embed({
+      embedder: embedEnglish3,
+      content: text,
+    });
+
+    return JSON.stringify(embedding);
   }
 );

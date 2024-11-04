@@ -16,7 +16,7 @@
 
 import dotenv from 'dotenv';
 import { genkit, z } from 'genkit';
-import mistral, { openMistral7B } from 'genkitx-mistral';
+import mistral, { openMistral7B, mistralembed } from 'genkitx-mistral';
 
 dotenv.config();
 
@@ -36,5 +36,23 @@ export const jokeFlow = ai.defineFlow(
       prompt: `tell me a joke about ${subject}`,
     });
     return llmResponse.text;
+  }
+);
+
+//  genkit flow:run embedFlow \"hello world\"
+
+export const embedFlow = ai.defineFlow(
+  {
+    name: 'embedFlow',
+    inputSchema: z.string(),
+    outputSchema: z.string(),
+  },
+  async (text) => {
+    const embedding = await ai.embed({
+      embedder: mistralembed,
+      content: text,
+    });
+
+    return JSON.stringify(embedding);
   }
 );
