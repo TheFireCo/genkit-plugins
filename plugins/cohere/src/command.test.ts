@@ -15,8 +15,7 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import z from 'zod';
-import { genkit } from 'genkit'; // Initialize genkit without plugins
+import { genkit, z } from 'genkit';
 import { toToolDefinition } from 'genkit/tool';
 import type { ToolDefinition } from 'genkit/model';
 
