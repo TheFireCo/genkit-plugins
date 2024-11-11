@@ -19,6 +19,13 @@ import { genkit, z } from 'genkit';
 import { anthropic, claude35Sonnet } from 'genkitx-anthropic';
 dotenv.config();
 
+const requiredEnvVars = ['ANTHROPIC_API_KEY'];
+for (const envVar of requiredEnvVars) {
+  if (!process.env[envVar]) {
+    throw new Error(`Missing required environment variable: ${envVar}`);
+  }
+}
+
 const ai = genkit({
   plugins: [anthropic()],
   model: claude35Sonnet,
