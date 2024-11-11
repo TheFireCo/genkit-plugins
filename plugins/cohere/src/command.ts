@@ -167,9 +167,10 @@ export function jsonSchemaToPythonType(schema: Record<string, any>): string {
 }
 
 export function toCohereTool(tool: ToolDefinition): Cohere.Tool {
+  const properties = tool.inputSchema?.properties || {};
   const parameterDefinitions =
     Object.fromEntries<Cohere.ToolParameterDefinitionsValue>(
-      Object.entries(tool.inputSchema?.properties).map(([key, value]) => [
+      Object.entries(properties).map(([key, value]) => [
         key,
         {
           type: jsonSchemaToPythonType(value as Record<string, any>),
