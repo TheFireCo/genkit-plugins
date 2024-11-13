@@ -15,7 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "genkit": "^0.9.0-dev.2",
+    "genkit": "^0.9.0-rc || ^0.9",
     "genkitx-cohere": "file:../../plugins/cohere"
   },
   "devDependencies": {

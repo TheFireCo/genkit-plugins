@@ -71,7 +71,7 @@ function toWhisper1Request(
     language: request.config?.language,
     timestamp_granularities: request.config?.timestamp_granularities,
   };
-  const outputFormat = request.output?.format;
+  const outputFormat = request.output?.format as 'json' | 'text' | 'media';
   const customFormat = request.config?.response_format;
   if (outputFormat && customFormat) {
     if (
