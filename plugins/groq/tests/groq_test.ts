@@ -27,7 +27,7 @@ describe('toGroqRole', () => {
 
   it('should throw error for unsupported roles', () => {
     assert.throws(() => toGroqRole('unknown' as Role), {
-      message: 'Role unknown does not map to any Groq role.', // Adjusted message
+      message: "role unknown doesn't map to a Groq role.",
     });
   });
 });
