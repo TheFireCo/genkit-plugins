@@ -324,6 +324,7 @@ describe('fromOpenAiChoice', () => {
         message: {
           role: 'assistant',
           content: 'Tell a joke about dogs.',
+          refusal: null,
         },
         finish_reason: 'whatever' as any,
         logprobs: null,
@@ -345,6 +346,7 @@ describe('fromOpenAiChoice', () => {
         message: {
           role: 'assistant',
           content: JSON.stringify({ json: 'test' }),
+          refusal: null,
         },
         finish_reason: 'content_filter',
         logprobs: null,
@@ -367,6 +369,7 @@ describe('fromOpenAiChoice', () => {
         message: {
           role: 'assistant',
           content: 'Tool call',
+          refusal: null,
           tool_calls: [
             {
               id: 'ref123',
