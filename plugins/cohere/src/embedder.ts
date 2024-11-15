@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-import { defineEmbedder, embedderRef } from '@genkit-ai/ai/embedder';
-import { z } from 'zod';
-import { PluginOptions } from '.';
+import type { Genkit } from 'genkit';
+import { z } from 'genkit';
+import { embedderRef } from 'genkit/embedder';
 import { CohereClient } from 'cohere-ai';
+
+import type { PluginOptions } from '.';
 
 export const TextEmbeddingConfigSchema = z.object({
   // Its difficult with the schema to make this an array therefore its only a single string for now
@@ -104,7 +106,11 @@ export const SUPPORTED_EMBEDDING_MODELS = {
   'embed-multilingual-light-v3.0': embedMultilingualLight3,
 };
 
-export function cohereEmbedder(name: string, options?: PluginOptions) {
+export function cohereEmbedder(
+  ai: Genkit,
+  name: string,
+  options?: PluginOptions
+) {
   let apiKey = options?.apiKey || process.env.COHERE_API_KEY;
   if (!apiKey)
     throw new Error(
@@ -112,9 +118,8 @@ export function cohereEmbedder(name: string, options?: PluginOptions) {
     );
   const model = SUPPORTED_EMBEDDING_MODELS[name];
   if (!model) throw new Error(`Unsupported model: ${name}`);
-
   const client = new CohereClient({ token: apiKey });
-  return defineEmbedder(
+  return ai.defineEmbedder(
     {
       info: model.info!,
       configSchema: TextEmbeddingConfigSchema,
@@ -124,7 +129,7 @@ export function cohereEmbedder(name: string, options?: PluginOptions) {
       const embeddings = await client.embed({
         model: name,
         texts: input.map((d) => {
-          return d.text();
+          return d.text;
         }),
         inputType: options?.inputType ? options.inputType : 'search_document',
         embeddingTypes: options?.embeddingTypes

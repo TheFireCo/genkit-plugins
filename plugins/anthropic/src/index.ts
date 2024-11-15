@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-import { genkitPlugin, type Plugin } from '@genkit-ai/core';
+import type { Genkit } from 'genkit';
+import { genkitPlugin } from 'genkit/plugin';
 import Anthropic from '@anthropic-ai/sdk';
+
 import {
   claude35Sonnet,
   claude3Opus,
@@ -24,6 +26,7 @@ import {
   claudeModel,
   SUPPORTED_CLAUDE_MODELS,
 } from './claude.js';
+
 export { claude35Sonnet, claude3Opus, claude3Sonnet, claude3Haiku };
 
 export interface PluginOptions {
@@ -60,23 +63,19 @@ export interface PluginOptions {
  * ```
  */
 // TODO: add support for voyage embeddings and tool use (both not documented well in docs.anthropic.com)
-export const anthropic: Plugin<[PluginOptions] | []> = genkitPlugin(
-  'anthropic',
-  async (options?: PluginOptions) => {
+export const anthropic = (options?: PluginOptions) =>
+  genkitPlugin('anthropic', async (ai: Genkit) => {
     let apiKey = options?.apiKey || process.env.ANTHROPIC_API_KEY;
-    if (!apiKey)
+    if (!apiKey) {
       throw new Error(
         'Please pass in the API key or set the ANTHROPIC_API_KEY environment variable'
       );
+    }
     const client = new Anthropic({ apiKey });
-    return {
-      models: [
-        ...Object.keys(SUPPORTED_CLAUDE_MODELS).map((name) =>
-          claudeModel(name, client)
-        ),
-      ],
-    };
-  }
-);
+
+    for (const name of Object.keys(SUPPORTED_CLAUDE_MODELS)) {
+      claudeModel(ai, name, client);
+    }
+  });
 
 export default anthropic;

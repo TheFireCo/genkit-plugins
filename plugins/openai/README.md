@@ -47,24 +47,39 @@ Install the plugin in your project with your favorite package manager:
 
 ## Usage
 
-### Basic examples
-
-The simplest way to call the text generation model is by using the helper function `generate`:
+### Initialize
 
 ```typescript
-// Basic usage of an LLM
-const response = await generate({
-  model: gpt4o, // model imported from genkitx-openai
+import dotenv from 'dotenv';
+import { genkit } from 'genkit';
+import openAI, { gpt35Turbo } from 'genkitx-openai';
+
+dotenv.config();
+
+const ai = genkit({
+  plugins: [openAI({ apiKey: process.env.OPENAI_API_KEY })],
+  // specify a default model if not provided in generate params:
+  model: gpt35Turbo,
+});
+```
+
+### Basic examples
+
+The simplest way to generate text is by using the `generate` method:
+
+```typescript
+const response = await ai.generate({
+  model: gpt4o
   prompt: 'Tell me a joke.',
 });
 
-console.log(await response.text());
+console.log(response.text);
 ```
 
 ### Multi-modal prompt
 
 ```typescript
-const response = await generate({
+const response = await ai.generate({
   model: gpt4o,
   prompt: [
     { text: 'What animal is in the photo?' },
@@ -76,38 +91,50 @@ const response = await generate({
     visualDetailLevel: 'low',
   },
 });
-console.log(await response.text());
+console.log(response.text);
+```
+
+### Text Embeddings
+
+```typescript
+import { textEmbeddingAda002 } from 'genkitx-openai';
+
+const embedding = await ai.embed({
+  embedder: textEmbeddingAda002,
+  content: 'Hello world',
+});
+
+console.log(embedding);
 ```
 
 ### Within a flow
 
 ```typescript
-// ...configure Genkit (as shown above)...
+import { z } from 'genkit';
 
-export const myFlow = defineFlow(
+export const jokeFlow = ai.defineFlow(
   {
-    name: 'menuSuggestionFlow',
+    name: 'jokeFlow',
     inputSchema: z.string(),
     outputSchema: z.string(),
   },
   async (subject) => {
-    const llmResponse = await generate({
-      prompt: `Suggest an item for the menu of a ${subject} themed restaurant`,
-      model: gpt4o,
+    const llmResponse = await ai.generate({
+      prompt: `tell me a joke about ${subject}`,
     });
-
-    return llmResponse.text();
+    return llmResponse.text;
   }
 );
-startFlowsServer();
 ```
 
 ### Tool use
 
 ```typescript
-// ...configure Genkit (as shown above)...
+import { z } from 'genkit';
 
-const createReminder = defineTool(
+// ...initialize genkit (as shown above)
+
+const createReminder = ai.defineTool(
   {
     name: 'createReminder',
     description: 'Use this to create reminders for things in the future',
@@ -122,8 +149,7 @@ const createReminder = defineTool(
   (reminder) => Promise.resolve(3)
 );
 
-const result = generate({
-  model: gpt4o,
+const result = await ai.generate({
   tools: [createReminder],
   prompt: `
   You are a reminder assistant.
@@ -133,7 +159,7 @@ const result = generate({
   `,
 });
 
-console.log(result.then((res) => res.text()));
+console.log(result.text);
 ```
 
 For more detailed examples and the explanation of other functionalities, refer to the examples in the [official Github repo of the plugin](https://github.com/TheFireCo/genkit-plugins/blob/main/examples/README.md) or in the [official Genkit documentation](https://firebase.google.com/docs/genkit/get-started).
