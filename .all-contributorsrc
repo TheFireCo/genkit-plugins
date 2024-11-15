@@ -96,6 +96,17 @@
         "doc",
         "test"
       ]
+    },
+    {
+      "login": "zhanshuyou",
+      "name": "Shuyoou",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7420640?v=4",
+      "profile": "http://shuyoou.com",
+      "contributions": [
+        "code",
+        "doc",
+        "test"
+      ]
     }
   ]
 }
