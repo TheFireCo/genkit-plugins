@@ -447,10 +447,10 @@ export function toAnthropicRequestBody(
     stream,
   };
   const textMode =
-    request.output?.format === "text" ||
-    request.output?.contentType === "plain/text";
+    request.output?.format === 'text' ||
+    request.output?.contentType === 'plain/text';
 
-  if (textMode) {
+  if (!textMode) {
     throw new Error(
       `Only text output format is supported for Claude models currently`
     );
