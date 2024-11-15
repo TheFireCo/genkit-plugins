@@ -96,6 +96,17 @@
         "doc",
         "test"
       ]
+    },
+    {
+      "login": "cabljac",
+      "name": "Jacob Cable",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32874567?v=4",
+      "profile": "https://github.com/cabljac",
+      "contributions": [
+        "code",
+        "test",
+        "doc"
+      ]
     }
   ]
 }
