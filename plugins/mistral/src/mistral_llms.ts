@@ -252,8 +252,12 @@ export function toMistralRequestBody(
   const mistralMessages = toMistralMessages(request.messages);
   const mappedModelName = request.config?.version || model.version || modelName;
 
+  const jsonMode =
+    request.output?.format === "json" ||
+    request.output?.contentType === "application/json";
+
   let responseFormat;
-  if (request.output?.format === 'json') {
+  if (jsonMode) {
     responseFormat = { type: 'json_object' };
   } else {
     responseFormat = null;

@@ -404,16 +404,27 @@ export function toGroqRequestBody(
     // response_format: request.config?.responseFormat, // Being set automatically
   };
 
-  const response_format = request.output?.format || 'text';
+  const jsonMode =
+    request.output?.format === "json" ||
+    request.output?.contentType === "application/json";
+
+  const textMode =
+    request.output?.format === "text" ||
+    request.output?.contentType === "plain/text";
+
+    const response_format = request.output?.format
+      ? request.output?.format
+      : request.output?.contentType;
+
   if (
-    response_format === 'json' &&
+    jsonMode &&
     model.info.supports?.output?.includes('json')
   ) {
     body.response_format = {
       type: 'json_object',
     };
   } else if (
-    response_format === 'text' &&
+    textMode &&
     model.info.supports?.output?.includes('text')
   ) {
     body.response_format = {
