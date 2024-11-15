@@ -14,24 +14,26 @@
  * limitations under the License.
  */
 
-import { Message } from '@genkit-ai/ai';
-import {
-  GenerateResponseChunkData,
+import type { CandidateData } from 'genkit/model';
+import type {
+  StreamingCallback,
+  GenerateRequest,
   GenerateResponseData,
-  GenerationCommonConfigSchema,
+  Genkit,
+  MessageData,
+  ModelReference,
+  Part,
+  Role,
+  ToolRequestPart,
+} from 'genkit';
+import { Message, GenerationCommonConfigSchema, z } from 'genkit';
+import type {
+  GenerateResponseChunkData,
   ModelAction,
-  defineModel,
-  modelRef,
-  type CandidateData,
-  type GenerateRequest,
-  type MessageData,
-  type Part,
-  type Role,
-  type ToolDefinition,
-  type ToolRequestPart,
-} from '@genkit-ai/ai/model';
-import { StreamingCallback } from '@genkit-ai/core';
-import OpenAI from 'openai';
+  ToolDefinition,
+} from 'genkit/model';
+import { modelRef } from 'genkit/model';
+import type OpenAI from 'openai';
 import {
   type ChatCompletion,
   type ChatCompletionChunk,
@@ -43,7 +45,6 @@ import {
   type ChatCompletionTool,
   type CompletionChoice,
 } from 'openai/resources/index.mjs';
-import z from 'zod';
 
 const MODELS_SUPPORTING_OPENAI_RESPONSE_FORMAT = [
   'gpt-4o',
@@ -177,7 +178,10 @@ export const gpt35Turbo = modelRef({
   configSchema: OpenAiConfigSchema,
 });
 
-export const SUPPORTED_GPT_MODELS = {
+export const SUPPORTED_GPT_MODELS: Record<
+  string,
+  ModelReference<typeof OpenAiConfigSchema>
+> = {
   'gpt-4o': gpt4o,
   'gpt-4o-mini': gpt4oMini,
   'gpt-4-turbo': gpt4Turbo,
@@ -211,7 +215,7 @@ function toOpenAiTool(tool: ToolDefinition): ChatCompletionTool {
     type: 'function',
     function: {
       name: tool.name,
-      parameters: tool.inputSchema,
+      parameters: tool.inputSchema !== null ? tool.inputSchema : undefined,
     },
   };
 }
@@ -272,7 +276,7 @@ export function toOpenAiMessages(
       case 'system':
         openAiMsgs.push({
           role: role,
-          content: msg.text(),
+          content: msg.text,
         });
         break;
       case 'assistant': {
@@ -300,7 +304,7 @@ export function toOpenAiMessages(
         } else {
           openAiMsgs.push({
             role: role,
-            content: msg.text(),
+            content: msg.text,
           });
         }
         break;
@@ -465,14 +469,14 @@ export function toOpenAiRequestBody(
   ) {
     if (
       response_format === 'json' &&
-      model.info.supports?.output?.includes('json')
+      model.info?.supports?.output?.includes('json')
     ) {
       body.response_format = {
         type: 'json_object',
       };
     } else if (
       response_format === 'text' &&
-      model.info.supports?.output?.includes('text')
+      model.info?.supports?.output?.includes('text')
     ) {
       body.response_format = {
         type: 'text',
@@ -543,6 +547,7 @@ export function gptRunner(name: string, client: OpenAI) {
  * @throws An error if the specified model is not supported.
  */
 export function gptModel(
+  ai: Genkit,
   name: string,
   client: OpenAI
 ): ModelAction<typeof OpenAiConfigSchema> {
@@ -550,7 +555,7 @@ export function gptModel(
   const model = SUPPORTED_GPT_MODELS[name];
   if (!model) throw new Error(`Unsupported model: ${name}`);
 
-  return defineModel(
+  return ai.defineModel(
     {
       name: modelId,
       ...model.info,

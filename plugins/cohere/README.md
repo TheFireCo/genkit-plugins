@@ -18,7 +18,7 @@
    <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/TheFireCo/genkit-plugins">
 </div>
 
-**`genkitx-cohere`** is a community plugin for using OpenAI APIs with
+**`genkitx-cohere`** is a community plugin for using Cohere AI APIs with
 [Firebase Genkit](https://github.com/firebase/genkit). Built by [**The Fire Company**](https://github.com/TheFireCo). 🔥
 
 ## Installation
@@ -35,65 +35,71 @@ Install the plugin in your project with your favorite package manager:
 
 ```typescript
 import 'dotenv/config';
+import { genkit } from 'genkit';
+import cohere, { command } from 'genkitx-cohere';
 
-import { configureGenkit } from '@genkit-ai/core';
-import { defineFlow, startFlowsServer } from '@genkit-ai/flow';
-import { cohere } from 'genkitx-cohere';
-
-configureGenkit({
-  plugins: [
-    // Cohere API key is required and defaults to the COHERE_API_KEY environment variable
-    cohere({ apiKey: process.env.COHERE_API_KEY }),
-  ],
-  logLevel: 'debug',
-  enableTracingAndMetrics: true,
+const ai = genkit({
+  plugins: [cohere({ apiKey: process.env.COHERE_API_KEY })],
+  model: command,
 });
 ```
 
 ### Basic examples
 
-The simplest way to call the text generation model is by using the helper function `generate`:
+The simplest way to generate text is by using the `generate` method:
 
 ```typescript
-// ...configure Genkit (as shown above)...
+// ...initialize genkit (as shown above)...
 
-const response = await generate({
-  model: commandRPlus, // model imported from genkitx-cohere
+const response = await ai.generate({
   prompt: 'Tell me a joke.',
 });
 
-console.log(await response.text());
+console.log(response.text);
+```
+
+### Text Embeddings
+
+You can generate embeddings using the `embed` method:
+
+```typescript
+import { embedEnglish3 } from 'genkitx-cohere';
+
+const embedding = await ai.embed({
+  embedder: embedEnglish3,
+  content: 'Hello world',
+});
+
+console.log(embedding);
 ```
 
 ### Within a flow
 
 ```typescript
-// ...configure Genkit (as shown above)...
+import { z } from 'genkit';
 
-export const myFlow = defineFlow(
+export const jokeFlow = ai.defineFlow(
   {
-    name: 'menuSuggestionFlow',
+    name: 'jokeFlow',
     inputSchema: z.string(),
     outputSchema: z.string(),
   },
   async (subject) => {
-    const llmResponse = await generate({
-      prompt: `Suggest an item for the menu of a ${subject} themed restaurant`,
-      model: commandRPlus,
+    const llmResponse = await ai.generate({
+      prompt: `tell me a joke about ${subject}`,
     });
 
-    return llmResponse.text();
+    return llmResponse.text;
   }
 );
-startFlowsServer();
 ```
 
 ### Tool use
 
 ```typescript
-// ...configure Genkit (as shown above)...
+import { z } from 'genkit';
 
-const createReminder = defineTool(
+const createReminder = ai.defineTool(
   {
     name: 'createReminder',
     description: 'Use this to create reminders for things in the future',
@@ -108,7 +114,7 @@ const createReminder = defineTool(
   (reminder) => Promise.resolve(3)
 );
 
-const result = generate({
+const result = ai.generate({
   model: llama3x70b,
   tools: [createReminder],
   prompt: `

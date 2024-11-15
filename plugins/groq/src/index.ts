@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-import { genkitPlugin, Plugin } from '@genkit-ai/core';
+// Import necessary types and functions for Groq SDK integration.
 import Groq from 'groq-sdk';
 import {
+  groqModel,
   llama3x70b,
   llama3x8b,
   gemma7b,
   mixtral8x7b,
-  groqModel,
   SUPPORTED_GROQ_MODELS,
 } from './groq_models';
+import { Genkit } from 'genkit';
+import { genkitPlugin } from 'genkit/plugin';
 
+// Export models for direct access
 export { llama3x70b, llama3x8b, gemma7b, mixtral8x7b };
 
+// Define the PluginOptions interface for customization of the Groq plugin.
+// This configuration provides flexibility and defaults for Groq API connectivity.
 export interface PluginOptions {
   /**
    * Defaults to process.env['GROQ_API_KEY'].
@@ -60,23 +65,34 @@ export interface PluginOptions {
   // TODO: add additional options supported by the Groq SDK
 }
 
-export const groq: Plugin<[PluginOptions] | []> = genkitPlugin(
-  'groq',
-  async (options?: PluginOptions) => {
-    const client = new Groq({
-      baseURL: options?.baseURL || process.env.GROQ_BASE_URL,
-      apiKey: options?.apiKey || process.env.GROQ_API_KEY,
-      timeout: options?.timeout,
-      maxRetries: options?.maxRetries,
-    });
-    return {
-      models: [
-        ...Object.keys(SUPPORTED_GROQ_MODELS).map((name) =>
-          groqModel(name, client)
-        ),
-      ],
-    };
-  }
-);
+/**
+ * Initializes and returns the Groq plugin with provided or default options.
+ *
+ * @param options - Optional configuration settings for the plugin.
+ * @returns An object containing the models initialized with the Groq client.
+ */
+export const groq = (options?: PluginOptions) =>
+  genkitPlugin('groq', async (ai: Genkit) => {
+    const apiKey = options?.apiKey || process.env.GROQ_API_KEY;
+    if (!apiKey) {
+      throw new Error(
+        'Please provide the API key or set the GROQ_API_KEY environment variable'
+      );
+    }
 
+    // Initialize Groq client
+    const client = new Groq({
+      baseURL: options?.baseURL || process.env.GROQ_BASE_URL, // Optional base URL with environment variable fallback
+      apiKey, // API key retrieved from options or environment
+      timeout: options?.timeout, // Optional timeout
+      maxRetries: options?.maxRetries, // Optional max retries
+    });
+
+    // Register each model with the Genkit instance
+    for (const name of Object.keys(SUPPORTED_GROQ_MODELS)) {
+      groqModel(ai, name, client);
+    }
+  });
+
+// Default export for plugin usage
 export default groq;

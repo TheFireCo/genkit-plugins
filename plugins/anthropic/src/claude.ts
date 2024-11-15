@@ -14,38 +14,39 @@
  * limitations under the License.
  */
 
-import { Message as GenkitMessage } from '@genkit-ai/ai';
-import {
-  GenerateResponseChunkData,
+import { Message as GenkitMessage, z } from 'genkit';
+import type {
   GenerateResponseData,
-  GenerationCommonConfigSchema,
+  GenerateRequest,
+  MessageData,
+  Part,
+  Role,
+  StreamingCallback,
+  Genkit,
+  ModelReference,
+} from 'genkit';
+import { GenerationCommonConfigSchema } from 'genkit';
+import type {
+  CandidateData,
+  GenerateResponseChunkData,
   ModelAction,
-  defineModel,
-  modelRef,
-  type CandidateData,
-  type GenerateRequest,
-  type MessageData,
-  type ModelReference,
-  type Part,
-  type Role,
-  type ToolDefinition,
-} from '@genkit-ai/ai/model';
-import Anthropic from '@anthropic-ai/sdk';
-import z from 'zod';
-import {
-  type ImageBlockParam,
-  type TextBlock,
-  type TextBlockParam,
-  type MessageCreateParams,
-  type Tool,
-  type ToolResultBlockParam,
-  type ContentBlock,
-  type Message,
-  type MessageParam,
-  type MessageStreamEvent,
-  type ToolUseBlockParam,
+  ToolDefinition,
+} from 'genkit/model';
+import { modelRef } from 'genkit/model';
+import type Anthropic from '@anthropic-ai/sdk';
+import type {
+  ImageBlockParam,
+  TextBlock,
+  TextBlockParam,
+  MessageCreateParams,
+  Tool,
+  ToolResultBlockParam,
+  ContentBlock,
+  Message,
+  MessageParam,
+  MessageStreamEvent,
+  ToolUseBlockParam,
 } from '@anthropic-ai/sdk/resources/messages.mjs';
-import { StreamingCallback } from '@genkit-ai/core';
 
 export const AnthropicConfigSchema = GenerationCommonConfigSchema.extend({
   tool_choice: z
@@ -149,10 +150,6 @@ export const SUPPORTED_CLAUDE_MODELS: Record<
 
 /**
  * Converts a Genkit role to the corresponding Anthropic role.
- * @param role The Genkit role to convert.
- * @param toolMessageType In case the message refers to the usage of a tool, the type of tool message (tool_use or tool_result).
- * @returns The corresponding Anthropic role.
- * @throws Error if the role doesn't map to an Anthropic role.
  */
 export function toAnthropicRole(
   role: Role,
@@ -179,7 +176,7 @@ const isMediaObject = (obj: unknown): obj is Media =>
   typeof obj === 'object' &&
   obj !== null &&
   'url' in obj &&
-  typeof obj.url === 'string';
+  typeof (obj as Media).url === 'string';
 
 const extractDataFromBase64Url = (
   url: string
@@ -195,9 +192,6 @@ const extractDataFromBase64Url = (
 
 /**
  * Converts a Genkit message Part to the corresponding Anthropic TextBlockParam or ImageBlockParam.
- * @param part The Genkit Part to convert.
- * @returns The corresponding Anthropic TextBlockParam or ImageBlockParam.
- * @throws Error if the part contains unsupported fields.
  */
 export function toAnthropicToolResponseContent(
   part: Part
@@ -240,10 +234,7 @@ export function toAnthropicToolResponseContent(
 }
 
 /**
- * Converts a Genkit Part to the corresponding Anthropic TextBlock or ImageBlockParam.
- * @param part The Genkit Part to convert.
- * @returns The corresponding Anthropic TextBlock, ImageBlockParam, ToolUseBlockParam, or ToolResultBlockParam.
- * @throws Error if the part contains unsupported fields for the current message role.
+ * Converts a Genkit Part to the corresponding Anthropic TextBlock, ImageBlockParam, etc.
  */
 export function toAnthropicMessageContent(
   part: Part
@@ -259,7 +250,9 @@ export function toAnthropicMessageContent(
       extractDataFromBase64Url(part.media.url) ?? {};
     if (!data) {
       throw Error(
-        `Invalid genkit part media provided to toAnthropicMessageContent: ${JSON.stringify(part.media)}.`
+        `Invalid genkit part media provided to toAnthropicMessageContent: ${JSON.stringify(
+          part.media
+        )}.`
       );
     }
     return {
@@ -288,12 +281,14 @@ export function toAnthropicMessageContent(
     };
   }
   throw Error(
-    `Unsupported genkit part fields encountered for current message role: ${JSON.stringify(part)}.`
+    `Unsupported genkit part fields encountered for current message role: ${JSON.stringify(
+      part
+    )}.`
   );
 }
 
 /**
- * Converts a Genkit MessageData array to an Anthropic system message and MessageParam array.
+ * Converts a Genkit MessageData array to Anthropic system message and MessageParam array.
  * @param messages The Genkit MessageData array to convert.
  * @returns An object containing the optional Anthropic system message and the array of Anthropic MessageParam objects.
  */
@@ -337,6 +332,9 @@ export function toAnthropicTool(tool: ToolDefinition): Tool {
  * Converts an Anthropic content block to a Genkit Part object.
  * @param contentBlock The Anthropic content block to convert.
  * @returns The converted Genkit Part object.
+ * @param event The Anthropic message stream event to convert.
+ * @returns The converted Genkit Part object if the event is a content block
+ *          start or delta, otherwise undefined.
  */
 function fromAnthropicContentBlock(contentBlock: ContentBlock): Part {
   return contentBlock.type === 'tool_use'
@@ -352,9 +350,6 @@ function fromAnthropicContentBlock(contentBlock: ContentBlock): Part {
 
 /**
  * Converts an Anthropic message stream event to a Genkit Part object.
- * @param event The Anthropic message stream event to convert.
- * @returns The converted Genkit Part object if the event is a content block
- *          start or delta, otherwise undefined.
  */
 export function fromAnthropicContentBlockChunk(
   event: MessageStreamEvent
@@ -382,6 +377,7 @@ export function fromAnthropicContentBlockChunk(
 
 export function fromAnthropicStopReason(
   reason: Message['stop_reason']
+  // TODO: CandidateData is deprecated
 ): CandidateData['finishReason'] {
   switch (reason) {
     case 'max_tokens':
@@ -497,12 +493,9 @@ export function claudeRunner(name: string, client: Anthropic) {
 
 /**
  * Defines a Claude model with the given name and Anthropic client.
- * @param name The name of the Claude model.
- * @param client The Anthropic client instance.
- * @returns The defined Claude model.
- * @throws An error if the specified model is not supported.
  */
 export function claudeModel(
+  ai: Genkit,
   name: string,
   client: Anthropic
 ): ModelAction<typeof AnthropicConfigSchema> {
@@ -510,7 +503,7 @@ export function claudeModel(
   const model = SUPPORTED_CLAUDE_MODELS[name];
   if (!model) throw new Error(`Unsupported model: ${name}`);
 
-  return defineModel(
+  return ai.defineModel(
     {
       name: modelId,
       ...model.info,
