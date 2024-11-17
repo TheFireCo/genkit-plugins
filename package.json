@@ -4,10 +4,10 @@
   "workspaces": [
     "plugins/*",
     "docs",
-    "examples"
+    "examples/*"
   ],
   "scripts": {
-    "build": "lerna run build",
+    "build": "nx run-many --target=build --all --parallel=false",
     "publish": "lerna publish --no-private -y from-package",
     "test": "lerna run test",
     "format": "prettier --write \"**/*.{js,ts,json,md}\"",
@@ -17,9 +17,19 @@
     "**/*.{js,ts,json,md}": "prettier --write"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.5",
+    "genkit": "^0.9.0",
     "husky": "^9.0.11",
     "lerna": "^8.1.2",
     "lint-staged": "^15.2.2",
+    "nx": "^20.1.0",
     "prettier": "^3.2.5"
+  },
+  "dependencies": {
+    "uuid": "^11.0.2"
+  },
+  "optionalDependencies": {
+    "@nx/nx-linux-x64-gpu": "20.1.0"
   }
 }

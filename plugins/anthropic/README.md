@@ -42,44 +42,35 @@ Install the plugin in your project with your favorite package manager:
 ### Initialize
 
 ```typescript
-import 'dotenv/config';
+import { genkit } from 'genkit';
+import { anthropic, claude35Sonnet } from 'genkitx-anthropic';
 
-import { configureGenkit } from '@genkit-ai/core';
-import { defineFlow, startFlowsServer } from '@genkit-ai/flow';
-import { anthropic } from 'genkitx-anthropic';
-
-configureGenkit({
-  plugins: [
-    // Anthropic API key is required and defaults to the ANTHROPIC_API_KEY environment variable
-    anthropic({ apiKey: process.env.ANTHROPIC_API_KEY }),
-  ],
-  logLevel: 'debug',
-  enableTracingAndMetrics: true,
+const ai = genkit({
+  plugins: [anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })],
+  // specify a default model for generate here if you wish:
+  model: claude35Sonnet,
 });
 ```
 
 ### Basic examples
 
-The simplest way to call the text generation model is by using the helper function `generate`:
+The simplest way to generate text is by using the `generate` method:
 
 ```typescript
-// ...configure Genkit (as shown above)...
-
-const response = await generate({
+const response = await ai.generate({
   model: claude3Haiku, // model imported from genkitx-anthropic
   prompt: 'Tell me a joke.',
 });
 
-console.log(await response.text());
+console.log(response.text);
 ```
 
 ### Multi-modal prompt
 
 ```typescript
-// ...configure Genkit (as shown above)...
+// ...intialize Genkit instance (as shown above)...
 
-const response = await generate({
-  model: claude3Haiku,
+const response = await ai.generate({
   prompt: [
     { text: 'What animal is in the photo?' },
     { media: { url: imageUrl } },
@@ -90,30 +81,29 @@ const response = await generate({
     visualDetailLevel: 'low',
   },
 });
-console.log(await response.text());
+console.log(response.text);
 ```
 
 ### Within a flow
 
 ```typescript
-// ...configure Genkit (as shown above)...
+import { z } from 'genkit';
 
-export const myFlow = defineFlow(
+// ...initialize Genkit instance (as shown above)...
+
+export const jokeFlow = ai.defineFlow(
   {
-    name: 'menuSuggestionFlow',
+    name: 'jokeFlow',
     inputSchema: z.string(),
     outputSchema: z.string(),
   },
   async (subject) => {
-    const llmResponse = await generate({
-      prompt: `Suggest an item for the menu of a ${subject} themed restaurant`,
-      model: claude3Opus,
+    const llmResponse = await ai.generate({
+      prompt: `tell me a joke about ${subject}`,
     });
-
-    return llmResponse.text();
+    return llmResponse.text;
   }
 );
-startFlowsServer();
 ```
 
 ## Contributing
@@ -133,4 +123,4 @@ This plugin is proudly maintained by the team at [**The Fire Company**](https://
 
 ## License
 
-This project is licensed under the [Apache 2.0 License](https://github.com/TheFireCo/genkitx-openai/blob/main/LICENSE).
+This project is licensed under the [Apache 2.0 License](https://github.com/TheFireCo/genkit-plugins/blob/main/LICENSE).

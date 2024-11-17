@@ -13,22 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import { Message } from '@genkit-ai/ai';
-import {
-  GenerationCommonConfigSchema,
-  defineModel,
-  modelRef,
-  type GenerateRequest,
-  type GenerateResponseData,
-  type ModelAction,
-} from '@genkit-ai/ai/model';
-import OpenAI from 'openai';
+import type { GenerateRequest, GenerateResponseData, Genkit } from 'genkit';
+import { GenerationCommonConfigSchema, Message, z } from 'genkit';
+import type { ModelAction } from 'genkit/model';
+import { modelRef } from 'genkit/model';
+import type OpenAI from 'openai';
 import {
   type ImageGenerateParams,
   type ImagesResponse,
 } from 'openai/resources/images.mjs';
-import { z } from 'zod';
 
 export const DallE3ConfigSchema = GenerationCommonConfigSchema.extend({
   size: z.enum(['1024x1024', '1792x1024', '1024x1792']).optional(),
@@ -58,7 +51,7 @@ function toDallE3Request(
 ): ImageGenerateParams {
   const options = {
     model: 'dall-e-3',
-    prompt: new Message(request.messages[0]).text(),
+    prompt: new Message(request.messages[0]).text,
     n: request.candidates || 1,
     size: request.config?.size,
     style: request.config?.style,
@@ -97,9 +90,10 @@ function toGenerateResponse(result: ImagesResponse): GenerateResponseData {
 }
 
 export function dallE3Model(
+  ai: Genkit,
   client: OpenAI
 ): ModelAction<typeof DallE3ConfigSchema> {
-  return defineModel<typeof DallE3ConfigSchema>(
+  return ai.defineModel<typeof DallE3ConfigSchema>(
     {
       name: dallE3.name,
       ...dallE3.info,
