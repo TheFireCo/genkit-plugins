@@ -35,6 +35,7 @@ This repository contains community plugins for
 
 - [`genkitx-convex`](plugins/convex/README.md) - Plugin for Convex Vector Stores
 - [`genkitx-hnsw`](plugins/hnsw/README.md) - Plugin for HNSW Vector Stores
+- [`genkitx-milvus`](plugins/milvus/README.md) - Plugin for Milvus Vector Database
 
 ### Other Plugins
 
