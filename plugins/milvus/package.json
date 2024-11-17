@@ -1,6 +1,6 @@
 {
   "name": "genkitx-milvus",
-  "version": "0.0.1",
+  "version": "0.11.0",
   "type": "commonjs",
   "description": "Genkit AI framework plugin for Milvus vector database.",
   "scripts": {
