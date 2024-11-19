@@ -18,7 +18,7 @@
    <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/TheFireCo/genkit-plugins">
 </div>
 
-**`genkitx-groq`** is a community plugin for using OpenAI APIs with
+**`genkitx-groq`** is a community plugin for using Groq APIs with
 [Firebase Genkit](https://github.com/firebase/genkit). Built by [**The Fire Company**](https://github.com/TheFireCo). 🔥
 
 ![Genit + Groq example](https://github.com/TheFireCo/genkit-plugins/assets/21220927/b56501c2-25c1-48aa-8da9-65486f0e982d)
@@ -36,66 +36,63 @@ Install the plugin in your project with your favorite package manager:
 ### Initialize
 
 ```typescript
-import 'dotenv/config';
+import dotenv from 'dotenv';
+import { genkit } from 'genkit';
+import { groq, gemma7b } from 'genkitx-groq';
 
-import { configureGenkit } from '@genkit-ai/core';
-import { defineFlow, startFlowsServer } from '@genkit-ai/flow';
-import { groq } from 'genkitx-groq';
+dotenv.config();
 
-configureGenkit({
-  plugins: [
-    // Groq API key is required and defaults to the GROQ_API_KEY environment variable
-    groq({ apiKey: process.env.GROQ_API_KEY }),
-  ],
-  logLevel: 'debug',
-  enableTracingAndMetrics: true,
+const ai = genkit({
+  plugins: [groq({ apiKey: process.env.GROQ_API_KEY })],
+  // optional: default model for generate calls
+  model: gemma7b,
 });
 ```
 
 ### Basic examples
 
-The simplest way to call the text generation model is by using the helper function `generate`:
+The simplest way to generate text is by using the `generate` method:
 
 ```typescript
-// ...configure Genkit (as shown above)...
-
-const response = await generate({
+const response = await ai.generate({
   model: llama3x70b, // model imported from genkitx-groq
   prompt: 'Tell me a joke.',
 });
 
-console.log(await response.text());
+console.log(response.text);
 ```
 
 ### Within a flow
 
 ```typescript
-// ...configure Genkit (as shown above)...
+import { z } from 'genkit';
 
-export const myFlow = defineFlow(
+export const jokeFlow = ai.defineFlow(
   {
-    name: 'menuSuggestionFlow',
+    name: 'jokeFlow',
     inputSchema: z.string(),
     outputSchema: z.string(),
   },
   async (subject) => {
-    const llmResponse = await generate({
-      prompt: `Suggest an item for the menu of a ${subject} themed restaurant`,
-      model: openMixtral8x22B,
+    const llmResponse = await ai.generate({
+      prompt: `tell me a joke about ${subject}`,
     });
-
-    return llmResponse.text();
+    return llmResponse.text;
   }
 );
-startFlowsServer();
+
+// Run the flow using the CLI:
+// genkit flow:run jokeFlow "chicken"
 ```
 
 ### Tool use
 
 ```typescript
-// ...configure Genkit (as shown above)...
+import { z } from 'genkit';
 
-const createReminder = defineTool(
+// ...initialise genkit as described above...
+
+const createReminder = ai.defineTool(
   {
     name: 'createReminder',
     description: 'Use this to create reminders for things in the future',
@@ -110,8 +107,7 @@ const createReminder = defineTool(
   (reminder) => Promise.resolve(3)
 );
 
-const result = generate({
-  model: llama3x70b,
+const result = await ai.generate({
   tools: [createReminder],
   prompt: `
   You are a reminder assistant.
@@ -121,7 +117,7 @@ const result = generate({
   `,
 });
 
-console.log(result.then((res) => res.text()));
+console.log(result.text);
 ```
 
 ## Contributing

@@ -14,7 +14,7 @@
     "genai",
     "generative-ai"
   ],
-  "version": "0.10.0",
+  "version": "0.11.0",
   "type": "commonjs",
   "repository": {
     "type": "git",
@@ -24,12 +24,10 @@
   "author": "TheFireCo",
   "license": "Apache-2.0",
   "dependencies": {
-    "openai": "^4.47.1",
-    "zod": "^3.23.8"
+    "openai": "^4.47.1"
   },
   "peerDependencies": {
-    "@genkit-ai/ai": "^0.5.0",
-    "@genkit-ai/core": "^0.5.0"
+    "genkit": "^0.9.0"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",

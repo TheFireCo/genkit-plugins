@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import { genkitPlugin, type Plugin } from '@genkit-ai/core';
+import type { Genkit } from 'genkit';
+import { genkitPlugin } from 'genkit/plugin';
 import OpenAI from 'openai';
+
 import { dallE3, dallE3Model } from './dalle.js';
 import {
   openaiEmbedder,
@@ -98,31 +99,26 @@ export interface PluginOptions {
  * });
  * ```
  */
-export const openAI: Plugin<[PluginOptions] | []> = genkitPlugin(
-  'openai',
-  async (options?: PluginOptions) => {
+export const openAI = (options?: PluginOptions) =>
+  genkitPlugin('openai', async (ai: Genkit) => {
     let apiKey = options?.apiKey || process.env.OPENAI_API_KEY;
     if (!apiKey)
       throw new Error(
         'please pass in the API key or set the OPENAI_API_KEY environment variable'
       );
     const client = new OpenAI({ apiKey });
-    return {
-      models: [
-        ...Object.keys(SUPPORTED_GPT_MODELS).map((name) =>
-          gptModel(name, client)
-        ),
-        ...Object.keys(SUPPORTED_TTS_MODELS).map((name) =>
-          ttsModel(name, client)
-        ),
-        dallE3Model(client),
-        whisper1Model(client),
-      ],
-      embedders: Object.keys(SUPPORTED_EMBEDDING_MODELS).map((name) =>
-        openaiEmbedder(name, options)
-      ),
-    };
-  }
-);
+
+    for (const name of Object.keys(SUPPORTED_GPT_MODELS)) {
+      gptModel(ai, name, client);
+    }
+    dallE3Model(ai, client);
+    whisper1Model(ai, client);
+    for (const name of Object.keys(SUPPORTED_TTS_MODELS)) {
+      ttsModel(ai, name, client);
+    }
+    for (const name of Object.keys(SUPPORTED_EMBEDDING_MODELS)) {
+      openaiEmbedder(ai, name, options);
+    }
+  });
 
 export default openAI;

@@ -18,7 +18,7 @@
    <img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/TheFireCo/genkit-plugins">
 </div>
 
-**`genkitx-mistral`** is a community plugin for using OpenAI APIs with
+**`genkitx-mistral`** is a community plugin for using Mistral AI APIs with
 [Firebase Genkit](https://github.com/firebase/genkit). Built by [**The Fire Company**](https://github.com/TheFireCo). 🔥
 
 ## Installation
@@ -34,55 +34,64 @@ Install the plugin in your project with your favorite package manager:
 ### Initialize
 
 ```typescript
-import 'dotenv/config';
+import { genkit } from 'genkit';
+import mistral, { openMistral7B } from 'genkitx-mistral';
 
-import { configureGenkit } from '@genkit-ai/core';
-import { defineFlow, startFlowsServer } from '@genkit-ai/flow';
-import { mistral } from 'genkitx-mistral';
-
-configureGenkit({
-  plugins: [
-    // Mistral API key is required and defaults to the MISTRAL_API_KEY environment variable
-    mistral({ apiKey: process.env.MISTRAL_API_KEY }),
-  ],
-  logLevel: 'debug',
-  enableTracingAndMetrics: true,
+const ai = genkit({
+  plugins: [mistral({ apiKey: 'your-api-key' })],
+  model: openMistral7B,
 });
 ```
 
 ### Basic examples
 
-The simplest way to call the text generation model is by using the helper function `generate`:
+The simplest way to generate text is by using the `generate` method:
 
 ```typescript
-// Basic usage of an LLM
-const response = await generate({
+const response = await ai.generate({
   model: openMixtral8x22B, // model imported from genkitx-mistral
   prompt: 'Tell me a joke.',
 });
 
-console.log(await response.text());
+console.log(response.text);
+```
+
+### Text Embeddings
+
+```typescript
+import { mistralembed } from 'genkitx-mistral';
+
+const embedding = await ai.embed({
+  embedder: mistralembed,
+  content: 'Hello world',
+});
+
+console.log(embedding);
 ```
 
 ### Within a flow
 
 ```typescript
-export const myFlow = defineFlow(
+import { z } from 'genkit';
+
+// ...initialize genkit as above...
+
+export const jokeFlow = ai.defineFlow(
   {
-    name: 'menuSuggestionFlow',
+    name: 'jokeFlow',
     inputSchema: z.string(),
     outputSchema: z.string(),
   },
   async (subject) => {
-    const llmResponse = await generate({
-      prompt: `Suggest an item for the menu of a ${subject} themed restaurant`,
-      model: openMixtral8x22B,
+    const llmResponse = await ai.generate({
+      prompt: `tell me a joke about ${subject}`,
     });
-
-    return llmResponse.text();
+    return llmResponse.text;
   }
 );
-startFlowsServer();
+
+// Run the flow using the CLI:
+// genkit flow:run jokeFlow "chicken"
 ```
 
 ## Contributing

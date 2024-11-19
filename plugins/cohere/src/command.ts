@@ -14,24 +14,19 @@
  * limitations under the License.
  */
 
-import { Message } from '@genkit-ai/ai';
-import {
-  CandidateData,
-  defineModel,
+import type { Genkit } from 'genkit';
+import { Message, GenerationCommonConfigSchema, z } from 'genkit';
+import type {
   GenerateRequest,
-  GenerationCommonConfigSchema,
   MessageData,
-  ModelAction,
-  modelRef,
-  Part,
   Role,
-  ToolDefinition,
   ToolRequestPart,
-} from '@genkit-ai/ai/model';
-import { Cohere, CohereClient } from 'cohere-ai';
-import { ChatStreamEndEventFinishReason } from 'cohere-ai/api';
-
-import z from 'zod';
+} from 'genkit';
+import type { ModelAction, ToolDefinition, CandidateData } from 'genkit/model';
+import { modelRef } from 'genkit/model';
+import type { CohereClient } from 'cohere-ai';
+import { Cohere } from 'cohere-ai';
+import type { ChatStreamEndEventFinishReason } from 'cohere-ai/api';
 
 export const CohereConfigSchema = GenerationCommonConfigSchema.extend({
   frequencyPenalty: z.number().min(-2).max(2).optional(),
@@ -172,13 +167,14 @@ export function jsonSchemaToPythonType(schema: Record<string, any>): string {
 }
 
 export function toCohereTool(tool: ToolDefinition): Cohere.Tool {
+  const properties = tool.inputSchema?.properties || {};
   const parameterDefinitions =
     Object.fromEntries<Cohere.ToolParameterDefinitionsValue>(
-      Object.entries(tool.inputSchema.properties).map(([key, value]) => [
+      Object.entries(properties).map(([key, value]) => [
         key,
         {
           type: jsonSchemaToPythonType(value as Record<string, any>),
-          required: tool.inputSchema.required?.includes(key) || false,
+          required: tool.inputSchema?.required?.includes(key) || false,
         },
       ])
     );
@@ -198,7 +194,7 @@ export function toCohereMessageHistory(
     const msg = new Message(message);
     cohereMsgs.push({
       role: toCohereRole(message.role),
-      message: msg.text(),
+      message: msg.text,
     });
   }
   return cohereMsgs;
@@ -432,6 +428,7 @@ export function toCohereRequestBody(
  *
  */
 export function commandModel(
+  ai: Genkit,
   name: string,
   client: CohereClient
 ): ModelAction<typeof CohereConfigSchema> {
@@ -439,7 +436,7 @@ export function commandModel(
   const model = SUPPORTED_COMMAND_MODELS[name];
   if (!model) throw new Error(`Unsupported model: ${name}`);
 
-  return defineModel(
+  return ai.defineModel(
     {
       name: modelId,
       ...model.info,
