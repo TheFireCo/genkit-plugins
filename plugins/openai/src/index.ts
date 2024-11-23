@@ -15,7 +15,7 @@
  */
 import type { Genkit } from 'genkit';
 import { genkitPlugin } from 'genkit/plugin';
-import OpenAI from 'openai';
+import {OpenAI, ClientOptions } from 'openai';
 
 import { dallE3, dallE3Model } from './dalle.js';
 import {
@@ -53,9 +53,7 @@ export {
   textEmbeddingAda002,
 };
 
-export interface PluginOptions {
-  apiKey?: string;
-}
+export interface PluginOptions extends ClientOptions {}
 
 /**
  * This module provides an interface to the OpenAI models through the Genkit
@@ -101,13 +99,7 @@ export interface PluginOptions {
  */
 export const openAI = (options?: PluginOptions) =>
   genkitPlugin('openai', async (ai: Genkit) => {
-    let apiKey = options?.apiKey || process.env.OPENAI_API_KEY;
-    if (!apiKey)
-      throw new Error(
-        'please pass in the API key or set the OPENAI_API_KEY environment variable'
-      );
-    const client = new OpenAI({ apiKey });
-
+    const client = new OpenAI(options);
     for (const name of Object.keys(SUPPORTED_GPT_MODELS)) {
       gptModel(ai, name, client);
     }
