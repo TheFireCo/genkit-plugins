@@ -15,23 +15,18 @@
  */
 
 import { describe, it, expect } from '@jest/globals';
-import {
-  CandidateData,
-  GenerateRequest,
-  MessageData,
-  Part,
-  Role,
-} from '@genkit-ai/ai/model';
-import * as GenkitAiModel from '@genkit-ai/ai/model';
-import {
+import type {
   ChatCompletion,
   ChatCompletionChunk,
   ChatCompletionMessageToolCall,
   ChatCompletionRole,
 } from 'openai/resources/index.mjs';
+import type OpenAI from 'openai';
+import type { GenerateRequest, Genkit, MessageData, Part, Role } from 'genkit';
+import type { CandidateData } from 'genkit/model';
+
 import {
   gpt4o,
-  OpenAiConfigSchema,
   fromOpenAiChoice,
   fromOpenAiChunkChoice,
   fromOpenAiToolCall,
@@ -42,7 +37,7 @@ import {
   toOpenAiTextAndMedia,
   gptRunner,
 } from './gpt';
-import OpenAI from 'openai';
+import type { OpenAiConfigSchema } from './gpt';
 
 jest.mock('@genkit-ai/ai/model', () => ({
   ...jest.requireActual('@genkit-ai/ai/model'),
@@ -274,7 +269,10 @@ describe('fromOpenAiToolCall', () => {
         arguments: '{"topic":"bob"}',
       },
     };
-    const actualOutput = fromOpenAiToolCall(toolCall);
+    const actualOutput = fromOpenAiToolCall(toolCall, {
+      message: { tool_calls: [toolCall] },
+      finish_reason: 'tool_calls',
+    } as ChatCompletion.Choice);
     expect(actualOutput).toStrictEqual({
       toolRequest: {
         ref: 'call_SVDpFV2l2fW88QRFtv85FWwM',
@@ -293,7 +291,10 @@ describe('fromOpenAiToolCall', () => {
         arguments: '',
       },
     };
-    const actualOutput = fromOpenAiToolCall(toolCall);
+    const actualOutput = fromOpenAiToolCall(toolCall, {
+      message: { tool_calls: [toolCall] },
+      finish_reason: 'tool_calls',
+    } as ChatCompletion.Choice);
     expect(actualOutput).toStrictEqual({
       toolRequest: {
         ref: 'call_SVDpFV2l2fW88QRFtv85FWwM',
@@ -309,7 +310,13 @@ describe('fromOpenAiToolCall', () => {
       type: 'function',
       function: undefined as any,
     };
-    expect(() => fromOpenAiToolCall(toolCall)).toThrowError(
+
+    expect(() =>
+      fromOpenAiToolCall(toolCall, {
+        message: { tool_calls: [toolCall] },
+        finish_reason: 'tool_calls',
+      } as ChatCompletion.Choice)
+    ).toThrowError(
       'Unexpected openAI chunk choice. tool_calls was provided but one or more tool_calls is missing.'
     );
   });
@@ -329,6 +336,7 @@ describe('fromOpenAiChoice', () => {
         message: {
           role: 'assistant',
           content: 'Tell a joke about dogs.',
+          refusal: null,
         },
         finish_reason: 'whatever' as any,
         logprobs: null,
@@ -350,6 +358,7 @@ describe('fromOpenAiChoice', () => {
         message: {
           role: 'assistant',
           content: JSON.stringify({ json: 'test' }),
+          refusal: null,
         },
         finish_reason: 'content_filter',
         logprobs: null,
@@ -372,6 +381,7 @@ describe('fromOpenAiChoice', () => {
         message: {
           role: 'assistant',
           content: 'Tool call',
+          refusal: null,
           tool_calls: [
             {
               id: 'ref123',
@@ -1345,16 +1355,22 @@ describe('gptRunner', () => {
 });
 
 describe('gptModel', () => {
+  let ai: Genkit;
+
+  beforeEach(() => {
+    ai = {
+      defineModel: jest.fn(),
+    } as unknown as Genkit;
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
   });
 
   it('should correctly define supported GPT models', () => {
-    jest
-      .spyOn(GenkitAiModel, 'defineModel')
-      .mockImplementation((() => ({})) as any);
-    gptModel('gpt-4o', {} as OpenAI);
-    expect(GenkitAiModel.defineModel).toHaveBeenCalledWith(
+    jest.spyOn(ai, 'defineModel').mockImplementation((() => ({})) as any);
+    gptModel(ai, 'gpt-4o', {} as OpenAI);
+    expect(ai.defineModel).toHaveBeenCalledWith(
       {
         name: gpt4o.name,
         ...gpt4o.info,
@@ -1365,7 +1381,7 @@ describe('gptModel', () => {
   });
 
   it('should throw for unsupported models', () => {
-    expect(() => gptModel('unsupported-model', {} as OpenAI)).toThrowError(
+    expect(() => gptModel(ai, 'unsupported-model', {} as OpenAI)).toThrowError(
       'Unsupported model: unsupported-model'
     );
   });

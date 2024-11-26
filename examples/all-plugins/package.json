@@ -1,0 +1,39 @@
+{
+  "name": "genkit-plugins-examples",
+  "version": "0.11.0",
+  "description": "",
+  "main": "lib/index.js",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "init": "npm --prefix ../ install && npm --prefix ../ run build",
+    "start": "node lib/index.js",
+    "start:browser": "npx genkit start -o",
+    "start:dev": "npm --prefix ../ run build && node lib/index.js",
+    "compile": "npx tsc",
+    "build": "npm run build:clean && npm run compile",
+    "build:clean": "rm -rf ./lib",
+    "build:watch": "npx tsc --watch",
+    "genkit:dev": "cross-env GENKIT_ENV=dev npm run dev",
+    "dev": "export GENKIT_RUNTIME_ID=$(openssl rand -hex 8) && node lib/index.js 2>&1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "genkit": "^0.9.0",
+    "genkitx-anthropic": "file:../../plugins/anthropic",
+    "genkitx-azure-openai": "file:../../plugins/azure-openai",
+    "genkitx-cohere": "file:../../plugins/cohere",
+    "genkitx-groq": "file:../../plugins/groq",
+    "genkitx-mistral": "file:../../plugins/mistral",
+    "genkitx-openai": "file:../../plugins/openai"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}

@@ -13,20 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import { Message } from '@genkit-ai/ai';
-import {
-  CandidateData,
-  defineModel,
-  GenerateRequest,
-  GenerationCommonConfigSchema,
-  MessageData,
-  modelRef,
-  Part,
-  Role,
-  ToolDefinition,
-  ToolRequestPart,
-} from '@genkit-ai/ai/model';
 import Groq from 'groq-sdk';
 import { ChatCompletionChunk } from 'groq-sdk/lib/chat_completions_ext.mjs';
 import { ChatCompletionCreateParamsBase } from 'groq-sdk/resources/chat/completions.mjs';
@@ -34,8 +20,18 @@ import {
   ChatCompletion,
   CompletionCreateParams,
 } from 'groq-sdk/resources/chat/index.mjs';
-
-import z from 'zod';
+import {
+  GenerateRequest,
+  GenerationCommonConfigSchema,
+  Genkit,
+  Message,
+  MessageData,
+  Part,
+  Role,
+  ToolRequestPart,
+  z,
+} from 'genkit';
+import { CandidateData, modelRef, ToolDefinition } from 'genkit/model';
 
 export const GroqConfigSchema = GenerationCommonConfigSchema.extend({
   stream: z.boolean().optional(),
@@ -91,7 +87,7 @@ export const llama3x70b = modelRef({
 
 // Best at JSON mode
 export const mixtral8x7b = modelRef({
-  name: 'groq/mixtral-8x7b-32768',
+  name: 'groq/mixtral-8x7b',
   info: {
     versions: ['mixtral-8x7b-32768'],
     label: 'Mixtral 8 7B',
@@ -109,7 +105,7 @@ export const mixtral8x7b = modelRef({
 
 // Runner up at JSON mode
 export const gemma7b = modelRef({
-  name: 'groq/gemma-7b-it',
+  name: 'groq/gemma-7b',
   info: {
     versions: ['gemma-7b-it'],
     label: 'Gemma 7B IT',
@@ -165,7 +161,7 @@ export function toGroqTool(tool: ToolDefinition): CompletionCreateParams.Tool {
     function: {
       name: tool.name,
       description: tool.description,
-      parameters: tool.inputSchema,
+      parameters: tool.inputSchema === null ? undefined : tool.inputSchema,
     },
   };
 }
@@ -212,7 +208,7 @@ export function toGroqMessages(
       case 'system':
         groqMsgs.push({
           role: toGroqRole(message.role),
-          content: msg.text(),
+          content: msg.text,
         });
         break;
       case 'model':
@@ -235,14 +231,14 @@ export function toGroqMessages(
           });
         if (toolCalls?.length > 0) {
           groqMsgs.push({
-            content: msg.text(),
+            content: msg.text,
             role: toGroqRole(message.role),
             tool_calls: toolCalls,
           });
         } else {
           groqMsgs.push({
             role: toGroqRole(message.role),
-            content: msg.text(),
+            content: msg.text,
           });
         }
         break;
@@ -443,12 +439,12 @@ export function toGroqRequestBody(
  * @param client - The Groq client.
  * @returns The model.
  */
-export function groqModel(name: string, client: Groq) {
+export function groqModel(ai: Genkit, name: string, client: Groq) {
   const model = SUPPORTED_GROQ_MODELS[name];
   if (!model) throw new Error(`Unsupported model: ${name}`);
   const modelId = `groq/${name}`;
 
-  return defineModel(
+  return ai.defineModel(
     {
       name: modelId,
       ...model.info,

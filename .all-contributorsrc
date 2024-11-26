@@ -96,6 +96,38 @@
         "doc",
         "test"
       ]
+    },
+    {
+      "login": "zhanshuyou",
+      "name": "Shuyoou",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7420640?v=4",
+      "profile": "http://shuyoou.com",
+      "contributions": [
+        "code",
+        "doc",
+        "test"
+      ]
+    },
+    {
+      "login": "cabljac",
+      "name": "Jacob Cable",
+      "avatar_url": "https://avatars.githubusercontent.com/u/32874567?v=4",
+      "profile": "https://github.com/cabljac",
+      "contributions": [
+        "code",
+        "test",
+        "doc"
+      ]
+    },
+    {
+      "login": "xavidop",
+      "name": "Xavier Portilla Edo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4416096?v=4",
+      "profile": "https://xavidop.me/",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ]
 }

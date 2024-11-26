@@ -1,23 +1,27 @@
 import 'dotenv/config';
 
-import { defineDotprompt, prompt } from '@genkit-ai/dotprompt';
-import { generate, definePrompt, defineTool } from '@genkit-ai/ai';
+import { Genkit } from 'genkit';
+// import { generate, definePrompt, defineTool } from '@genkit-ai/ai';
 
 import { defineFlow, startFlowsServer } from '@genkit-ai/flow';
-import * as z from 'zod';
 
-import { gpt4o } from 'genkitx-openai';
-import { initializeGenkit } from '@genkit-ai/core';
-import config from './genkit.config';
-import { llama3x70b } from 'genkitx-groq';
-
-initializeGenkit(config);
-
+import { gpt4o, openAI } from 'genkitx-openai';
+import { genkit, z } from 'genkit';
+import groq, { llama3x70b } from 'genkitx-groq';
+import mistral from 'genkitx-mistral';
+import anthropic from 'genkitx-anthropic';
+import { cohere } from 'genkitx-cohere';
+const ai = genkit({
+  plugins: [openAI(), groq(), cohere(), anthropic(), mistral()],
+  promptDir: '../prompts',
+});
 // Define standard prompts
-const helloPrompt = definePrompt(
+const helloPrompt = ai.definePrompt(
   {
     name: 'helloPrompt',
-    inputSchema: z.object({ name: z.string() }),
+    input: {
+      schema: z.object({ name: z.string() }),
+    },
   },
   async (input) => {
     const promptText = `You are a helpful AI assistant named Walt.
@@ -31,7 +35,7 @@ const helloPrompt = definePrompt(
 );
 
 // Tool definition
-const tool = defineTool(
+const tool = ai.defineTool(
   {
     name: 'myJoke',
     description: 'useful when you need a joke to tell.',
@@ -48,7 +52,7 @@ const tool = defineTool(
 // const customConfigPrompt = prompt('customConfig');
 
 // Define a Dotprompt in code
-const codeDotPrompt = defineDotprompt(
+const codeDotPrompt = ai.definePrompt(
   {
     name: 'exampleDotPrompt',
     model: gpt4o,
@@ -85,12 +89,12 @@ export const myFlow = defineFlow(
     outputSchema: z.string(),
   },
   async (subject) => {
-    const llmResponse = await generate({
+    const llmResponse = await ai.generate({
       prompt: `Suggest an item for the menu of a ${subject} themed restaurant`,
       model: gpt4o,
     });
 
-    return llmResponse.text();
+    return llmResponse.text;
   }
 );
 startFlowsServer();
