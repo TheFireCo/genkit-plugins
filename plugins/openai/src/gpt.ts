@@ -59,6 +59,7 @@ const MODELS_SUPPORTING_OPENAI_RESPONSE_FORMAT = [
   'gpt-3.5-turbo-0125',
   'gpt-3.5-turbo',
   'gpt-3.5-turbo-1106',
+  'o1-preview',
 ];
 
 export const OpenAiConfigSchema = GenerationCommonConfigSchema.extend({
@@ -87,6 +88,22 @@ export const gpt4o = modelRef({
       media: true,
       systemRole: true,
       output: ['text', 'json'],
+    },
+  },
+  configSchema: OpenAiConfigSchema,
+});
+
+export const o1Preview = modelRef({
+  name: 'openai/o1-preview',
+  info: {
+    versions: ['o1-preview'],
+    label: 'OpenAI - O1 Preview',
+    supports: {
+      multiturn: true,
+      tools: false,
+      media: false,
+      systemRole: false,
+      output: ['text'],
     },
   },
   configSchema: OpenAiConfigSchema,
@@ -188,6 +205,7 @@ export const SUPPORTED_GPT_MODELS: Record<
   'gpt-4-vision': gpt4Vision,
   'gpt-4': gpt4,
   'gpt-3.5-turbo': gpt35Turbo,
+  'o1-preview': o1Preview,
 };
 
 export function toOpenAIRole(role: Role): ChatCompletionRole {
@@ -347,7 +365,8 @@ const finishReasonMap: Record<
 export function fromOpenAiToolCall(
   toolCall:
     | ChatCompletionMessageToolCall
-    | ChatCompletionChunk.Choice.Delta.ToolCall
+    | ChatCompletionChunk.Choice.Delta.ToolCall,
+  choice: ChatCompletion.Choice | ChatCompletionChunk.Choice
 ): ToolRequestPart {
   if (!toolCall.function) {
     throw Error(
@@ -355,13 +374,25 @@ export function fromOpenAiToolCall(
     );
   }
   const f = toolCall.function;
-  return {
-    toolRequest: {
-      name: f.name!,
-      ref: toolCall.id,
-      input: f.arguments ? JSON.parse(f.arguments) : f.arguments,
-    },
-  };
+
+  // Only parse arugments when it is a JSON object and the finish reason is tool_calls to avoid parsing errors
+  if (choice.finish_reason === 'tool_calls') {
+    return {
+      toolRequest: {
+        name: f.name!,
+        ref: toolCall.id,
+        input: f.arguments ? JSON.parse(f.arguments) : f.arguments,
+      },
+    };
+  } else {
+    return {
+      toolRequest: {
+        name: f.name!,
+        ref: toolCall.id,
+        input: '',
+      },
+    };
+  }
 }
 
 /**
@@ -374,7 +405,9 @@ export function fromOpenAiChoice(
   choice: ChatCompletion.Choice,
   jsonMode = false
 ): CandidateData {
-  const toolRequestParts = choice.message.tool_calls?.map(fromOpenAiToolCall);
+  const toolRequestParts = choice.message.tool_calls?.map((toolCall) =>
+    fromOpenAiToolCall(toolCall, choice)
+  );
   return {
     index: choice.index,
     finishReason: finishReasonMap[choice.finish_reason] || 'other',
@@ -404,7 +437,9 @@ export function fromOpenAiChunkChoice(
   choice: ChatCompletionChunk.Choice,
   jsonMode = false
 ): CandidateData {
-  const toolRequestParts = choice.delta.tool_calls?.map(fromOpenAiToolCall);
+  const toolRequestParts = choice.delta.tool_calls?.map((toolCall) =>
+    fromOpenAiToolCall(toolCall, choice)
+  );
   return {
     index: choice.index,
     finishReason: choice.finish_reason
