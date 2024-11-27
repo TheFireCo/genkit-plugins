@@ -269,7 +269,10 @@ describe('fromOpenAiToolCall', () => {
         arguments: '{"topic":"bob"}',
       },
     };
-    const actualOutput = fromOpenAiToolCall(toolCall);
+    const actualOutput = fromOpenAiToolCall(toolCall, {
+      message: { tool_calls: [toolCall] },
+      finish_reason: 'tool_calls',
+    } as ChatCompletion.Choice);
     expect(actualOutput).toStrictEqual({
       toolRequest: {
         ref: 'call_SVDpFV2l2fW88QRFtv85FWwM',
@@ -288,7 +291,10 @@ describe('fromOpenAiToolCall', () => {
         arguments: '',
       },
     };
-    const actualOutput = fromOpenAiToolCall(toolCall);
+    const actualOutput = fromOpenAiToolCall(toolCall, {
+      message: { tool_calls: [toolCall] },
+      finish_reason: 'tool_calls',
+    } as ChatCompletion.Choice);
     expect(actualOutput).toStrictEqual({
       toolRequest: {
         ref: 'call_SVDpFV2l2fW88QRFtv85FWwM',
@@ -304,7 +310,13 @@ describe('fromOpenAiToolCall', () => {
       type: 'function',
       function: undefined as any,
     };
-    expect(() => fromOpenAiToolCall(toolCall)).toThrowError(
+
+    expect(() =>
+      fromOpenAiToolCall(toolCall, {
+        message: { tool_calls: [toolCall] },
+        finish_reason: 'tool_calls',
+      } as ChatCompletion.Choice)
+    ).toThrowError(
       'Unexpected openAI chunk choice. tool_calls was provided but one or more tool_calls is missing.'
     );
   });
