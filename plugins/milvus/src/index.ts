@@ -1,19 +1,12 @@
-import { embed, EmbedderArgument } from '@genkit-ai/ai/embedder';
-import {
-  CommonRetrieverOptionsSchema,
-  defineIndexer,
-  defineRetriever,
-  Document,
-  indexerRef,
-  retrieverRef,
-} from '@genkit-ai/ai/retriever';
-import { genkitPlugin, PluginProvider } from '@genkit-ai/core';
+import { EmbedderArgument } from '@genkit-ai/ai/embedder';
+import { CommonRetrieverOptionsSchema,} from '@genkit-ai/ai/retriever';
+import { GenkitPlugin, genkitPlugin } from 'genkit/plugin';
+import { Genkit, z, Document, indexerRef, retrieverRef } from 'genkit';
 import {
   MilvusClient,
   ClientConfig as MilvusClientParams,
   RowData,
 } from '@zilliz/milvus2-sdk-node';
-import * as z from 'zod';
 
 export const DocumentSchema = z.object({
   id: z.number(),
@@ -43,16 +36,12 @@ interface MilvusPluginOptions<
  * Milvus plugin that provides a milvus retriever and indexer.
  */
 export function milvus<EmbedderCustomOptions extends z.ZodTypeAny>(
-  options: MilvusPluginOptions<EmbedderCustomOptions>[]
-): PluginProvider {
-  const plugin = genkitPlugin(
-    'milvus',
-    async (options: MilvusPluginOptions[]) => ({
-      retrievers: options.map((i) => milvusRetriever(i)),
-      indexers: options.map((i) => milvusIndexer(i)),
-    })
-  );
-  return plugin(options);
+  params: MilvusPluginOptions<EmbedderCustomOptions>[]
+): GenkitPlugin {
+  return genkitPlugin('milvus', async (ai: Genkit) => {
+    params.map((i) => milvusRetriever(ai, i));
+    params.map((i) => milvusIndexer(ai, i));
+  });
 }
 
 export default milvus;
@@ -87,18 +76,19 @@ export const milvusIndexerRef = (params: {
  * Configures a Milvus vector store retriever.
  */
 export function milvusRetriever<EmbedderCustomOptions extends z.ZodTypeAny>(
+  ai: Genkit,
   params: MilvusPluginOptions<EmbedderCustomOptions>
 ) {
   const { collectionName, embedder, embedderOptions, dbName } = params;
   const milvusConfig = params.clientParams ?? getDefaultConfig();
 
-  return defineRetriever(
+  return ai.defineRetriever(
     {
       name: `milvus/${collectionName}`,
       configSchema: MilvusRetrieverOptionsSchema,
     },
     async (content, options) => {
-      const queryEmbeddings = await embed({
+      const queryEmbeddings = await ai.embed({
         embedder,
         content,
         options: embedderOptions,
@@ -146,12 +136,13 @@ export function milvusRetriever<EmbedderCustomOptions extends z.ZodTypeAny>(
  * Configures a Milvus vector store indexer.
  */
 export function milvusIndexer<EmbedderCustomOptions extends z.ZodTypeAny>(
+  ai: Genkit,
   params: MilvusPluginOptions<EmbedderCustomOptions>
 ) {
   const { collectionName, embedder, embedderOptions, dbName } = params;
   const milvusConfig = params.clientParams ?? getDefaultConfig();
 
-  return defineIndexer(
+  return ai.defineIndexer(
     {
       name: `milvus/${collectionName}`,
       configSchema: MilvusIndexerOptionsSchema.optional(),
@@ -159,7 +150,7 @@ export function milvusIndexer<EmbedderCustomOptions extends z.ZodTypeAny>(
     async (docs) => {
       const embeddings = await Promise.all(
         docs.map((doc) =>
-          embed({
+          ai.embed({
             embedder,
             content: doc,
             options: embedderOptions,
@@ -174,7 +165,7 @@ export function milvusIndexer<EmbedderCustomOptions extends z.ZodTypeAny>(
 
         return {
           vector: value,
-          document: docs[i].text(),
+          document: docs[i].text,
           metadata,
         };
       });
