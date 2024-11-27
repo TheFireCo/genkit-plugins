@@ -59,6 +59,7 @@ const MODELS_SUPPORTING_OPENAI_RESPONSE_FORMAT = [
   'gpt-3.5-turbo-0125',
   'gpt-3.5-turbo',
   'gpt-3.5-turbo-1106',
+  'o1-preview',
 ];
 
 export const OpenAiConfigSchema = GenerationCommonConfigSchema.extend({
@@ -87,6 +88,22 @@ export const gpt4o = modelRef({
       media: true,
       systemRole: true,
       output: ['text', 'json'],
+    },
+  },
+  configSchema: OpenAiConfigSchema,
+});
+
+export const o1Preview = modelRef({
+  name: 'openai/o1-preview',
+  info: {
+    versions: ['o1-preview'],
+    label: 'OpenAI - O1 Preview',
+    supports: {
+      multiturn: true,
+      tools: false,
+      media: false,
+      systemRole: false,
+      output: ['text'],
     },
   },
   configSchema: OpenAiConfigSchema,
@@ -188,6 +205,7 @@ export const SUPPORTED_GPT_MODELS: Record<
   'gpt-4-vision': gpt4Vision,
   'gpt-4': gpt4,
   'gpt-3.5-turbo': gpt35Turbo,
+  'o1-preview': o1Preview,
 };
 
 export function toOpenAIRole(role: Role): ChatCompletionRole {
