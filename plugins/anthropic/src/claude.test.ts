@@ -813,6 +813,40 @@ describe('toAnthropicRequestBody', () => {
       'Only text output format is supported for Claude models currently'
     );
   });
+
+  it('should apply system prompt caching when enabled', () => {
+    const request: GenerateRequest<typeof AnthropicConfigSchema> = {
+      messages: [
+        { role: 'system', content: [{ text: 'You are a helpful assistant' }] },
+        { role: 'user', content: [{ text: 'Hi' }] },
+      ],
+      output: { format: 'text' },
+    };
+
+    // Test with caching enabled
+    const outputWithCaching = toAnthropicRequestBody(
+      'claude-3-haiku',
+      request,
+      false,
+      true
+    );
+    expect(outputWithCaching.system).toEqual([
+      {
+        type: 'text',
+        text: 'You are a helpful assistant',
+        cache_control: { type: 'ephemeral' },
+      },
+    ]);
+
+    // Test with caching disabled
+    const outputWithoutCaching = toAnthropicRequestBody(
+      'claude-3-haiku',
+      request,
+      false,
+      false
+    );
+    expect(outputWithoutCaching.system).toBe('You are a helpful assistant');
+  });
 });
 
 describe('claudeRunner', () => {
