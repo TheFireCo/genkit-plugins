@@ -17,8 +17,6 @@
 import type { Genkit } from 'genkit';
 import { genkitPlugin } from 'genkit/plugin';
 import Anthropic from '@anthropic-ai/sdk';
-import { fetch as undiciFetch } from 'undici';
-const { Readable } = require('stream');
 
 import {
   claude35Sonnet,
