@@ -17,6 +17,8 @@
 import type { Genkit } from 'genkit';
 import { genkitPlugin } from 'genkit/plugin';
 import Anthropic from '@anthropic-ai/sdk';
+import { fetch as undiciFetch } from 'undici';
+const { Readable } = require('stream');
 
 import {
   claude35Sonnet,
@@ -31,6 +33,7 @@ export { claude35Sonnet, claude3Opus, claude3Sonnet, claude3Haiku };
 
 export interface PluginOptions {
   apiKey?: string;
+  cacheSystemPrompt?: boolean;
 }
 
 /**
@@ -48,7 +51,7 @@ export interface PluginOptions {
  * - anthropic: The main plugin function to interact with the Anthropic AI.
  *
  * Usage:
- * To use the Claude models, initialize the anthropic plugin inside `configureGenkit` and pass the configuration options. If no API key is provided in the options, the environment variable `ANTHROPIC_API_KEY` must be set.
+ * To use the Claude models, initialize the anthropic plugin inside `configureGenkit` and pass the configuration options. If no API key is provided in the options, the environment variable `ANTHROPIC_API_KEY` must be set. If you want to cache the system prompt, set `cacheSystemPrompt` to `true`. **Note:** Prompt caching is in beta and may change. To learn more, see https://docs.anthropic.com/en/docs/prompt-caching.
  *
  * Example:
  * ```
@@ -56,7 +59,7 @@ export interface PluginOptions {
  *
  * export default configureGenkit({
  *  plugins: [
- *    anthropic({ apiKey: 'your-api-key' })
+ *    anthropic({ apiKey: 'your-api-key', cacheSystemPrompt: false })
  *    ... // other plugins
  *  ]
  * });
@@ -71,10 +74,14 @@ export const anthropic = (options?: PluginOptions) =>
         'Please pass in the API key or set the ANTHROPIC_API_KEY environment variable'
       );
     }
-    const client = new Anthropic({ apiKey });
+    let defaultHeaders = {};
+    if (options?.cacheSystemPrompt == true) {
+      defaultHeaders['anthropic-beta'] = 'prompt-caching-2024-07-31';
+    }
+    const client = new Anthropic({ apiKey, defaultHeaders });
 
     for (const name of Object.keys(SUPPORTED_CLAUDE_MODELS)) {
-      claudeModel(ai, name, client);
+      claudeModel(ai, name, client, options?.cacheSystemPrompt);
     }
   });
 
