@@ -420,20 +420,31 @@ export function fromAnthropicResponse(response: Message): GenerateResponseData {
  * @param modelName The name of the Anthropic model to use.
  * @param request The Genkit GenerateRequest to convert.
  * @param stream Whether to stream the response.
+ * @param cacheSystemPrompt Whether to cache the system prompt.
  * @returns The converted Anthropic API request body.
  * @throws An error if the specified model is not supported or if an unsupported output format is requested.
  */
 export function toAnthropicRequestBody(
   modelName: string,
   request: GenerateRequest<typeof AnthropicConfigSchema>,
-  stream?: boolean
+  stream?: boolean,
+  cacheSystemPrompt?: boolean
 ): MessageCreateParams {
   const model = SUPPORTED_CLAUDE_MODELS[modelName];
   if (!model) throw new Error(`Unsupported model: ${modelName}`);
   const { system, messages } = toAnthropicMessages(request.messages);
   const mappedModelName = request.config?.version ?? model.version ?? modelName;
   const body: MessageCreateParams = {
-    system,
+    system: cacheSystemPrompt
+      ? [
+          {
+            type: 'text',
+            text: system,
+            // @ts-expect-error cache_control is in beta
+            cache_control: { type: 'ephemeral' },
+          },
+        ]
+      : system,
     messages,
     tools: request.tools?.map(toAnthropicTool),
     max_tokens: request.config?.maxOutputTokens ?? 4096,
@@ -463,15 +474,25 @@ export function toAnthropicRequestBody(
  * Creates the runner used by Genkit to interact with the Claude model.
  * @param name The name of the Claude model.
  * @param client The Anthropic client instance.
+ * @param cacheSystemPrompt Whether to cache the system prompt.
  * @returns The runner that Genkit will call when the model is invoked.
  */
-export function claudeRunner(name: string, client: Anthropic) {
+export function claudeRunner(
+  name: string,
+  client: Anthropic,
+  cacheSystemPrompt?: boolean
+) {
   return async (
     request: GenerateRequest<typeof AnthropicConfigSchema>,
     streamingCallback?: StreamingCallback<GenerateResponseChunkData>
   ): Promise<GenerateResponseData> => {
     let response: Message;
-    const body = toAnthropicRequestBody(name, request, !!streamingCallback);
+    const body = toAnthropicRequestBody(
+      name,
+      request,
+      !!streamingCallback,
+      cacheSystemPrompt
+    );
     if (streamingCallback) {
       const stream = client.messages.stream(body);
       for await (const chunk of stream) {
@@ -497,7 +518,8 @@ export function claudeRunner(name: string, client: Anthropic) {
 export function claudeModel(
   ai: Genkit,
   name: string,
-  client: Anthropic
+  client: Anthropic,
+  cacheSystemPrompt?: boolean
 ): ModelAction<typeof AnthropicConfigSchema> {
   const modelId = `anthropic/${name}`;
   const model = SUPPORTED_CLAUDE_MODELS[name];
@@ -509,6 +531,6 @@ export function claudeModel(
       ...model.info,
       configSchema: model.configSchema,
     },
-    claudeRunner(name, client)
+    claudeRunner(name, client, cacheSystemPrompt)
   );
 }
