@@ -1,6 +1,6 @@
 {
   "name": "genkitx-openai-example",
-  "version": "0.11.0",
+  "version": "0.11.1",
   "description": "",
   "main": "lib/index.js",
   "private": true,
