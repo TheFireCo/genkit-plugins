@@ -97,7 +97,7 @@
         "test"
       ]
     },
-    {      
+    {
       "login": "debkanchan",
       "name": "DK",
       "avatar_url": "https://avatars.githubusercontent.com/u/11326669?v=4",
@@ -135,6 +135,16 @@
       "name": "Xavier Portilla Edo",
       "avatar_url": "https://avatars.githubusercontent.com/u/4416096?v=4",
       "profile": "https://xavidop.me/",
+      "contributions": [
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "srgtuszy",
+      "name": "Michał Tuszyński",
+      "avatar_url": "https://avatars.githubusercontent.com/u/290669?v=4",
+      "profile": "http://srgtuszy.com",
       "contributions": [
         "code",
         "test"
