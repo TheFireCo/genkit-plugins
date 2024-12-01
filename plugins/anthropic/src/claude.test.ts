@@ -41,7 +41,7 @@ import type { CandidateData, ToolDefinition } from 'genkit/model';
 
 import type { AnthropicConfigSchema } from './claude';
 import {
-  claude3Haiku,
+  claude35Haiku,
   claudeModel,
   claudeRunner,
   fromAnthropicContentBlockChunk,
@@ -678,7 +678,40 @@ describe('toAnthropicRequestBody', () => {
             role: 'user',
           },
         ],
-        model: 'claude-3-5-sonnet-20240620',
+        model: 'claude-3-5-sonnet-latest',
+        metadata: {
+          user_id: 'exampleUser123',
+        },
+      },
+    },
+    {
+      should: '(claude-3-5-haiku) handles request with text messages',
+      modelName: 'claude-3-5-haiku',
+      genkitRequest: {
+        messages: [
+          { role: 'user', content: [{ text: 'Tell a joke about dogs.' }] },
+        ],
+        output: { format: 'text' },
+        config: {
+          metadata: {
+            user_id: 'exampleUser123',
+          },
+        },
+      },
+      expectedOutput: {
+        max_tokens: 4096,
+        messages: [
+          {
+            content: [
+              {
+                text: 'Tell a joke about dogs.',
+                type: 'text',
+              },
+            ],
+            role: 'user',
+          },
+        ],
+        model: 'claude-3-5-haiku-latest',
         metadata: {
           user_id: 'exampleUser123',
         },
@@ -804,7 +837,7 @@ describe('toAnthropicRequestBody', () => {
 
   it('should throw if output format is not text', () => {
     expect(() =>
-      toAnthropicRequestBody('claude-3-haiku', {
+      toAnthropicRequestBody('claude-3-5-haiku', {
         messages: [],
         tools: [],
         output: { format: 'media' },
@@ -825,7 +858,7 @@ describe('toAnthropicRequestBody', () => {
 
     // Test with caching enabled
     const outputWithCaching = toAnthropicRequestBody(
-      'claude-3-haiku',
+      'claude-3-5-haiku',
       request,
       false,
       true
@@ -840,7 +873,7 @@ describe('toAnthropicRequestBody', () => {
 
     // Test with caching disabled
     const outputWithoutCaching = toAnthropicRequestBody(
-      'claude-3-haiku',
+      'claude-3-5-haiku',
       request,
       false,
       false
@@ -863,12 +896,12 @@ describe('claudeRunner', () => {
       },
     };
     const runner = claudeRunner(
-      'claude-3-haiku',
+      'claude-3-5-haiku',
       anthropicClient as unknown as Anthropic
     );
     await runner({ messages: [] });
     expect(anthropicClient.messages.create).toHaveBeenCalledWith({
-      model: 'claude-3-haiku-20240307',
+      model: 'claude-3-5-haiku-latest',
       max_tokens: 4096,
     });
   });
@@ -916,12 +949,12 @@ describe('claudeRunner', () => {
     };
     const streamingCallback = jest.fn();
     const runner = claudeRunner(
-      'claude-3-haiku',
+      'claude-3-5-haiku',
       anthropicClient as unknown as Anthropic
     );
     await runner({ messages: [] }, streamingCallback);
     expect(anthropicClient.messages.stream).toHaveBeenCalledWith({
-      model: 'claude-3-haiku-20240307',
+      model: 'claude-3-5-haiku-latest',
       max_tokens: 4096,
       stream: true,
     });
@@ -943,12 +976,12 @@ describe('claudeModel', () => {
 
   it('should correctly define supported Claude models', () => {
     jest.spyOn(ai, 'defineModel').mockImplementation((() => ({})) as any);
-    claudeModel(ai, 'claude-3-haiku', {} as Anthropic);
+    claudeModel(ai, 'claude-3-5-haiku', {} as Anthropic);
     expect(ai.defineModel).toHaveBeenCalledWith(
       {
-        name: claude3Haiku.name,
-        ...claude3Haiku.info,
-        configSchema: claude3Haiku.configSchema,
+        name: claude35Haiku.name,
+        ...claude35Haiku.info,
+        configSchema: claude35Haiku.configSchema,
       },
       expect.any(Function)
     );
