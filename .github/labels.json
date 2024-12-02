@@ -1,0 +1,17 @@
+[
+  {
+    "name": "bump:major",
+    "color": "ef6bb4",
+    "description": "Attach to PR to automatically bump major version on merge"
+  },
+  {
+    "name": "bump:minor",
+    "color": "ef6bb4",
+    "description": "Attach to PR to automatically bump minor version on merge"
+  },
+  {
+    "name": "bump:patch",
+    "color": "ef6bb4",
+    "description": "Attach to PR to automatically bump patch version on merge"
+  }
+]

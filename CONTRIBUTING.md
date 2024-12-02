@@ -22,6 +22,7 @@ Before reading further, please note that:
    3. [Development Process](#development-process)
    4. [Building the Project](#building-the-project)
    5. [Testing](#testing)
+   6. [Automatic release draft with version bump labels](#automatic-release-draft-with-version-bump-labels)
 7. [About this document](#about-this-document)
 
 ## Code of Conduct
@@ -110,6 +111,13 @@ npm run test
 ```
 
 Or with the `npm: test` VSCode task. More about VSCode tasks [here](https://code.visualstudio.com/Docs/editor/tasks).
+
+### Automatic release draft with version bump labels
+
+For repository maintainers, make sure to add one of `bump:patch`, `bump:minor` or `bump:major` labels according to whether you think the PR contains a patch, minor or major change.
+When the PR is merged, CI will automatically create a new tag and draft a release with changes included in the PR.
+
+If no bump labels are added to the PR, no draft release and tag will be generated.
 
 ## About this document
 
