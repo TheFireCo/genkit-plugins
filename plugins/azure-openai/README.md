@@ -46,22 +46,24 @@ Once you have your instance running, make sure you have the endpoint and key. Yo
 You can then define the following environment variables to use the service:
 
 ```
-AZURE_OPENAI_API_ENDPOINT=<YOUR_ENDPOINT>
+AZURE_OPENAI_ENDPOINT=<YOUR_ENDPOINT>
 AZURE_OPENAI_API_KEY=<YOUR_KEY>
-AZURE_OPENAI_API_EMBEDDING_DEPLOYMENT_NAME=<YOUR_EMBEDDING_DEPLOYMENT
+OPENAI_API_VERSION=<YOUR_API_VERSION>
 ```
 
 Alternatively, you can pass the values directly to the `azureOpenAI` constructor:
 
 ```typescript
 import { azureOpenAI } from 'genkitx-azure-openai';
+const apiVersion = '2024-10-21';
 
 export default configureGenkit({
   plugins: [
     azureOpenAI({
       apiKey: '<your_key>',
-      azureOpenAIEndpoint: '<your_endpoint>',
-      azureOpenAIApiDeploymentName: '<your_embedding_deployment_name',
+      endpoint: '<your_endpoint>',
+      deployment: '<your_embedding_deployment_name',
+      apiVersion,
     }),
     // other plugins
   ],
@@ -72,16 +74,23 @@ If you're using Azure Managed Identity, you can also pass the credentials direct
 
 ```typescript
 import { azureOpenAI } from 'genkitx-azure-openai';
-import { DefaultAzureCredential } from '@azure/identity';
+import {
+  DefaultAzureCredential,
+  getBearerTokenProvider,
+} from '@azure/identity';
+const apiVersion = '2024-10-21';
 
 const credential = new DefaultAzureCredential();
+const scope = 'https://cognitiveservices.azure.com/.default';
+const azureADTokenProvider = getBearerTokenProvider(credential, scope);
 
 export default configureGenkit({
   plugins: [
     azureOpenAI({
-      credential,
-      azureOpenAIEndpoint: '<your_endpoint>',
-      azureOpenAIApiDeploymentName: '<your_embedding_deployment_name',
+      azureADTokenProvider,
+      endpoint: '<your_endpoint>',
+      deployment: '<your_embedding_deployment_name',
+      apiVersion,
     }),
     // other plugins
   ],
