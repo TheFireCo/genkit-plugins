@@ -1,7 +1,7 @@
 ![Firebase Genkit + Azure OpenAI](https://github.com/TheFireCo/genkit-plugins/blob/main/assets/genkit-azure-openai.png?raw=true)
 
 <h1 align="center">
-   [WIP]Firebase Genkit <> Azure OpenAI Plugin
+   Firebase Genkit <> Azure OpenAI Plugin
 </h1>
 
 <h4 align="center">Azure OpenAI Community Plugin for Google Firebase Genkit</h4>
@@ -94,18 +94,18 @@ The simplest way to call the text generation model is by using the helper functi
 
 ```typescript
 // Basic usage of an LLM
-const response = await generate({
-  model: gpt35Turbo,
+const response = await ai.generate({
+  model: gpt4,
   prompt: 'Tell me a joke.',
 });
 
-console.log(await response.text());
+console.log(await response.text);
 ```
 
 Using the same interface, you can prompt a multimodal model:
 
 ```typescript
-const response = await generate({
+const response = await ai.generate({
   model: gpt4o,
   prompt: [
     { text: 'What animal is in the photo?' },
@@ -117,7 +117,7 @@ const response = await generate({
     visualDetailLevel: 'low',
   },
 });
-console.log(await response.text());
+console.log(await response.text);
 ```
 
 For more detailed examples and the explanation of other functionalities, refer to the examples in the [official Github repo of the plugin](https://github.com/TheFireCo/genkit-plugins/blob/main/examples/README.md) or in the [official Genkit documentation](https://firebase.google.com/docs/genkit/get-started).
