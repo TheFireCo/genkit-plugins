@@ -30,6 +30,7 @@ This repository contains community plugins for
 - [`genkitx-groq`](plugins/groq/README.md) - Plugin for Groq APIs
 - [`genkitx-mistral`](plugins/mistral/README.md) - Plugin for Mistral AI APIs
 - [`genkitx-openai`](plugins/openai/README.md) - Plugin for OpenAI APIs
+- [`genkitx-azure-openai`](plugins/azure-openai/README.md) - Plugin for Azure OpenAI APIs
 
 ### Vector Store Plugins
 
