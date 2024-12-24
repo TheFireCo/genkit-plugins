@@ -6,3 +6,4 @@
 /plugins/anthropic @Dabolus
 /plugins/hnsw @retzd-tech
 /plugins/milvus @zhanshuyou
+/plugins/azure-openai/ @xavidop

@@ -14,93 +14,63 @@
  * limitations under the License.
  */
 
-import { genkitPlugin, Plugin } from '@genkit-ai/core';
+import type { Genkit } from 'genkit';
+import { genkitPlugin } from 'genkit/plugin';
+import { AzureClientOptions, AzureOpenAI } from 'openai';
+
+import { dallE3, dallE3Model } from './dalle.js';
+import { whisper1, whisper1Model } from './whisper.js';
+
 import {
-  AzureKeyCredential,
-  OpenAIClient,
-  OpenAIClientOptions,
-} from '@azure/openai';
-import { DefaultAzureCredential } from '@azure/identity';
+  openaiEmbedder,
+  SUPPORTED_EMBEDDING_MODELS,
+  textEmbedding3Large,
+  textEmbedding3Small,
+  textEmbeddingAda002,
+} from './embedder.js';
+import {
+  gpt35Turbo,
+  gpt4,
+  gptO1Preview,
+  gptO1Mini,
+  gptO1,
+  gpt4o,
+  gptModel,
+  SUPPORTED_GPT_MODELS,
+} from './gpt.js';
+import { SUPPORTED_TTS_MODELS, ttsModel, tts1, tts1Hd } from './tts.js';
+export {
+  dallE3,
+  tts1,
+  tts1Hd,
+  whisper1,
+  gpt35Turbo,
+  gpt4,
+  gptO1,
+  gptO1Mini,
+  gptO1Preview,
+  gpt4o,
+  textEmbedding3Large,
+  textEmbedding3Small,
+  textEmbeddingAda002,
+};
 
-// import { dallE3, dallE3Model } from './dalle.js';
-// import {
-//   openaiEmbedder,
-//   SUPPORTED_EMBEDDING_MODELS,
-//   textEmbedding3Large,
-//   textEmbedding3Small,
-// } from './embedder.js';
-// import {
-//   gpt35Turbo,
-//   gpt4,
-//   gpt4Turbo,
-//   gpt4Vision,
-//   gpt4o,
-//   gptModel,
-//   SUPPORTED_GPT_MODELS,
-// } from './gpt.js';
-// export {
-//   dallE3,
-//   gpt35Turbo,
-//   gpt4,
-//   gpt4Turbo,
-//   gpt4Vision,
-//   gpt4o,
-//   textEmbedding3Large,
-//   textEmbedding3Small,
-// };
+export interface PluginOptions extends AzureClientOptions {}
 
-export interface PluginOptions {
-  apiKey?: string;
-  azureOpenAIEndpoint?: string;
-  azureOpenAIApiDeploymentName?: string;
-  credential?: AzureKeyCredential;
-  clientOptions?: OpenAIClientOptions;
-}
-
-export const azureOpenAI: Plugin<[PluginOptions] | []> = genkitPlugin(
-  'azure-openai',
-  async (options?: PluginOptions) => {
-    let apiKey = options?.apiKey || process.env.AZURE_OPENAI_API_KEY;
-    let endpoint =
-      options?.azureOpenAIEndpoint || process.env.AZURE_OPENAI_API_ENDPOINT;
-    let deploymentName =
-      options?.azureOpenAIApiDeploymentName ||
-      process.env.AZURE_OPENAI_API_EMBEDDING_DEPLOYMENT_NAME;
-
-    if (!apiKey && !options?.credential)
-      throw new Error(
-        'Please provide an API key or Azure credential or set the AZURE_OPENAI_API_KEY environment variable'
-      );
-
-    if (!endpoint)
-      throw new Error(
-        'Please provide the Azure OpenAI endpoint or set the AZURE_OPENAI_API_ENDPOINT environment variable'
-      );
-
-    const credential =
-      options?.credential ||
-      new AzureKeyCredential(apiKey!) ||
-      new DefaultAzureCredential();
-
-    const client = new OpenAIClient(
-      endpoint,
-      credential,
-      options?.clientOptions
-    );
-
-    return {
-      // TODO: WIP
-      // models: [
-      //   ...Object.keys(SUPPORTED_GPT_MODELS).map((name) =>
-      //     gptModel(name, client)
-      //   ),
-      //   dallE3Model(client),
-      // ],
-      // embedders: Object.keys(SUPPORTED_EMBEDDING_MODELS).map((name) =>
-      //   openaiEmbedder(name, options)
-      // ),
-    };
-  }
-);
+export const azureOpenAI = (options?: PluginOptions) =>
+  genkitPlugin('azure-openai', async (ai: Genkit) => {
+    const client = new AzureOpenAI(options);
+    for (const name of Object.keys(SUPPORTED_GPT_MODELS)) {
+      gptModel(ai, name, client);
+    }
+    dallE3Model(ai, client);
+    whisper1Model(ai, client);
+    for (const name of Object.keys(SUPPORTED_TTS_MODELS)) {
+      ttsModel(ai, name, client);
+    }
+    for (const name of Object.keys(SUPPORTED_EMBEDDING_MODELS)) {
+      openaiEmbedder(ai, name, client);
+    }
+  });
 
 export default azureOpenAI;

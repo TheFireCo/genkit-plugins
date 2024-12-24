@@ -1,7 +1,7 @@
 ![Firebase Genkit + Azure OpenAI](https://github.com/TheFireCo/genkit-plugins/blob/main/assets/genkit-azure-openai.png?raw=true)
 
 <h1 align="center">
-   [WIP]Firebase Genkit <> Azure OpenAI Plugin
+   Firebase Genkit <> Azure OpenAI Plugin
 </h1>
 
 <h4 align="center">Azure OpenAI Community Plugin for Google Firebase Genkit</h4>
@@ -46,22 +46,24 @@ Once you have your instance running, make sure you have the endpoint and key. Yo
 You can then define the following environment variables to use the service:
 
 ```
-AZURE_OPENAI_API_ENDPOINT=<YOUR_ENDPOINT>
+AZURE_OPENAI_ENDPOINT=<YOUR_ENDPOINT>
 AZURE_OPENAI_API_KEY=<YOUR_KEY>
-AZURE_OPENAI_API_EMBEDDING_DEPLOYMENT_NAME=<YOUR_EMBEDDING_DEPLOYMENT
+OPENAI_API_VERSION=<YOUR_API_VERSION>
 ```
 
 Alternatively, you can pass the values directly to the `azureOpenAI` constructor:
 
 ```typescript
 import { azureOpenAI } from 'genkitx-azure-openai';
+const apiVersion = '2024-10-21';
 
 export default configureGenkit({
   plugins: [
     azureOpenAI({
       apiKey: '<your_key>',
-      azureOpenAIEndpoint: '<your_endpoint>',
-      azureOpenAIApiDeploymentName: '<your_embedding_deployment_name',
+      endpoint: '<your_endpoint>',
+      deployment: '<your_embedding_deployment_name',
+      apiVersion,
     }),
     // other plugins
   ],
@@ -72,16 +74,23 @@ If you're using Azure Managed Identity, you can also pass the credentials direct
 
 ```typescript
 import { azureOpenAI } from 'genkitx-azure-openai';
-import { DefaultAzureCredential } from '@azure/identity';
+import {
+  DefaultAzureCredential,
+  getBearerTokenProvider,
+} from '@azure/identity';
+const apiVersion = '2024-10-21';
 
 const credential = new DefaultAzureCredential();
+const scope = 'https://cognitiveservices.azure.com/.default';
+const azureADTokenProvider = getBearerTokenProvider(credential, scope);
 
 export default configureGenkit({
   plugins: [
     azureOpenAI({
-      credential,
-      azureOpenAIEndpoint: '<your_endpoint>',
-      azureOpenAIApiDeploymentName: '<your_embedding_deployment_name',
+      azureADTokenProvider,
+      endpoint: '<your_endpoint>',
+      deployment: '<your_embedding_deployment_name',
+      apiVersion,
     }),
     // other plugins
   ],
@@ -94,18 +103,18 @@ The simplest way to call the text generation model is by using the helper functi
 
 ```typescript
 // Basic usage of an LLM
-const response = await generate({
-  model: gpt35Turbo,
+const response = await ai.generate({
+  model: gpt4,
   prompt: 'Tell me a joke.',
 });
 
-console.log(await response.text());
+console.log(await response.text);
 ```
 
 Using the same interface, you can prompt a multimodal model:
 
 ```typescript
-const response = await generate({
+const response = await ai.generate({
   model: gpt4o,
   prompt: [
     { text: 'What animal is in the photo?' },
@@ -117,7 +126,7 @@ const response = await generate({
     visualDetailLevel: 'low',
   },
 });
-console.log(await response.text());
+console.log(await response.text);
 ```
 
 For more detailed examples and the explanation of other functionalities, refer to the examples in the [official Github repo of the plugin](https://github.com/TheFireCo/genkit-plugins/blob/main/examples/README.md) or in the [official Genkit documentation](https://firebase.google.com/docs/genkit/get-started).
