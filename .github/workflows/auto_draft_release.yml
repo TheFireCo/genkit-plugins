@@ -48,7 +48,7 @@ jobs:
         echo "bump_type=$bump_type" >> "$GITHUB_OUTPUT"
 
     - name: "Version and Publish"
-      if : ${{ steps.determine_version.outputs.bump_type != "none" }}
+      if : ${{ steps.determine_version.outputs.bump_type != 'none' }}
       run: |
         git config user.name "${{ github.actor }}"
         git config user.email "${{ github.actor }}@users.noreply.github.com"
@@ -61,7 +61,7 @@ jobs:
 
         echo "latest_tag=$latest_tag" >> "$GITHUB_OUTPUT"
     - name: "Draft GitHub Release"
-      if: ${{ steps.determine_version.outputs.bump_type != "none" }}
+      if: ${{ steps.determine_version.outputs.bump_type != 'none' }}
       uses: msoftprops/action-gh-release@v2
       with:
         prerelease: false
