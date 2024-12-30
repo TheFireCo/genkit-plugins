@@ -62,7 +62,7 @@ jobs:
         echo "latest_tag=$latest_tag" >> "$GITHUB_OUTPUT"
     - name: "Draft GitHub Release"
       if: ${{ steps.determine_version.outputs.bump_type != 'none' }}
-      uses: msoftprops/action-gh-release@v2
+      uses: softprops/action-gh-release@v2
       with:
         prerelease: false
         draft: true
