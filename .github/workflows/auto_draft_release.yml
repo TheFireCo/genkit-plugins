@@ -17,10 +17,10 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: "Use NodeJS 14"
+    - name: "Setup Node.js"
       uses: actions/setup-node@v2
       with:
-        node-version: '14'
+        node-version: '20.x'
 
     - name: "Determine Version Bump"
       id: determine_version
