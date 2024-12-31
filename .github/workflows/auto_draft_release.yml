@@ -21,6 +21,10 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: '20.x'
+    
+    - uses: webfactory/ssh-agent@v0.9.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
     - name: "Determine Version Bump"
       id: determine_version
@@ -50,8 +54,8 @@ jobs:
     - name: "Version and Publish"
       if : ${{ steps.determine_version.outputs.bump_type != 'none' }}
       run: |
-        git config user.name "${{ github.actor }}"
-        git config user.email "${{ github.actor }}@users.noreply.github.com"
+        git config user.name  "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
 
         # Run Lerna with the determined bump type
         npx lerna version ${{ steps.determine_version.outputs.bump_type }} --yes
