@@ -23,11 +23,18 @@ import {
   claude3Opus,
   claude3Sonnet,
   claude3Haiku,
+  claude35Haiku,
   claudeModel,
   SUPPORTED_CLAUDE_MODELS,
 } from './claude.js';
 
-export { claude35Sonnet, claude3Opus, claude3Sonnet, claude3Haiku };
+export {
+  claude35Sonnet,
+  claude3Opus,
+  claude3Sonnet,
+  claude3Haiku,
+  claude35Haiku,
+};
 
 export interface PluginOptions {
   apiKey?: string;
