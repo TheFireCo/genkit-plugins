@@ -107,6 +107,22 @@ const embedding = await ai.embed({
 console.log(embedding);
 ```
 
+### Image Generation
+
+```typescript
+const response = await generate({
+  model: DallE3,
+  prompt: 'A cartoon image of a dog in a cyberpunk setting',
+  config: {
+    size: "1024x1024",
+  },
+  output: {
+    format: "media",
+  },
+});
+```
+
+
 ### Within a flow
 
 ```typescript
