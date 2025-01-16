@@ -1,5 +1,5 @@
 
-name: Draft Release
+name: Publish Release
 on:
   pull_request:
     types: [closed]
@@ -65,12 +65,12 @@ jobs:
         latest_tag=$(git describe --tags --abbrev=0)
 
         echo "latest_tag=$latest_tag" >> "$GITHUB_OUTPUT"
-    - name: "Draft GitHub Release"
+    - name: "Publish GitHub Release"
       if: ${{ steps.determine_version.outputs.bump_type != 'none' }}
       uses: softprops/action-gh-release@v2
       with:
         prerelease: false
-        draft: true
+        draft: false
         make_latest: true
         generate_release_notes: true
         discussion_category_name: Announcements
