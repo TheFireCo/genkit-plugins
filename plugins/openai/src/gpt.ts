@@ -97,7 +97,55 @@ export const o1Preview = modelRef({
   name: 'openai/o1-preview',
   info: {
     versions: ['o1-preview'],
-    label: 'OpenAI - O1 Preview',
+    label: 'OpenAI - o1 Preview',
+    supports: {
+      multiturn: true,
+      tools: false,
+      media: false,
+      systemRole: false,
+      output: ['text'],
+    },
+  },
+  configSchema: OpenAiConfigSchema,
+});
+
+export const o1Mini = modelRef({
+  name: 'openai/o1',
+  info: {
+    versions: ['o1-mini'],
+    label: 'OpenAI - o1 Mini',
+    supports: {
+      multiturn: true,
+      tools: false,
+      media: false,
+      systemRole: false,
+      output: ['text'],
+    },
+  },
+  configSchema: OpenAiConfigSchema,
+});
+
+export const o1 = modelRef({
+  name: 'openai/o1',
+  info: {
+    versions: ['o1'],
+    label: 'OpenAI - o1',
+    supports: {
+      multiturn: true,
+      tools: false,
+      media: false,
+      systemRole: false,
+      output: ['text'],
+    },
+  },
+  configSchema: OpenAiConfigSchema,
+});
+
+export const o3Mini = modelRef({
+  name: 'openai/o3-mini',
+  info: {
+    versions: ['o3-mini'],
+    label: 'OpenAI - o3 Mini',
     supports: {
       multiturn: true,
       tools: false,
@@ -206,6 +254,9 @@ export const SUPPORTED_GPT_MODELS: Record<
   'gpt-4': gpt4,
   'gpt-3.5-turbo': gpt35Turbo,
   'o1-preview': o1Preview,
+  o1: o1,
+  'o1-mini': o1Mini,
+  'o3-mini': o3Mini,
 };
 
 export function toOpenAIRole(role: Role): ChatCompletionRole {
