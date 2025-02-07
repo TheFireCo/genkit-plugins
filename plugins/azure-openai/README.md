@@ -55,9 +55,10 @@ Alternatively, you can pass the values directly to the `azureOpenAI` constructor
 
 ```typescript
 import { azureOpenAI, gpt4o } from 'genkitx-azure-openai';
+import { genkit } from 'genkit';
 const apiVersion = '2024-10-21';
 
-const ai = configureGenkit({
+const ai = genkit({
   plugins: [
     azureOpenAI({
       apiKey: '<your_key>',
@@ -75,6 +76,7 @@ If you're using Azure Managed Identity, you can also pass the credentials direct
 
 ```typescript
 import { azureOpenAI, gpt4o } from 'genkitx-azure-openai';
+import { genkit } from 'genkit';
 import {
   DefaultAzureCredential,
   getBearerTokenProvider,
@@ -85,7 +87,7 @@ const credential = new DefaultAzureCredential();
 const scope = 'https://cognitiveservices.azure.com/.default';
 const azureADTokenProvider = getBearerTokenProvider(credential, scope);
 
-const ai = configureGenkit({
+const ai = genkit({
   plugins: [
     azureOpenAI({
       azureADTokenProvider,
