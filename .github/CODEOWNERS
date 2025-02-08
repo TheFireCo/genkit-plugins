@@ -1,5 +1,5 @@
 # Global code owners
-*       @davidoort @EPMatt
+*       @davidoort @EPMatt @xavidop
 
 # Plugins owners
 /plugins/openai/ @Dabolus

@@ -33,6 +33,18 @@
       ]
     },
     {
+      "login": "xavidop",
+      "name": "Xavier Portilla Edo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4416096?v=4",
+      "profile": "https://xavidop.me/",
+      "contributions": [
+        "code",
+        "test",
+        "doc",
+        "maintenance"
+      ]
+    },
+    {
       "login": "Dabolus",
       "name": "Giorgio Garasto",
       "avatar_url": "https://avatars.githubusercontent.com/u/28671340?v=4",
@@ -124,17 +136,6 @@
       "name": "Jacob Cable",
       "avatar_url": "https://avatars.githubusercontent.com/u/32874567?v=4",
       "profile": "https://github.com/cabljac",
-      "contributions": [
-        "code",
-        "test",
-        "doc"
-      ]
-    },
-    {
-      "login": "xavidop",
-      "name": "Xavier Portilla Edo",
-      "avatar_url": "https://avatars.githubusercontent.com/u/4416096?v=4",
-      "profile": "https://xavidop.me/",
       "contributions": [
         "code",
         "test",
