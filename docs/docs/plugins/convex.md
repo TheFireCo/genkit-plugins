@@ -39,19 +39,19 @@ Install the plugin in your project with your favorite package manager:
 
 ## Usage
 
-:::warning
-Documentation is currently work in progress.
-:::
+> \[!WARNING\]\
+> Documentation is currently work in progress.
 
 ## Contributing
 
-Want to contribute to the project? That's awesome! Head over to our [Contribution Guidelines](https://github.com/TheFireCo/genkit-plugins/blob/main/https://github.com/TheFireCo/genkit-plugins/blob/main/CONTRIBUTING.md).
+Want to contribute to the project? That's awesome! Head over to our [Contribution Guidelines](https://github.com/TheFireCo/genkit-plugins/blob/main/CONTRIBUTING.md).
 
 ## Need support?
 
 :::info
-This repository depends on Google's Firebase Genkit. For issues and questions related to Genkit, please refer to instructions available in [Genkit's repository](https://github.com/firebase/genkit).
-:::
+
+> This repository depends on Google's Firebase Genkit. For issues and questions related to Genkit, please refer to instructions available in [Genkit's repository](https://github.com/firebase/genkit).
+> :::
 
 Reach out by opening a discussion on [Github Discussions](https://github.com/TheFireCo/genkit-plugins/discussions).
 

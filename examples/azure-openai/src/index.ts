@@ -16,12 +16,19 @@
 
 import dotenv from 'dotenv';
 import { genkit, z } from 'genkit';
-import openAI, { gpt4o, textEmbeddingAda002 } from 'genkitx-openai';
+import AzureOpenAi, { gpt4o, textEmbeddingAda002 } from 'genkitx-azure-openai';
 
 dotenv.config();
 
 const ai = genkit({
-  plugins: [openAI({ apiKey: process.env.OPENAI_API_KEY })],
+  plugins: [
+    AzureOpenAi({
+      apiKey: process.env.AZURE_OPENAI_API_KEY,
+      endpoint: process.env.AZURE_OPENAI_ENDPOINT,
+      deployment: process.env.AZURE_OPENAI_DEPLOYMENT_ID,
+      apiVersion: process.env.OPENAI_API_VERSION,
+    }),
+  ],
   model: gpt4o,
 });
 

@@ -1,0 +1,14 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.pluginsSidebar.category.Plugins": {
+    "message": "Plugins",
+    "description": "The label for category Plugins in sidebar pluginsSidebar"
+  },
+  "sidebar.pluginsSidebar.category.Plugins.link.generated-index.description": {
+    "message": "Browse the list of available plugins.",
+    "description": "The generated-index page description for category Plugins in sidebar pluginsSidebar"
+  }
+}
