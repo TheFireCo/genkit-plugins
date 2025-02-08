@@ -15,7 +15,7 @@
     "generative-ai"
   ],
   "version": "0.14.0",
-  "type": "module",
+  "type": "commonjs",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TheFireCo/genkit-plugins.git",

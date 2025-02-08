@@ -15,7 +15,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "genkit": "^0.9.0",
+    "genkit": "^0.9.0 || ^1.0.0",
     "genkitx-anthropic": "file:../../plugins/anthropic"
   },
   "devDependencies": {

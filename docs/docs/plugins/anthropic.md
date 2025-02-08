@@ -23,6 +23,16 @@ title: genkitx-anthropic
 
 `genkitx-anthropic` is a community plugin for using Anthropic AI and all its supported models with [Firebase Genkit](https://github.com/firebase/genkit).
 
+This Genkit plugin allows to use Anthropic AI models through their official APIs.
+
+If you want to use Anthropic AI models through Google Vertex AI, please refer
+to the [official Vertex AI plugin](https://www.npmjs.com/package/@genkit-ai/vertexai).
+
+## Supported models
+
+The plugin supports the most recent Anthropic models:
+**Claude 3.5 Sonnet**, **Claude 3 Opus**, **Claude 3 Sonnet**, and **Claude 3 Haiku**.
+
 ## Installation
 
 Install the plugin in your project with your favorite package manager:
@@ -30,54 +40,40 @@ Install the plugin in your project with your favorite package manager:
 - `npm install genkitx-anthropic`
 - `yarn add genkitx-anthropic`
 
-## Supported models
-
-The plugin supports the most recent Anthropic models:
-**Claude 3.5 Sonnet**, **Claude 3 Opus**, **Claude 3 Sonnet**, and **Claude 3 Haiku**.
-
 ## Usage
 
 ### Initialize
 
 ```typescript
-import 'dotenv/config';
+import { genkit } from 'genkit';
+import { anthropic, claude35Sonnet } from 'genkitx-anthropic';
 
-import { configureGenkit } from '@genkit-ai/core';
-import { defineFlow, startFlowsServer } from '@genkit-ai/flow';
-import { anthropic } from 'genkitx-anthropic';
-
-configureGenkit({
-  plugins: [
-    // Anthropic API key is required and defaults to the ANTHROPIC_API_KEY environment variable
-    anthropic({ apiKey: process.env.ANTHROPIC_API_KEY }),
-  ],
-  logLevel: 'debug',
-  enableTracingAndMetrics: true,
+const ai = genkit({
+  plugins: [anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })],
+  // specify a default model for generate here if you wish:
+  model: claude35Sonnet,
 });
 ```
 
 ### Basic examples
 
-The simplest way to call the text generation model is by using the helper function `generate`:
+The simplest way to generate text is by using the `generate` method:
 
 ```typescript
-// ...configure Genkit (as shown above)...
-
-const response = await generate({
+const response = await ai.generate({
   model: claude3Haiku, // model imported from genkitx-anthropic
   prompt: 'Tell me a joke.',
 });
 
-console.log(await response.text());
+console.log(response.text);
 ```
 
 ### Multi-modal prompt
 
 ```typescript
-// ...configure Genkit (as shown above)...
+// ...intialize Genkit instance (as shown above)...
 
-const response = await generate({
-  model: claude3Haiku,
+const response = await ai.generate({
   prompt: [
     { text: 'What animal is in the photo?' },
     { media: { url: imageUrl } },
@@ -88,30 +84,29 @@ const response = await generate({
     visualDetailLevel: 'low',
   },
 });
-console.log(await response.text());
+console.log(response.text);
 ```
 
 ### Within a flow
 
 ```typescript
-// ...configure Genkit (as shown above)...
+import { z } from 'genkit';
 
-export const myFlow = defineFlow(
+// ...initialize Genkit instance (as shown above)...
+
+export const jokeFlow = ai.defineFlow(
   {
-    name: 'menuSuggestionFlow',
+    name: 'jokeFlow',
     inputSchema: z.string(),
     outputSchema: z.string(),
   },
   async (subject) => {
-    const llmResponse = await generate({
-      prompt: `Suggest an item for the menu of a ${subject} themed restaurant`,
-      model: claude3Opus,
+    const llmResponse = await ai.generate({
+      prompt: `tell me a joke about ${subject}`,
     });
-
-    return llmResponse.text();
+    return llmResponse.text;
   }
 );
-startFlowsServer();
 ```
 
 ## Contributing
@@ -121,8 +116,9 @@ Want to contribute to the project? That's awesome! Head over to our [Contributio
 ## Need support?
 
 :::info
-This repository depends on Google's Firebase Genkit. For issues and questions related to Genkit, please refer to instructions available in [Genkit's repository](https://github.com/firebase/genkit).
-:::
+
+> This repository depends on Google's Firebase Genkit. For issues and questions related to Genkit, please refer to instructions available in [Genkit's repository](https://github.com/firebase/genkit).
+> :::
 
 Reach out by opening a discussion on [Github Discussions](https://github.com/TheFireCo/genkitx-openai/discussions).
 
@@ -132,4 +128,4 @@ This plugin is proudly maintained by the team at [**The Fire Company**](https://
 
 ## License
 
-This project is licensed under the [Apache 2.0 License](https://github.com/TheFireCo/genkitx-openai/blob/main/LICENSE).
+This project is licensed under the [Apache 2.0 License](https://github.com/TheFireCo/genkit-plugins/blob/main/LICENSE).

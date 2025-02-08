@@ -1,0 +1,9 @@
+node_modules/
+.nx/
+lib/
+.env
+.vscode/launch.json
+plugins/.DS_Store
+lerna-debug.log
+.DS_Store
+.genkit

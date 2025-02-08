@@ -1,5 +1,5 @@
 import { EmbedderArgument } from '@genkit-ai/ai/embedder';
-import { CommonRetrieverOptionsSchema,} from '@genkit-ai/ai/retriever';
+import { CommonRetrieverOptionsSchema } from '@genkit-ai/ai/retriever';
 import { GenkitPlugin, genkitPlugin } from 'genkit/plugin';
 import { Genkit, z, Document, indexerRef, retrieverRef } from 'genkit';
 import {
@@ -111,7 +111,7 @@ export function milvusRetriever<EmbedderCustomOptions extends z.ZodTypeAny>(
       const response = await searchMilvusData({
         collectionName,
         dbName,
-        query: queryEmbeddings,
+        query: queryEmbeddings.flatMap((e) => e.embedding),
         limit: options.limit,
         filter: JSON.stringify(options.filter),
         topk: options.k,

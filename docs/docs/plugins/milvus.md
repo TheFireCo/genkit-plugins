@@ -36,12 +36,13 @@ Install the plugin in your project with your favorite package manager:
 
 ### Initialize
 
-To use this plugin, specify it when you call `configureGenkit()`:
+To use this plugin, specify it when you initialize Genkit:
 
 ```js
+import { genkit } from 'genkit';
 import { milvus } from 'genkitx-milvus';
 
-export default configureGenkit({
+export default genkit({
   plugins: [
     milvus([
       {
@@ -84,28 +85,28 @@ Import retriever and indexer references like so:
 import { milvusRetrieverRef, milvusIndexerRef } from 'genkitx-milvus';
 ```
 
-Then, pass the references to `retrieve()` and `index()`:
+Then, use the references with `ai.retrieve()` and `ai.index()`:
 
 ```js
 // To use the index you configured when you loaded the plugin:
-let docs = await retrieve({ retriever: milvusRetrieverRef, query });
+let docs = await ai.retrieve({ retriever: milvusRetrieverRef, query });
 
 // To specify an index:
 export const customRetriever = milvusRetrieverRef({
   collectionName: 'collection_01',
 });
-docs = await retrieve({ retriever: customRetriever, query });
+docs = await ai.retrieve({ retriever: customRetriever, query });
 ```
 
 ```js
 // To use the index you configured when you loaded the plugin:
-await index({ indexer: milvusIndexerRef, documents });
+await ai.index({ indexer: milvusIndexerRef, documents });
 
 // To specify an index:
 export const customIndexer = milvusIndexerRef({
   collectionName: 'collection_01',
 });
-await index({ indexer: customIndexer, documents });
+await ai.index({ indexer: customIndexer, documents });
 ```
 
 ## Contributing
@@ -115,8 +116,9 @@ Want to contribute to the project? That's awesome! Head over to our [Contributio
 ## Need support?
 
 :::info
-This repository depends on Google's Firebase Genkit. For issues and questions related to Genkit, please refer to instructions available in [Genkit's repository](https://github.com/firebase/genkit).
-:::
+
+> This repository depends on Google's Firebase Genkit. For issues and questions related to Genkit, please refer to instructions available in [Genkit's repository](https://github.com/firebase/genkit).
+> :::
 
 Reach out by opening a discussion on [Github Discussions](https://github.com/TheFireCo/genkit-plugins/discussions).
 

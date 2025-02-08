@@ -1,12 +1,7 @@
 ---
 id: genkitx-azure-openai
-title: 🚧 genkitx-azure-openai
+title: genkitx-azure-openai
 ---
-
-:::warning
-
-This plugin is currently a work in progress.
-:::
 
 <h1 align="center">
    Firebase Genkit - Azure OpenAI Plugin
@@ -52,45 +47,58 @@ Once you have your instance running, make sure you have the endpoint and key. Yo
 You can then define the following environment variables to use the service:
 
 ```
-AZURE_OPENAI_API_ENDPOINT=<YOUR_ENDPOINT>
+AZURE_OPENAI_ENDPOINT=<YOUR_ENDPOINT>
 AZURE_OPENAI_API_KEY=<YOUR_KEY>
-AZURE_OPENAI_API_EMBEDDING_DEPLOYMENT_NAME=<YOUR_EMBEDDING_DEPLOYMENT
+OPENAI_API_VERSION=<YOUR_API_VERSION>
 ```
 
 Alternatively, you can pass the values directly to the `azureOpenAI` constructor:
 
 ```typescript
-import { azureOpenAI } from 'genkitx-azure-openai';
+import { azureOpenAI, gpt4o } from 'genkitx-azure-openai';
+import { genkit } from 'genkit';
+const apiVersion = '2024-10-21';
 
-export default configureGenkit({
+const ai = genkit({
   plugins: [
     azureOpenAI({
       apiKey: '<your_key>',
-      azureOpenAIEndpoint: '<your_endpoint>',
-      azureOpenAIApiDeploymentName: '<your_embedding_deployment_name',
+      endpoint: '<your_endpoint>',
+      deployment: '<your_embedding_deployment_name',
+      apiVersion,
     }),
     // other plugins
   ],
+  model: gpt4o,
 });
 ```
 
 If you're using Azure Managed Identity, you can also pass the credentials directly to the constructor:
 
 ```typescript
-import { azureOpenAI } from 'genkitx-azure-openai';
-import { DefaultAzureCredential } from '@azure/identity';
+import { azureOpenAI, gpt4o } from 'genkitx-azure-openai';
+import { genkit } from 'genkit';
+import {
+  DefaultAzureCredential,
+  getBearerTokenProvider,
+} from '@azure/identity';
+const apiVersion = '2024-10-21';
 
 const credential = new DefaultAzureCredential();
+const scope = 'https://cognitiveservices.azure.com/.default';
+const azureADTokenProvider = getBearerTokenProvider(credential, scope);
 
-export default configureGenkit({
+const ai = genkit({
   plugins: [
     azureOpenAI({
-      credential,
-      azureOpenAIEndpoint: '<your_endpoint>',
-      azureOpenAIApiDeploymentName: '<your_embedding_deployment_name',
+      azureADTokenProvider,
+      endpoint: '<your_endpoint>',
+      deployment: '<your_embedding_deployment_name',
+      apiVersion,
     }),
     // other plugins
   ],
+  model: gpt4o,
 });
 ```
 
@@ -100,18 +108,17 @@ The simplest way to call the text generation model is by using the helper functi
 
 ```typescript
 // Basic usage of an LLM
-const response = await generate({
-  model: gpt35Turbo,
+const response = await ai.generate({
   prompt: 'Tell me a joke.',
 });
 
-console.log(await response.text());
+console.log(await response.text);
 ```
 
 Using the same interface, you can prompt a multimodal model:
 
 ```typescript
-const response = await generate({
+const response = await ai.generate({
   model: gpt4o,
   prompt: [
     { text: 'What animal is in the photo?' },
@@ -123,7 +130,7 @@ const response = await generate({
     visualDetailLevel: 'low',
   },
 });
-console.log(await response.text());
+console.log(await response.text);
 ```
 
 For more detailed examples and the explanation of other functionalities, refer to the examples in the [official Github repo of the plugin](https://github.com/TheFireCo/genkit-plugins/blob/main/examples/README.md) or in the [official Genkit documentation](https://firebase.google.com/docs/genkit/get-started).
@@ -135,8 +142,9 @@ Want to contribute to the project? That's awesome! Head over to our [Contributio
 ## Need support?
 
 :::info
-This repository depends on Google's Firebase Genkit. For issues and questions related to Genkit, please refer to instructions available in [Genkit's repository](https://github.com/firebase/genkit).
-:::
+
+> This repository depends on Google's Firebase Genkit. For issues and questions related to Genkit, please refer to instructions available in [Genkit's repository](https://github.com/firebase/genkit).
+> :::
 
 Reach out by opening a discussion on [Github Discussions](https://github.com/TheFireCo/genkit-plugins/discussions).
 
