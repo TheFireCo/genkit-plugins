@@ -54,10 +54,11 @@ OPENAI_API_VERSION=<YOUR_API_VERSION>
 Alternatively, you can pass the values directly to the `azureOpenAI` constructor:
 
 ```typescript
-import { azureOpenAI } from 'genkitx-azure-openai';
+import { azureOpenAI, gpt4o } from 'genkitx-azure-openai';
+import { genkit } from 'genkit';
 const apiVersion = '2024-10-21';
 
-export default configureGenkit({
+const ai = genkit({
   plugins: [
     azureOpenAI({
       apiKey: '<your_key>',
@@ -67,13 +68,15 @@ export default configureGenkit({
     }),
     // other plugins
   ],
+  model: gpt4o,
 });
 ```
 
 If you're using Azure Managed Identity, you can also pass the credentials directly to the constructor:
 
 ```typescript
-import { azureOpenAI } from 'genkitx-azure-openai';
+import { azureOpenAI, gpt4o } from 'genkitx-azure-openai';
+import { genkit } from 'genkit';
 import {
   DefaultAzureCredential,
   getBearerTokenProvider,
@@ -84,7 +87,7 @@ const credential = new DefaultAzureCredential();
 const scope = 'https://cognitiveservices.azure.com/.default';
 const azureADTokenProvider = getBearerTokenProvider(credential, scope);
 
-export default configureGenkit({
+const ai = genkit({
   plugins: [
     azureOpenAI({
       azureADTokenProvider,
@@ -94,6 +97,7 @@ export default configureGenkit({
     }),
     // other plugins
   ],
+  model: gpt4o,
 });
 ```
 
@@ -104,7 +108,6 @@ The simplest way to call the text generation model is by using the helper functi
 ```typescript
 // Basic usage of an LLM
 const response = await ai.generate({
-  model: gpt4,
   prompt: 'Tell me a joke.',
 });
 

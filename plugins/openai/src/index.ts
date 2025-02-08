@@ -15,7 +15,7 @@
  */
 import type { Genkit } from 'genkit';
 import { genkitPlugin } from 'genkit/plugin';
-import {OpenAI, ClientOptions } from 'openai';
+import { OpenAI, ClientOptions } from 'openai';
 
 import { dallE3, dallE3Model } from './dalle.js';
 import {
@@ -33,6 +33,10 @@ import {
   gpt4o,
   gpt4oMini,
   gptModel,
+  o1,
+  o1Preview,
+  o1Mini,
+  o3Mini,
   SUPPORTED_GPT_MODELS,
 } from './gpt.js';
 import { SUPPORTED_TTS_MODELS, ttsModel, tts1, tts1Hd } from './tts.js';
@@ -45,6 +49,10 @@ export {
   gpt4Vision,
   gpt4o,
   gpt4oMini,
+  o1,
+  o1Preview,
+  o1Mini,
+  o3Mini,
   tts1,
   tts1Hd,
   whisper1,
