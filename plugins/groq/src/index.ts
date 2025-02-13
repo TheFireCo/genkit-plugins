@@ -20,7 +20,7 @@ import {
   groqModel,
   llama3x70b,
   llama3x8b,
-  gemma7b,
+  gemma29b,
   mixtral8x7b,
   SUPPORTED_GROQ_MODELS,
 } from './groq_models';
@@ -28,7 +28,7 @@ import { Genkit } from 'genkit';
 import { genkitPlugin } from 'genkit/plugin';
 
 // Export models for direct access
-export { llama3x70b, llama3x8b, gemma7b, mixtral8x7b };
+export { llama3x70b, llama3x8b, gemma29b, mixtral8x7b };
 
 // Define the PluginOptions interface for customization of the Groq plugin.
 // This configuration provides flexibility and defaults for Groq API connectivity.

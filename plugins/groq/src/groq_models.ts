@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 import Groq from 'groq-sdk';
-import { ChatCompletionChunk } from 'groq-sdk/lib/chat_completions_ext.mjs';
-import { ChatCompletionCreateParamsBase } from 'groq-sdk/resources/chat/completions.mjs';
 import {
-  ChatCompletion,
-  CompletionCreateParams,
-} from 'groq-sdk/resources/chat/index.mjs';
+  ChatCompletionChunk,
+  ChatCompletionCreateParamsBase,
+  ChatCompletionMessageParam,
+  ChatCompletionMessageToolCall,
+  ChatCompletionTool,
+} from 'groq-sdk/resources/chat/completions.mjs';
+import { ChatCompletion } from 'groq-sdk/resources/chat/index.mjs';
 import {
   GenerateRequest,
   GenerationCommonConfigSchema,
@@ -104,11 +106,11 @@ export const mixtral8x7b = modelRef({
 });
 
 // Runner up at JSON mode
-export const gemma7b = modelRef({
-  name: 'groq/gemma-7b',
+export const gemma29b = modelRef({
+  name: 'groq/gemma2-9b',
   info: {
-    versions: ['gemma-7b-it'],
-    label: 'Gemma 7B IT',
+    versions: ['gemma2-9b-it'],
+    label: 'Gemma 2 9B',
     supports: {
       multiturn: true,
       tools: false,
@@ -118,14 +120,14 @@ export const gemma7b = modelRef({
     },
   },
   configSchema: GroqConfigSchema,
-  version: 'gemma-7b-it',
+  version: 'gemma2-9b-it',
 });
 
 export const SUPPORTED_GROQ_MODELS = {
   'llama-3-8b': llama3x8b,
   'llama-3-70b': llama3x70b,
   'mixtral-8-7b': mixtral8x7b,
-  'gemma-7b': gemma7b,
+  'gemma2-9b': gemma29b,
 };
 
 /**
@@ -155,7 +157,7 @@ export function toGroqRole(role: Role): 'system' | 'user' | 'assistant' {
  * @param tool - The tool definition containing the name, description, and input schema.
  * @returns A Groq tool object formatted for use in completion creation parameters.
  */
-export function toGroqTool(tool: ToolDefinition): CompletionCreateParams.Tool {
+export function toGroqTool(tool: ToolDefinition): ChatCompletionTool {
   return {
     type: 'function',
     function: {
@@ -194,8 +196,8 @@ export function toGroqTextAndMedia(part: Part): string {
  */
 export function toGroqMessages(
   messages: MessageData[]
-): CompletionCreateParams.Message[] {
-  const groqMsgs: CompletionCreateParams.Message[] = [];
+): ChatCompletionMessageParam[] {
+  const groqMsgs: ChatCompletionMessageParam[] = [];
   for (const message of messages) {
     const msg = new Message(message);
     switch (msg.role) {
@@ -212,7 +214,7 @@ export function toGroqMessages(
         });
         break;
       case 'model':
-        const toolCalls: CompletionCreateParams.Message.ToolCall[] = msg.content
+        const toolCalls: ChatCompletionMessageToolCall[] = msg.content
           .filter((part) => part.toolRequest)
           .map((part) => {
             if (!part.toolRequest) {
@@ -247,7 +249,6 @@ export function toGroqMessages(
         toolResponseParts.map((part) => {
           groqMsgs.push({
             role: toGroqRole(message.role),
-            tool_call_id: part.toolResponse.ref || '',
             content:
               typeof part.toolResponse.output === 'string'
                 ? part.toolResponse.output
@@ -273,7 +274,6 @@ const FINISH_REASON_MAP: Record<
   length: 'length',
   tool_calls: 'stop',
   function_call: 'stop',
-  content_filter: 'blocked',
 };
 
 /**
@@ -284,7 +284,7 @@ const FINISH_REASON_MAP: Record<
  */
 function fromGroqToolCall(
   toolCall:
-    | ChatCompletion.Choice.Message.ToolCall
+    | ChatCompletionMessageToolCall
     | ChatCompletionChunk.Choice.Delta.ToolCall
 ) {
   if (!toolCall.function) {
@@ -324,8 +324,8 @@ function fromGroqChoice(
         ? (toolRequestParts as ToolRequestPart[])
         : [
             jsonMode
-              ? { data: JSON.parse(choice.message.content) }
-              : { text: choice.message.content },
+              ? { data: JSON.parse(choice.message.content || '{}') }
+              : { text: choice.message.content || '' },
           ],
     },
     custom: {},
@@ -370,18 +370,6 @@ export function toGroqRequestBody(
   modelName: string,
   request: GenerateRequest
 ): ChatCompletionCreateParamsBase {
-  const mapToSnakeCase = <T extends Record<string, any>>(
-    obj: T
-  ): Record<string, any> => {
-    return Object.entries(obj).reduce((acc, [key, value]) => {
-      const snakeCaseKey = key.replace(
-        /[A-Z]/g,
-        (letter) => `_${letter.toLowerCase()}`
-      );
-      acc[snakeCaseKey] = value;
-      return acc;
-    }, {});
-  };
   const model = SUPPORTED_GROQ_MODELS[modelName];
   if (!model) throw new Error(`Unsupported model: ${modelName}`);
 
@@ -490,10 +478,12 @@ export function groqModel(ai: Genkit, name: string, client: Groq) {
               logprobs: choice.logprobs as ChatCompletion.Choice.Logprobs,
               message: {
                 content: choice.delta.content || '',
-                role: 'model',
-                tool_calls: choice.delta.tool_calls,
+                role: 'assistant',
+                tool_calls: choice.delta.tool_calls?.filter(
+                  (tc) => tc.type === 'function' && !!tc.function && !!tc.id
+                ) as ChatCompletionMessageToolCall[] | undefined,
               },
-              finish_reason: choice.finish_reason || 'unknown',
+              finish_reason: choice.finish_reason || 'stop',
             });
             const c = fromGroqChunkChoice(choice);
             streamingCallback({
@@ -511,6 +501,7 @@ export function groqModel(ai: Genkit, name: string, client: Groq) {
             completion_tokens: totalCompletionTokens,
             total_tokens: totalPromptTokens + totalCompletionTokens,
           },
+          object: 'chat.completion',
         };
         // TODO: find a way to get the final completion (current approach is a bit hacky) - issue here: https://github.com/groq/groq-typescript/issues/29
         // response = await stream.finalChatCompletion();
