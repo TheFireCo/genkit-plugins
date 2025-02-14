@@ -20,15 +20,44 @@ import {
   groqModel,
   llama3x70b,
   llama3x8b,
-  gemma29b,
+  llamaGuard3x8b,
+  llama33x70bVersatile,
+  llama33x70bSpecdec,
+  llama32x90bVisionPreview,
+  llama32x11bVisionPreview,
+  llama32x3bPreview,
+  llama32x1bPreview,
+  llama31x8bInstant,
+  gemma2x9b,
   mixtral8x7b,
+  qwen25x32b,
+  qwen25coderx32b,
+  deepseekR1DistillQwenx32b,
+  deepseekR1DistillLlamax70b,
   SUPPORTED_GROQ_MODELS,
 } from './groq_models';
 import { Genkit } from 'genkit';
 import { genkitPlugin } from 'genkit/plugin';
 
 // Export models for direct access
-export { llama3x70b, llama3x8b, gemma29b, mixtral8x7b };
+export {
+  llama3x70b,
+  llama3x8b,
+  llamaGuard3x8b,
+  llama33x70bVersatile,
+  llama33x70bSpecdec,
+  llama32x90bVisionPreview,
+  llama32x11bVisionPreview,
+  llama32x3bPreview,
+  llama32x1bPreview,
+  llama31x8bInstant,
+  gemma2x9b,
+  mixtral8x7b,
+  qwen25x32b,
+  qwen25coderx32b,
+  deepseekR1DistillQwenx32b,
+  deepseekR1DistillLlamax70b,
+};
 
 // Define the PluginOptions interface for customization of the Groq plugin.
 // This configuration provides flexibility and defaults for Groq API connectivity.

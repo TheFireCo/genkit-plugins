@@ -68,6 +68,142 @@ export const llama3x8b = modelRef({
   version: 'llama3-8b-8192',
 });
 
+export const llamaGuard3x8b = modelRef({
+  name: 'groq/llama-guard-3-8b',
+  info: {
+    versions: ['llama-guard-3-8b'],
+    label: 'Llama Guard 3 8B',
+    supports: {
+      multiturn: true,
+      tools: false, // Could be true but not recommended
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'llama-guard-3-8b',
+});
+
+export const llama33x70bVersatile = modelRef({
+  name: 'groq/llama-3.3-70b-versatile',
+  info: {
+    versions: ['llama-3.3-70b-versatile'],
+    label: 'Llama 3.3 70B Versatile',
+    supports: {
+      multiturn: true,
+      tools: false, // Could be true but not recommended
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'llama-3.3-70b-versatile',
+});
+
+export const llama33x70bSpecdec = modelRef({
+  name: 'groq/llama-3.3-70b-specdec',
+  info: {
+    versions: ['llama-3.3-70b-specdec'],
+    label: 'Llama 3.3 70B SpecDec',
+    supports: {
+      multiturn: true,
+      tools: false, // Could be true but not recommended
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'llama-3.3-70b-specdec',
+});
+
+export const llama32x90bVisionPreview = modelRef({
+  name: 'groq/llama-3.2-90b-vision-preview',
+  info: {
+    versions: ['llama-3.2-90b-vision-preview'],
+    label: 'Llama 3.2 90B Vision Preview',
+    supports: {
+      multiturn: true,
+      tools: false, // Could be true but not recommended
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'llama-3.2-90b-vision-preview',
+});
+
+export const llama32x11bVisionPreview = modelRef({
+  name: 'groq/llama-3.2-11b-vision-preview',
+  info: {
+    versions: ['llama-3.2-11b-vision-preview'],
+    label: 'Llama 3.2 11B Vision Preview',
+    supports: {
+      multiturn: true,
+      tools: false, // Could be true but not recommended
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'llama-3.2-11b-vision-preview',
+});
+
+export const llama32x3bPreview = modelRef({
+  name: 'groq/llama-3.2-3b-preview',
+  info: {
+    versions: ['llama-3.2-3b-preview'],
+    label: 'Llama 3.2 3B Preview',
+    supports: {
+      multiturn: true,
+      tools: false, // Could be true but not recommended
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'llama-3.2-3b-preview',
+});
+
+export const llama32x1bPreview = modelRef({
+  name: 'groq/llama-3.2-1b-preview',
+  info: {
+    versions: ['llama-3.2-1b-preview'],
+    label: 'Llama 3.2 1B Preview',
+    supports: {
+      multiturn: true,
+      tools: false, // Could be true but not recommended
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'llama-3.2-1b-preview',
+});
+
+export const llama31x8bInstant = modelRef({
+  name: 'groq/llama-3.1-8b-instant',
+  info: {
+    versions: ['llama-3.1-8b-instant'],
+    label: 'Llama 3.1 8B Instant',
+    supports: {
+      multiturn: true,
+      tools: false, // Could be true but not recommended
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'llama-3.1-8b-instant',
+});
+
 // Worst at JSON mode
 // Only model recommended for Tool Use
 export const llama3x70b = modelRef({
@@ -106,7 +242,7 @@ export const mixtral8x7b = modelRef({
 });
 
 // Runner up at JSON mode
-export const gemma29b = modelRef({
+export const gemma2x9b = modelRef({
   name: 'groq/gemma2-9b',
   info: {
     versions: ['gemma2-9b-it'],
@@ -123,11 +259,91 @@ export const gemma29b = modelRef({
   version: 'gemma2-9b-it',
 });
 
+export const qwen25x32b = modelRef({
+  name: 'groq/qwen-2.5-32b',
+  info: {
+    versions: ['qwen-2.5-32b'],
+    label: 'Qwen 2.5 32B',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'qwen-2.5-32b',
+});
+
+export const qwen25coderx32b = modelRef({
+  name: 'groq/qwen-2.5-coder-32b',
+  info: {
+    versions: ['qwen-2.5-coder-32b'],
+    label: 'Qwen 2.5 Coder 32B',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'qwen-2.5-coder-32b',
+});
+
+export const deepseekR1DistillQwenx32b = modelRef({
+  name: 'groq/deepseek-r1-distill-qwen-32b',
+  info: {
+    versions: ['deepseek-r1-distill-qwen-32b'],
+    label: 'Deepseek R1 Distill Qwen 32B',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'deepseek-r1-distill-qwen-32b',
+});
+
+export const deepseekR1DistillLlamax70b = modelRef({
+  name: 'groq/deepseek-r1-distill-llama-70b',
+  info: {
+    versions: ['deepseek-r1-distill-llama-70b'],
+    label: 'Deepseek R1 Distill Llama 70B',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'deepseek-r1-distill-llama-70b',
+});
+
 export const SUPPORTED_GROQ_MODELS = {
   'llama-3-8b': llama3x8b,
   'llama-3-70b': llama3x70b,
+  'llama-guard-3-8b': llamaGuard3x8b,
+  'llama-3.3-70b-versatile': llama33x70bVersatile,
+  'llama-3.3-70b-specdec': llama33x70bSpecdec,
+  'llama-3.2-90b-vision-preview': llama32x90bVisionPreview,
+  'llama-3.2-11b-vision-preview': llama32x11bVisionPreview,
+  'llama-3.2-3b-preview': llama32x3bPreview,
+  'llama-3.2-1b-preview': llama32x1bPreview,
+  'llama-3.1-8b-instant': llama31x8bInstant,
   'mixtral-8-7b': mixtral8x7b,
-  'gemma2-9b': gemma29b,
+  'gemma2-9b': gemma2x9b,
+  'qwen-2.5-32b': qwen25x32b,
+  'qwen-2.5-coder-32b': qwen25coderx32b,
+  'deepseek-r1-distill-qwen-32b': deepseekR1DistillQwenx32b,
+  'deepseek-r1-distill-llama-70b': deepseekR1DistillLlamax70b,
 };
 
 /**
