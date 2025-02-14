@@ -43,10 +43,7 @@ describe('toGroqMessages', () => {
       { role: 'user', content: 'Hello, world!' },
       { role: 'assistant', content: 'How can I assist you today?' },
     ];
-    assert.deepStrictEqual(
-      toGroqMessages(messages).map(({ tool_call_id, ...rest }) => rest),
-      expectedOutput
-    );
+    assert.deepStrictEqual(toGroqMessages(messages), expectedOutput);
   });
 });
 

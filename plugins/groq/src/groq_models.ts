@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 import Groq from 'groq-sdk';
-import { ChatCompletionChunk } from 'groq-sdk/lib/chat_completions_ext.mjs';
-import { ChatCompletionCreateParamsBase } from 'groq-sdk/resources/chat/completions.mjs';
 import {
-  ChatCompletion,
-  CompletionCreateParams,
-} from 'groq-sdk/resources/chat/index.mjs';
+  ChatCompletionChunk,
+  ChatCompletionCreateParamsBase,
+  ChatCompletionMessageParam,
+  ChatCompletionMessageToolCall,
+  ChatCompletionTool,
+} from 'groq-sdk/resources/chat/completions.mjs';
+import { ChatCompletion } from 'groq-sdk/resources/chat/index.mjs';
 import {
   GenerateRequest,
   GenerationCommonConfigSchema,
@@ -66,6 +68,142 @@ export const llama3x8b = modelRef({
   version: 'llama3-8b-8192',
 });
 
+export const llamaGuard3x8b = modelRef({
+  name: 'groq/llama-guard-3-8b',
+  info: {
+    versions: ['llama-guard-3-8b'],
+    label: 'Llama Guard 3 8B',
+    supports: {
+      multiturn: true,
+      tools: false, // Could be true but not recommended
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'llama-guard-3-8b',
+});
+
+export const llama33x70bVersatile = modelRef({
+  name: 'groq/llama-3.3-70b-versatile',
+  info: {
+    versions: ['llama-3.3-70b-versatile'],
+    label: 'Llama 3.3 70B Versatile',
+    supports: {
+      multiturn: true,
+      tools: false, // Could be true but not recommended
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'llama-3.3-70b-versatile',
+});
+
+export const llama33x70bSpecdec = modelRef({
+  name: 'groq/llama-3.3-70b-specdec',
+  info: {
+    versions: ['llama-3.3-70b-specdec'],
+    label: 'Llama 3.3 70B SpecDec',
+    supports: {
+      multiturn: true,
+      tools: false, // Could be true but not recommended
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'llama-3.3-70b-specdec',
+});
+
+export const llama32x90bVisionPreview = modelRef({
+  name: 'groq/llama-3.2-90b-vision-preview',
+  info: {
+    versions: ['llama-3.2-90b-vision-preview'],
+    label: 'Llama 3.2 90B Vision Preview',
+    supports: {
+      multiturn: true,
+      tools: false, // Could be true but not recommended
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'llama-3.2-90b-vision-preview',
+});
+
+export const llama32x11bVisionPreview = modelRef({
+  name: 'groq/llama-3.2-11b-vision-preview',
+  info: {
+    versions: ['llama-3.2-11b-vision-preview'],
+    label: 'Llama 3.2 11B Vision Preview',
+    supports: {
+      multiturn: true,
+      tools: false, // Could be true but not recommended
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'llama-3.2-11b-vision-preview',
+});
+
+export const llama32x3bPreview = modelRef({
+  name: 'groq/llama-3.2-3b-preview',
+  info: {
+    versions: ['llama-3.2-3b-preview'],
+    label: 'Llama 3.2 3B Preview',
+    supports: {
+      multiturn: true,
+      tools: false, // Could be true but not recommended
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'llama-3.2-3b-preview',
+});
+
+export const llama32x1bPreview = modelRef({
+  name: 'groq/llama-3.2-1b-preview',
+  info: {
+    versions: ['llama-3.2-1b-preview'],
+    label: 'Llama 3.2 1B Preview',
+    supports: {
+      multiturn: true,
+      tools: false, // Could be true but not recommended
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'llama-3.2-1b-preview',
+});
+
+export const llama31x8bInstant = modelRef({
+  name: 'groq/llama-3.1-8b-instant',
+  info: {
+    versions: ['llama-3.1-8b-instant'],
+    label: 'Llama 3.1 8B Instant',
+    supports: {
+      multiturn: true,
+      tools: false, // Could be true but not recommended
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'llama-3.1-8b-instant',
+});
+
 // Worst at JSON mode
 // Only model recommended for Tool Use
 export const llama3x70b = modelRef({
@@ -104,11 +242,11 @@ export const mixtral8x7b = modelRef({
 });
 
 // Runner up at JSON mode
-export const gemma7b = modelRef({
-  name: 'groq/gemma-7b',
+export const gemma2x9b = modelRef({
+  name: 'groq/gemma2-9b',
   info: {
-    versions: ['gemma-7b-it'],
-    label: 'Gemma 7B IT',
+    versions: ['gemma2-9b-it'],
+    label: 'Gemma 2 9B',
     supports: {
       multiturn: true,
       tools: false,
@@ -118,14 +256,94 @@ export const gemma7b = modelRef({
     },
   },
   configSchema: GroqConfigSchema,
-  version: 'gemma-7b-it',
+  version: 'gemma2-9b-it',
+});
+
+export const qwen25x32b = modelRef({
+  name: 'groq/qwen-2.5-32b',
+  info: {
+    versions: ['qwen-2.5-32b'],
+    label: 'Qwen 2.5 32B',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'qwen-2.5-32b',
+});
+
+export const qwen25coderx32b = modelRef({
+  name: 'groq/qwen-2.5-coder-32b',
+  info: {
+    versions: ['qwen-2.5-coder-32b'],
+    label: 'Qwen 2.5 Coder 32B',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'qwen-2.5-coder-32b',
+});
+
+export const deepseekR1DistillQwenx32b = modelRef({
+  name: 'groq/deepseek-r1-distill-qwen-32b',
+  info: {
+    versions: ['deepseek-r1-distill-qwen-32b'],
+    label: 'Deepseek R1 Distill Qwen 32B',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'deepseek-r1-distill-qwen-32b',
+});
+
+export const deepseekR1DistillLlamax70b = modelRef({
+  name: 'groq/deepseek-r1-distill-llama-70b',
+  info: {
+    versions: ['deepseek-r1-distill-llama-70b'],
+    label: 'Deepseek R1 Distill Llama 70B',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'deepseek-r1-distill-llama-70b',
 });
 
 export const SUPPORTED_GROQ_MODELS = {
   'llama-3-8b': llama3x8b,
   'llama-3-70b': llama3x70b,
+  'llama-guard-3-8b': llamaGuard3x8b,
+  'llama-3.3-70b-versatile': llama33x70bVersatile,
+  'llama-3.3-70b-specdec': llama33x70bSpecdec,
+  'llama-3.2-90b-vision-preview': llama32x90bVisionPreview,
+  'llama-3.2-11b-vision-preview': llama32x11bVisionPreview,
+  'llama-3.2-3b-preview': llama32x3bPreview,
+  'llama-3.2-1b-preview': llama32x1bPreview,
+  'llama-3.1-8b-instant': llama31x8bInstant,
   'mixtral-8-7b': mixtral8x7b,
-  'gemma-7b': gemma7b,
+  'gemma2-9b': gemma2x9b,
+  'qwen-2.5-32b': qwen25x32b,
+  'qwen-2.5-coder-32b': qwen25coderx32b,
+  'deepseek-r1-distill-qwen-32b': deepseekR1DistillQwenx32b,
+  'deepseek-r1-distill-llama-70b': deepseekR1DistillLlamax70b,
 };
 
 /**
@@ -155,7 +373,7 @@ export function toGroqRole(role: Role): 'system' | 'user' | 'assistant' {
  * @param tool - The tool definition containing the name, description, and input schema.
  * @returns A Groq tool object formatted for use in completion creation parameters.
  */
-export function toGroqTool(tool: ToolDefinition): CompletionCreateParams.Tool {
+export function toGroqTool(tool: ToolDefinition): ChatCompletionTool {
   return {
     type: 'function',
     function: {
@@ -194,8 +412,8 @@ export function toGroqTextAndMedia(part: Part): string {
  */
 export function toGroqMessages(
   messages: MessageData[]
-): CompletionCreateParams.Message[] {
-  const groqMsgs: CompletionCreateParams.Message[] = [];
+): ChatCompletionMessageParam[] {
+  const groqMsgs: ChatCompletionMessageParam[] = [];
   for (const message of messages) {
     const msg = new Message(message);
     switch (msg.role) {
@@ -212,7 +430,7 @@ export function toGroqMessages(
         });
         break;
       case 'model':
-        const toolCalls: CompletionCreateParams.Message.ToolCall[] = msg.content
+        const toolCalls: ChatCompletionMessageToolCall[] = msg.content
           .filter((part) => part.toolRequest)
           .map((part) => {
             if (!part.toolRequest) {
@@ -247,7 +465,6 @@ export function toGroqMessages(
         toolResponseParts.map((part) => {
           groqMsgs.push({
             role: toGroqRole(message.role),
-            tool_call_id: part.toolResponse.ref || '',
             content:
               typeof part.toolResponse.output === 'string'
                 ? part.toolResponse.output
@@ -273,7 +490,6 @@ const FINISH_REASON_MAP: Record<
   length: 'length',
   tool_calls: 'stop',
   function_call: 'stop',
-  content_filter: 'blocked',
 };
 
 /**
@@ -284,7 +500,7 @@ const FINISH_REASON_MAP: Record<
  */
 function fromGroqToolCall(
   toolCall:
-    | ChatCompletion.Choice.Message.ToolCall
+    | ChatCompletionMessageToolCall
     | ChatCompletionChunk.Choice.Delta.ToolCall
 ) {
   if (!toolCall.function) {
@@ -324,8 +540,8 @@ function fromGroqChoice(
         ? (toolRequestParts as ToolRequestPart[])
         : [
             jsonMode
-              ? { data: JSON.parse(choice.message.content) }
-              : { text: choice.message.content },
+              ? { data: JSON.parse(choice.message.content || '{}') }
+              : { text: choice.message.content || '' },
           ],
     },
     custom: {},
@@ -370,18 +586,6 @@ export function toGroqRequestBody(
   modelName: string,
   request: GenerateRequest
 ): ChatCompletionCreateParamsBase {
-  const mapToSnakeCase = <T extends Record<string, any>>(
-    obj: T
-  ): Record<string, any> => {
-    return Object.entries(obj).reduce((acc, [key, value]) => {
-      const snakeCaseKey = key.replace(
-        /[A-Z]/g,
-        (letter) => `_${letter.toLowerCase()}`
-      );
-      acc[snakeCaseKey] = value;
-      return acc;
-    }, {});
-  };
   const model = SUPPORTED_GROQ_MODELS[modelName];
   if (!model) throw new Error(`Unsupported model: ${modelName}`);
 
@@ -490,10 +694,12 @@ export function groqModel(ai: Genkit, name: string, client: Groq) {
               logprobs: choice.logprobs as ChatCompletion.Choice.Logprobs,
               message: {
                 content: choice.delta.content || '',
-                role: 'model',
-                tool_calls: choice.delta.tool_calls,
+                role: 'assistant',
+                tool_calls: choice.delta.tool_calls?.filter(
+                  (tc) => tc.type === 'function' && !!tc.function && !!tc.id
+                ) as ChatCompletionMessageToolCall[] | undefined,
               },
-              finish_reason: choice.finish_reason || 'unknown',
+              finish_reason: choice.finish_reason || 'stop',
             });
             const c = fromGroqChunkChoice(choice);
             streamingCallback({
@@ -511,6 +717,7 @@ export function groqModel(ai: Genkit, name: string, client: Groq) {
             completion_tokens: totalCompletionTokens,
             total_tokens: totalPromptTokens + totalCompletionTokens,
           },
+          object: 'chat.completion',
         };
         // TODO: find a way to get the final completion (current approach is a bit hacky) - issue here: https://github.com/groq/groq-typescript/issues/29
         // response = await stream.finalChatCompletion();
