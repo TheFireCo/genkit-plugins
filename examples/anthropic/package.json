@@ -1,6 +1,6 @@
 {
   "name": "genkitx-anthropic-example",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "description": "",
   "main": "lib/index.js",
   "private": true,
