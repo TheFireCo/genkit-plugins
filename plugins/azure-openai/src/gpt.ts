@@ -95,6 +95,22 @@ export const gpt4 = modelRef({
   configSchema: OpenAiConfigSchema,
 });
 
+export const gpt45 = modelRef({
+  name: 'azure-openai/gpt-4.5',
+  info: {
+    versions: ['gpt-4.5-preview'],
+    label: 'OpenAI - GPT-4.5',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: true,
+      systemRole: true,
+      output: ['text', 'json'],
+    },
+  },
+  configSchema: OpenAiConfigSchema,
+});
+
 export const gptO1 = modelRef({
   name: 'azure-openai/gpt-o1',
   info: {
@@ -182,6 +198,7 @@ export const SUPPORTED_GPT_MODELS = {
   'gpt-o3-mini': gptO3Mini,
   'gpt-4': gpt4,
   'gpt-4o': gpt4o,
+  'gpt-4.5': gpt45,
   'gpt-3.5-turbo': gpt35Turbo,
 };
 
