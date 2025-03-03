@@ -32,7 +32,8 @@ This Genkit plugin allows to use OpenAI models through their official APIs.
 
 The plugin supports several OpenAI models:
 
-- **GPT-4o**, **GPT-4** with all its variants (**Turbo**, **Vision**), and **GPT-3.5 Turbo** for text generation;
+- **o1**, **o1-preview**, **o1-mini** and **o3-mini** for text generation;
+- **GPT-4.5**, **GPT-4o**, **GPT-4** with all its variants (**Turbo**, **Vision**), and **GPT-3.5 Turbo** for text generation;
 - **DALL-E 3** for image generation;
 - **Text Embedding Small**, **Text Embedding Large**, and **Ada** for text embedding generation;
 - **Whisper** for speech recognition;

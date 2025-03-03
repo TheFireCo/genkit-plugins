@@ -36,6 +36,7 @@ import {
   gptO1,
   gpt4o,
   gptO3Mini,
+  gpt45,
   gptModel,
   SUPPORTED_GPT_MODELS,
 } from './gpt.js';
@@ -52,6 +53,7 @@ export {
   gptO1Preview,
   gpt4o,
   gptO3Mini,
+  gpt45,
   textEmbedding3Large,
   textEmbedding3Small,
   textEmbeddingAda002,
