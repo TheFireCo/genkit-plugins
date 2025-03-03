@@ -47,6 +47,7 @@ import {
 } from 'openai/resources/index.mjs';
 
 const MODELS_SUPPORTING_OPENAI_RESPONSE_FORMAT = [
+  'gpt-4.5-preview',
   'gpt-4o',
   'gpt-4o-2024-05-13',
   'gpt-4o-mini',
@@ -76,6 +77,22 @@ export const OpenAiConfigSchema = GenerationCommonConfigSchema.extend({
 type VisualDetailLevel = z.infer<
   typeof OpenAiConfigSchema
 >['visualDetailLevel'];
+
+export const gpt45 = modelRef({
+  name: 'openai/gpt-4.5',
+  info: {
+    versions: ['gpt-4.5-preview'],
+    label: 'OpenAI - GPT-4.5',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: true,
+      systemRole: true,
+      output: ['text', 'json'],
+    },
+  },
+  configSchema: OpenAiConfigSchema,
+});
 
 export const gpt4o = modelRef({
   name: 'openai/gpt-4o',
@@ -247,6 +264,7 @@ export const SUPPORTED_GPT_MODELS: Record<
   string,
   ModelReference<typeof OpenAiConfigSchema>
 > = {
+  'gpt-4.5': gpt45,
   'gpt-4o': gpt4o,
   'gpt-4o-mini': gpt4oMini,
   'gpt-4-turbo': gpt4Turbo,
