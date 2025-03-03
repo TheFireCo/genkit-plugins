@@ -27,6 +27,7 @@ import {
 } from './embedder.js';
 import {
   gpt35Turbo,
+  gpt45,
   gpt4,
   gpt4Turbo,
   gpt4Vision,
@@ -44,6 +45,7 @@ import { whisper1, whisper1Model } from './whisper.js';
 export {
   dallE3,
   gpt35Turbo,
+  gpt45,
   gpt4,
   gpt4Turbo,
   gpt4Vision,
