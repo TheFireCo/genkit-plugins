@@ -47,7 +47,7 @@ import {
 } from 'openai/resources/index.mjs';
 
 const MODELS_SUPPORTING_OPENAI_RESPONSE_FORMAT = [
-  'gpt-4.5',
+  'gpt-4.5-preview',
   'gpt-4o',
   'gpt-4o-2024-05-13',
   'gpt-4o-mini',
