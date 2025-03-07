@@ -14,9 +14,16 @@
  * limitations under the License.
  */
 
+import { startFlowServer } from '@genkit-ai/express';
 import dotenv from 'dotenv';
 import { genkit, z } from 'genkit';
-import mistral, { openMistral7B, mistralembed } from 'genkitx-mistral';
+import mistral, {
+  openMistral7B,
+  mistralembed,
+  openPixtral,
+} from 'genkitx-mistral';
+import { version } from 'uuid';
+import { ocr } from '../../../plugins/mistral/src/ocr';
 
 dotenv.config();
 
@@ -56,3 +63,48 @@ export const embedFlow = ai.defineFlow(
     return JSON.stringify(embedding);
   }
 );
+
+export const visionFlow = ai.defineFlow(
+  {
+    name: 'visionFlow',
+    inputSchema: z.string(),
+    outputSchema: z.string(),
+  },
+  async (input) => {
+    const { text } = await ai.generate({
+      prompt: [{ media: { url: 'https://my-photo.jpg' } }, { text: input }],
+      model: openPixtral,
+      config: {
+        version: 'pixtral-12b-2409',
+      },
+    });
+
+    return JSON.stringify(text);
+  }
+);
+
+export const ocrFlow = ai.defineFlow(
+  {
+    name: 'ocrFlow',
+    inputSchema: z.string(),
+    outputSchema: z.string(),
+  },
+  async (input) => {
+    const { text } = await ai.generate({
+      model: ocr,
+      prompt: 'parse the document',
+      config: {
+        document: {
+          documentUrl: input,
+          type: 'document_url',
+        },
+      },
+    });
+
+    return JSON.stringify(text);
+  }
+);
+
+startFlowServer({
+  flows: [embedFlow, jokeFlow, visionFlow, ocrFlow],
+});

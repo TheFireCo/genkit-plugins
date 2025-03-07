@@ -72,6 +72,50 @@ const embedding = await ai.embed({
 console.log(embedding);
 ```
 
+## Vision
+
+```typescript
+import { openPixtral } from 'genkitx-mistral';
+
+const { text } = await ai.generate({
+  prompt: [{ media: { url: 'https://my-photo.jpg' } }, { text: input }],
+  model: openPixtral,
+  config: {
+    version: 'pixtral-12b-2409',
+  },
+});
+
+return JSON.stringify(text);
+```
+
+## OCR
+
+```typescript
+import { ocr } from 'genkitx-mistral';
+
+export const ocrFlow = ai.defineFlow(
+  {
+    name: 'ocrFlow',
+    inputSchema: z.string(),
+    outputSchema: z.string(),
+  },
+  async (input) => {
+    const { text } = await ai.generate({
+      model: ocr,
+      prompt: 'parse the document',
+      config: {
+        document: {
+          documentUrl: input,
+          type: 'document_url',
+        },
+      },
+    });
+
+    return JSON.stringify(text);
+  }
+);
+```
+
 ### Within a flow
 
 ```typescript

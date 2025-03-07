@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import MistralClient from '@mistralai/mistralai';
-import type { Genkit } from 'genkit';
+import { Mistral } from '@mistralai/mistralai';
+import { Genkit } from 'genkit';
 import { embedderRef, z } from 'genkit';
 
 export const TextEmbeddingConfigSchema = z.object({
@@ -25,11 +25,7 @@ export const TextEmbeddingConfigSchema = z.object({
 
 export type TextEmbeddingConfig = z.infer<typeof TextEmbeddingConfigSchema>;
 
-export function mistralEmbedder(
-  ai: Genkit,
-  name: string,
-  client: MistralClient
-) {
+export function mistralEmbedder(ai: Genkit, name: string, client: Mistral) {
   const model = SUPPORTED_EMBEDDING_MODELS[name];
   if (!model) throw new Error(`Unsupported model: ${name}`);
 
@@ -40,12 +36,17 @@ export function mistralEmbedder(
       name: model.name,
     },
     async (input, _) => {
-      const embeddings = await client.embeddings({
+      const embeddings = await client.embeddings.create({
         model: name,
-        input: input.map((d) => d.text),
+        inputs: input.map((d) => d.text),
       });
       return {
-        embeddings: embeddings.data.map((d) => ({ embedding: d.embedding })),
+        embeddings: embeddings.data.map((d) => {
+          if (!d.embedding) {
+            throw new Error('Embedding is undefined');
+          }
+          return { embedding: d.embedding };
+        }),
       };
     }
   );

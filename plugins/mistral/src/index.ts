@@ -14,23 +14,35 @@
  * limitations under the License.
  */
 
-import type { Genkit } from 'genkit';
+import { Genkit } from 'genkit';
 import { genkitPlugin } from 'genkit/plugin';
-
+import { Mistral, SDKOptions } from '@mistralai/mistralai';
 import { mistralEmbedder, SUPPORTED_EMBEDDING_MODELS } from './embedders';
 import { SUPPORTED_MISTRAL_MODELS, mistralModel } from './mistral_llms';
+import { OCRModel } from './ocr';
 
 export {
   openMistral7B,
   openMistral8x7B,
   openMixtral8x22B,
+  openMinistral3B,
+  openMinistral8B,
+  openMistralSmall,
+  openMistralMedium,
+  openMistralLarge,
+  openMistralNemo,
+  openCodestralMambda,
+  openCodestral,
+  openMistralSaba,
+  openPixtralLarge,
+  openPixtral,
 } from './mistral_llms';
+
+export { ocr } from './ocr';
 
 export { mistralembed } from './embedders';
 
-export interface PluginOptions {
-  apiKey?: string;
-}
+export interface PluginOptions extends SDKOptions {}
 
 export const mistral = (options?: PluginOptions) =>
   genkitPlugin('mistral', async (ai: Genkit) => {
@@ -41,8 +53,7 @@ export const mistral = (options?: PluginOptions) =>
       );
     }
 
-    const { default: MistralClient } = await import('@mistralai/mistralai');
-    const client = new MistralClient(apiKey);
+    const client = new Mistral(options);
 
     for (const name of Object.keys(SUPPORTED_MISTRAL_MODELS)) {
       mistralModel(ai, name, client);
@@ -51,8 +62,8 @@ export const mistral = (options?: PluginOptions) =>
     for (const name of Object.keys(SUPPORTED_EMBEDDING_MODELS)) {
       mistralEmbedder(ai, name, client);
     }
+
+    OCRModel(ai, client);
   });
 
 export default mistral;
-
-// TODO: Add Mistral AI models as needed
