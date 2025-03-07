@@ -22,7 +22,6 @@ import mistral, {
   mistralembed,
   openPixtral,
 } from 'genkitx-mistral';
-import { version } from 'uuid';
 import { ocr } from '../../../plugins/mistral/src/ocr';
 
 dotenv.config();
