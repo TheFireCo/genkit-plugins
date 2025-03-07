@@ -42,6 +42,7 @@ import {
 } from './gpt.js';
 import { SUPPORTED_TTS_MODELS, ttsModel, tts1, tts1Hd } from './tts.js';
 import { whisper1, whisper1Model } from './whisper.js';
+import { ModelInfo } from 'genkit/model';
 export {
   dallE3,
   gpt35Turbo,
@@ -63,7 +64,16 @@ export {
   textEmbeddingAda002,
 };
 
-export interface PluginOptions extends ClientOptions {}
+export interface PluginOptions extends Partial<ClientOptions> {
+  models?: ModelDefinition[];
+}
+
+// Standard model definition
+export interface ModelDefinition {
+  name: string;
+  info: ModelInfo;
+  configSchema?: any;
+}
 
 /**
  * This module provides an interface to the OpenAI models through the Genkit
@@ -113,6 +123,11 @@ export const openAI = (options?: PluginOptions) =>
     for (const name of Object.keys(SUPPORTED_GPT_MODELS)) {
       gptModel(ai, name, client);
     }
+    // Initialize the models if provided in the options
+    options?.models?.map((model) =>
+      gptModel(ai, model.name, client, model.info, model.configSchema)
+    );
+
     dallE3Model(ai, client);
     whisper1Model(ai, client);
     for (const name of Object.keys(SUPPORTED_TTS_MODELS)) {
