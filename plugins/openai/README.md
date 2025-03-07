@@ -170,6 +170,7 @@ console.log(result.text);
 ```typescript
 import { GenerationCommonConfigSchema, genkit, z } from 'genkit';
 import { ModelInfo } from 'genkit/model';
+import openAI from 'genkitx-openai';
 
 const modelInfo: ModelInfo = {
   versions: ['claude-3-7-sonnet-20250219'],
