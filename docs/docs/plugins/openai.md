@@ -39,6 +39,8 @@ The plugin supports several OpenAI models:
 - **Whisper** for speech recognition;
 - **Text-to-speech 1** and **Text-to-speech 1 HD** for speech synthesis.
 
+This plugin also supports custom models and other cloud providers.
+
 ## Installation
 
 Install the plugin in your project with your favorite package manager:
@@ -162,6 +164,57 @@ const result = await ai.generate({
 });
 
 console.log(result.text);
+```
+
+### Custom models & other Cloud providers
+
+```typescript
+import { GenerationCommonConfigSchema, genkit, z } from 'genkit';
+import { ModelInfo } from 'genkit/model';
+import openAI from 'genkitx-openai';
+
+const modelInfo: ModelInfo = {
+  versions: ['claude-3-7-sonnet-20250219'],
+  label: 'Claude - Claude 3.7 Sonnet',
+  supports: {
+    multiturn: true,
+    tools: true,
+    media: false,
+    systemRole: true,
+    output: ['json', 'text'],
+  },
+};
+const schema = GenerationCommonConfigSchema.extend({});
+
+const ai = genkit({
+  plugins: [
+    openAI({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+      baseURL: 'https://api.anthropic.com/v1/',
+      models: [
+        { name: 'claude-3-7-sonnet', info: modelInfo, configSchema: schema },
+      ],
+    }),
+  ],
+});
+
+export const customModelFlow = ai.defineFlow(
+  {
+    name: 'customModelFlow',
+    inputSchema: z.string(),
+    outputSchema: z.string(),
+  },
+  async (subject) => {
+    const llmResponse = await ai.generate({
+      prompt: `tell me a joke about ${subject}`,
+      model: 'openai/claude-3-7-sonnet',
+      config: {
+        version: 'claude-3-7-sonnet-20250219',
+      },
+    });
+    return llmResponse.text;
+  }
+);
 ```
 
 For more detailed examples and the explanation of other functionalities, refer to the examples in the [official Github repo of the plugin](https://github.com/TheFireCo/genkit-plugins/blob/main/examples/README.md) or in the [official Genkit documentation](https://firebase.google.com/docs/genkit/get-started).

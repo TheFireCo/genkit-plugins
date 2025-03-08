@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+import { startFlowServer } from '@genkit-ai/express';
 import dotenv from 'dotenv';
-import { genkit, z } from 'genkit';
+import { GenerationCommonConfigSchema, genkit, z } from 'genkit';
+import { ModelInfo } from 'genkit/model';
 import openAI, { gpt4o, textEmbeddingAda002 } from 'genkitx-openai';
 
 dotenv.config();
@@ -56,3 +58,50 @@ export const embedFlow = ai.defineFlow(
     return JSON.stringify(embedding);
   }
 );
+
+const modelInfo: ModelInfo = {
+  versions: ['claude-3-7-sonnet-20250219'],
+  label: 'Claude - Claude 3.7 Sonnet',
+  supports: {
+    multiturn: true,
+    tools: true,
+    media: false,
+    systemRole: true,
+    output: ['json', 'text'],
+  },
+};
+const schema = GenerationCommonConfigSchema.extend({});
+
+const aiCustom = genkit({
+  plugins: [
+    openAI({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+      baseURL: 'https://api.anthropic.com/v1/',
+      models: [
+        { name: 'claude-3-7-sonnet', info: modelInfo, configSchema: schema },
+      ],
+    }),
+  ],
+});
+
+export const customModelFlow = aiCustom.defineFlow(
+  {
+    name: 'customModelFlow',
+    inputSchema: z.string(),
+    outputSchema: z.string(),
+  },
+  async (subject) => {
+    const llmResponse = await aiCustom.generate({
+      prompt: `tell me a joke about ${subject}`,
+      model: 'openai/claude-3-7-sonnet',
+      config: {
+        version: 'claude-3-7-sonnet-20250219',
+      },
+    });
+    return llmResponse.text;
+  }
+);
+
+startFlowServer({
+  flows: [jokeFlow, embedFlow, customModelFlow],
+});

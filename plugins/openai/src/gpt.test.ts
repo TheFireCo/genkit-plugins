@@ -1379,10 +1379,4 @@ describe('gptModel', () => {
       expect.any(Function)
     );
   });
-
-  it('should throw for unsupported models', () => {
-    expect(() => gptModel(ai, 'unsupported-model', {} as OpenAI)).toThrowError(
-      'Unsupported model: unsupported-model'
-    );
-  });
 });

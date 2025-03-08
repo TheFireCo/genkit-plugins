@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import type { CandidateData } from 'genkit/model';
+import type { CandidateData, ModelInfo } from 'genkit/model';
 import type {
   StreamingCallback,
   GenerateRequest,
@@ -653,17 +653,31 @@ export function gptRunner(name: string, client: OpenAI) {
 export function gptModel(
   ai: Genkit,
   name: string,
-  client: OpenAI
+  client: OpenAI,
+  modelInfo?: ModelInfo,
+  modelConfig?: any
 ): ModelAction<typeof OpenAiConfigSchema> {
   const modelId = `openai/${name}`;
   const model = SUPPORTED_GPT_MODELS[name];
-  if (!model) throw new Error(`Unsupported model: ${name}`);
+  if (!model) {
+    SUPPORTED_GPT_MODELS[name] = modelRef({
+      name: modelId,
+      info: modelInfo,
+      configSchema: modelConfig?.configSchema,
+    });
+  }
+
+  // Use the built-in model info and config schema or override if provided
+  const modelInformation = modelInfo ? modelInfo : model.info;
+  const configSchema = modelConfig
+    ? modelConfig.configSchema
+    : model.configSchema;
 
   return ai.defineModel(
     {
       name: modelId,
-      ...model.info,
-      configSchema: model.configSchema,
+      ...modelInformation,
+      configSchema,
     },
     gptRunner(name, client)
   );
