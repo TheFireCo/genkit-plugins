@@ -9,14 +9,17 @@
     "build": "tsc",
     "build:watch": "tsc --watch",
     "genkit:dev": "cross-env GENKIT_ENV=dev npm run dev",
+    "genkit:start": "cross-env GENKIT_ENV=dev genkit start -- tsx --watch src/index.ts",
     "dev": "export GENKIT_RUNTIME_ID=$(openssl rand -hex 8) && node lib/index.js 2>&1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@genkit-ai/express": "^1.1.0",
     "genkit": "^0.9.0 || ^1.0.0",
-    "genkitx-mistral": "file:../../plugins/mistral"
+    "genkitx-mistral": "file:../../plugins/mistral",
+    "tsx": "^4.19.3"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
