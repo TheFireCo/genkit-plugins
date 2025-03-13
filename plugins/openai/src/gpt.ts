@@ -353,12 +353,28 @@ export function toOpenAiMessages(
     const role = toOpenAIRole(message.role);
     switch (role) {
       case 'user':
-        openAiMsgs.push({
-          role: role,
-          content: msg.content.map((part) =>
-            toOpenAiTextAndMedia(part, visualDetailLevel)
-          ),
-        });
+        const content = msg.content.map((part) =>
+          toOpenAiTextAndMedia(part, visualDetailLevel)
+        );
+        // Check if we have only text content
+        const onlyTextContent = content.some((item) => item.type !== 'text');
+
+        // If all items are strings, just add them as text
+        if (!onlyTextContent) {
+          content.forEach((item, index) => {
+            if (item.type === 'text') {
+              openAiMsgs.push({
+                role: role,
+                content: item.text,
+              });
+            }
+          });
+        } else {
+          openAiMsgs.push({
+            role: role,
+            content: content,
+          });
+        }
         break;
       case 'system':
         openAiMsgs.push({

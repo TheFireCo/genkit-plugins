@@ -124,9 +124,12 @@ export const openAI = (options?: PluginOptions) =>
       gptModel(ai, name, client);
     }
     // Initialize the models if provided in the options
-    options?.models?.map((model) =>
-      gptModel(ai, model.name, client, model.info, model.configSchema)
-    );
+    options?.models?.map((model) => {
+      if (!model.name || !model.info || !model.configSchema) {
+        throw new Error(`Model ${model.name} is missing required fields`);
+      }
+      gptModel(ai, model.name, client, model.info, model.configSchema);
+    });
 
     dallE3Model(ai, client);
     whisper1Model(ai, client);
