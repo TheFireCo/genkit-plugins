@@ -203,9 +203,9 @@ describe('toOpenAiMessages', () => {
         { role: 'user', content: [{ text: 'I am testing' }] },
       ],
       expectedOutput: [
-        { role: 'user', content: [{ text: 'hi', type: 'text' }] },
+        { role: 'user', content: 'hi' },
         { role: 'assistant', content: 'how can I help you?' },
-        { role: 'user', content: [{ text: 'I am testing', type: 'text' }] },
+        { role: 'user', content: 'I am testing' },
       ],
     },
     {
@@ -554,7 +554,7 @@ describe('toOpenAiRequestBody', () => {
         messages: [
           {
             role: 'user',
-            content: [{ type: 'text', text: 'Tell a joke about dogs.' }],
+            content: 'Tell a joke about dogs.',
           },
         ],
         model: 'gpt-3.5-turbo',
@@ -628,7 +628,7 @@ describe('toOpenAiRequestBody', () => {
         messages: [
           {
             role: 'user',
-            content: [{ type: 'text', text: 'Tell a joke about dogs.' }],
+            content: 'Tell a joke about dogs.',
           },
           {
             role: 'assistant',
@@ -725,7 +725,7 @@ describe('toOpenAiRequestBody', () => {
         messages: [
           {
             role: 'user',
-            content: [{ type: 'text', text: 'Tell a joke about dogs.' }],
+            content: 'Tell a joke about dogs.',
           },
           {
             role: 'assistant',
@@ -820,7 +820,7 @@ describe('toOpenAiRequestBody', () => {
         messages: [
           {
             role: 'user',
-            content: [{ type: 'text', text: 'Tell a joke about dogs.' }],
+            content: 'Tell a joke about dogs.',
           },
           {
             role: 'assistant',
@@ -915,7 +915,7 @@ describe('toOpenAiRequestBody', () => {
         messages: [
           {
             role: 'user',
-            content: [{ type: 'text', text: 'Tell a joke about dogs.' }],
+            content: 'Tell a joke about dogs.',
           },
           {
             role: 'assistant',
@@ -1069,7 +1069,7 @@ describe('toOpenAiRequestBody', () => {
       messages: [
         {
           role: 'user',
-          content: [{ type: 'text', text: 'Tell a joke about dogs.' }],
+          content: 'Tell a joke about dogs.',
         },
         {
           role: 'assistant',
@@ -1221,7 +1221,7 @@ describe('toOpenAiRequestBody', () => {
       messages: [
         {
           role: 'user',
-          content: [{ type: 'text', text: 'Tell a joke about dogs.' }],
+          content: 'Tell a joke about dogs.',
         },
         {
           role: 'assistant',
