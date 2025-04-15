@@ -244,6 +244,54 @@ export const gpt4 = modelRef({
   configSchema: OpenAiConfigSchema,
 });
 
+export const gpt41 = modelRef({
+  name: 'openai/gpt-4.1',
+  info: {
+    versions: ['gpt-4.1'],
+    label: 'OpenAI - GPT-4.1',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'],
+    },
+  },
+  configSchema: OpenAiConfigSchema,
+});
+
+export const gpt41Mini = modelRef({
+  name: 'openai/gpt-4.1-mini',
+  info: {
+    versions: ['gpt-4.1-mini'],
+    label: 'OpenAI - GPT-4.1 Mini',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'],
+    },
+  },
+  configSchema: OpenAiConfigSchema,
+});
+
+export const gpt41Nano = modelRef({
+  name: 'openai/gpt-4.1-nano',
+  info: {
+    versions: ['gpt-4.1-nano'],
+    label: 'OpenAI - GPT-4.1 Nano',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'],
+    },
+  },
+  configSchema: OpenAiConfigSchema,
+});
+
 export const gpt35Turbo = modelRef({
   name: 'openai/gpt-3.5-turbo',
   info: {
@@ -270,6 +318,9 @@ export const SUPPORTED_GPT_MODELS: Record<
   'gpt-4-turbo': gpt4Turbo,
   'gpt-4-vision': gpt4Vision,
   'gpt-4': gpt4,
+  'gpt-4.1': gpt41,
+  'gpt-4.1-mini': gpt41Mini,
+  'gpt-4.1-nano': gpt41Nano,
   'gpt-3.5-turbo': gpt35Turbo,
   'o1-preview': o1Preview,
   o1: o1,
