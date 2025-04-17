@@ -66,8 +66,24 @@ export const OpenAiConfigSchema = GenerationCommonConfigSchema.extend({
 export const gpt4o = modelRef({
   name: 'azure-openai/gpt-4o',
   info: {
-    versions: ['gpt-4o', 'gpt-4o-mini'],
+    versions: ['gpt-4o'],
     label: 'OpenAI - GPT-4o',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: true,
+      systemRole: true,
+      output: ['text', 'json'],
+    },
+  },
+  configSchema: OpenAiConfigSchema,
+});
+
+export const gpt4oMini = modelRef({
+  name: 'azure-openai/gpt-4o-mini',
+  info: {
+    versions: ['gpt-4o-mini'],
+    label: 'OpenAI - GPT-4o Mini',
     supports: {
       multiturn: true,
       tools: true,
@@ -111,11 +127,59 @@ export const gpt45 = modelRef({
   configSchema: OpenAiConfigSchema,
 });
 
-export const gptO1 = modelRef({
-  name: 'azure-openai/gpt-o1',
+export const gpt41 = modelRef({
+  name: 'azure-openai/gpt-4.1',
   info: {
-    versions: ['gpt-o1'],
-    label: 'OpenAI - GPT-o1',
+    versions: ['gpt-4.1'],
+    label: 'OpenAI - GPT-4.1',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: true,
+      systemRole: true,
+      output: ['text', 'json'],
+    },
+  },
+  configSchema: OpenAiConfigSchema,
+});
+
+export const gpt41Mini = modelRef({
+  name: 'azure-openai/gpt-4.1-mini',
+  info: {
+    versions: ['gpt-4.1-mini'],
+    label: 'OpenAI - GPT-4.1 Mini',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: true,
+      systemRole: true,
+      output: ['text', 'json'],
+    },
+  },
+  configSchema: OpenAiConfigSchema,
+});
+
+export const gpt41Nano = modelRef({
+  name: 'azure-openai/gpt-4.1-nano',
+  info: {
+    versions: ['gpt-4.1-nano'],
+    label: 'OpenAI - GPT-4.1 Nano',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: true,
+      systemRole: true,
+      output: ['text', 'json'],
+    },
+  },
+  configSchema: OpenAiConfigSchema,
+});
+
+export const o1 = modelRef({
+  name: 'azure-openai/o1',
+  info: {
+    versions: ['o1'],
+    label: 'OpenAI - o1',
     supports: {
       multiturn: true,
       tools: false,
@@ -127,11 +191,11 @@ export const gptO1 = modelRef({
   configSchema: OpenAiConfigSchema,
 });
 
-export const gptO1Mini = modelRef({
-  name: 'azure-openai/gpt-o1-mini',
+export const o1Mini = modelRef({
+  name: 'azure-openai/o1-mini',
   info: {
     versions: ['o1-mini'],
-    label: 'OpenAI - GPT-o1 Mini',
+    label: 'OpenAI - o1 Mini',
     supports: {
       multiturn: true,
       tools: true,
@@ -143,11 +207,11 @@ export const gptO1Mini = modelRef({
   configSchema: OpenAiConfigSchema,
 });
 
-export const gptO1Preview = modelRef({
-  name: 'azure-openai/gpt-o1-preview',
+export const o1Preview = modelRef({
+  name: 'azure-openai/o1-preview',
   info: {
     versions: ['o1-preview'],
-    label: 'OpenAI - GPT-o1 Preview',
+    label: 'OpenAI - o1 Preview',
     supports: {
       multiturn: true,
       tools: true,
@@ -159,11 +223,43 @@ export const gptO1Preview = modelRef({
   configSchema: OpenAiConfigSchema,
 });
 
-export const gptO3Mini = modelRef({
-  name: 'azure-openai/gpt-o3-mini',
+export const o3 = modelRef({
+  name: 'azure-openai/o3',
+  info: {
+    versions: ['o3'],
+    label: 'OpenAI - o3',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: false,
+      systemRole: true,
+      output: ['text'],
+    },
+  },
+  configSchema: OpenAiConfigSchema,
+});
+
+export const o4Mini = modelRef({
+  name: 'azure-openai/o4-mini',
+  info: {
+    versions: ['o4-mini'],
+    label: 'OpenAI - o4 Mini',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: false,
+      systemRole: true,
+      output: ['text'],
+    },
+  },
+  configSchema: OpenAiConfigSchema,
+});
+
+export const o3Mini = modelRef({
+  name: 'azure-openai/o3-mini',
   info: {
     versions: ['o3-mini'],
-    label: 'OpenAI - GPT-o3 Mini',
+    label: 'OpenAI - o3 Mini',
     supports: {
       multiturn: true,
       tools: true,
@@ -192,12 +288,18 @@ export const gpt35Turbo = modelRef({
 });
 
 export const SUPPORTED_GPT_MODELS = {
-  'gpt-o1-mini': gptO1Mini,
-  'gpt-o1-preview': gptO1Preview,
-  'gpt-o1': gptO1,
-  'gpt-o3-mini': gptO3Mini,
+  'o1-mini': o1Mini,
+  'o1-preview': o1Preview,
+  o1: o1,
+  o3: o3,
+  'o3-mini': o3Mini,
+  'o4-mini': o4Mini,
+  gpt41: gpt41,
+  'gpt41-mini': gpt41Mini,
+  'gpt41-nano': gpt41Nano,
   'gpt-4': gpt4,
   'gpt-4o': gpt4o,
+  'gpt-4o-mini': gpt4oMini,
   'gpt-4.5': gpt45,
   'gpt-3.5-turbo': gpt35Turbo,
 };

@@ -126,22 +126,6 @@ export const o1Preview = modelRef({
   configSchema: OpenAiConfigSchema,
 });
 
-export const o1Pro = modelRef({
-  name: 'openai/o1-pro',
-  info: {
-    versions: ['o1-pro'],
-    label: 'OpenAI - o1 Pro',
-    supports: {
-      multiturn: true,
-      tools: true,
-      media: false,
-      systemRole: false,
-      output: ['text', 'json'],
-    },
-  },
-  configSchema: OpenAiConfigSchema,
-});
-
 export const o1Mini = modelRef({
   name: 'openai/o1',
   info: {
@@ -371,7 +355,6 @@ export const SUPPORTED_GPT_MODELS: Record<
   'gpt-4.1-nano': gpt41Nano,
   'gpt-3.5-turbo': gpt35Turbo,
   'o1-preview': o1Preview,
-  'o1-pro': o1Pro,
   o1: o1,
   'o1-mini': o1Mini,
   o3: o3,
