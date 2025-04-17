@@ -320,11 +320,33 @@ function toOpenAIRole(role: Role): ChatCompletionRole {
 }
 
 function toOpenAiTool(tool: ToolDefinition): ChatCompletionTool {
+  let parameters;
+  if (tool.inputSchema !== null) {
+    if (typeof tool.inputSchema === 'string') {
+      try {
+        parameters = JSON.parse(tool.inputSchema);
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unknown parsing error';
+        throw new Error(
+          `Invalid JSON schema for function '${tool.name}': ${errorMessage}`
+        );
+      }
+    } else {
+      parameters = tool.inputSchema;
+    }
+
+    parameters.type = 'object';
+    parameters.properties = {
+      ...tool.inputSchema!.properties,
+    };
+  }
+
   return {
     type: 'function',
     function: {
       name: tool.name,
-      parameters: tool.inputSchema !== null ? tool.inputSchema : undefined,
+      parameters: parameters,
     },
   };
 }
