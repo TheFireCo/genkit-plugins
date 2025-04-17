@@ -32,6 +32,17 @@ const ai = genkit({
   model: gpt4o,
 });
 
+// Tool definition
+const tool = ai.defineTool(
+  {
+    name: 'myJoke',
+    description: 'useful when you need a joke to tell.',
+    inputSchema: z.string(),
+    outputSchema: z.string(),
+  },
+  async (input) => `haha Just kidding no joke about for you! got you`
+);
+
 export const jokeFlow = ai.defineFlow(
   {
     name: 'jokeFlow',
@@ -43,6 +54,22 @@ export const jokeFlow = ai.defineFlow(
       prompt: `tell me a joke about ${subject}`,
     });
     return llmResponse.text;
+  }
+);
+
+export const toolFlow = ai.defineFlow(
+  {
+    name: 'toolFlow',
+    inputSchema: z.string(),
+    outputSchema: z.string(),
+  },
+  async (subject) => {
+    const responseLlm = await ai.generate({
+      prompt: `tell me a joke about ${subject}`,
+      tools: [tool],
+    });
+
+    return responseLlm.text;
   }
 );
 
