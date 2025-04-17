@@ -68,6 +68,40 @@ export const llama3x8b = modelRef({
   version: 'llama3-8b-8192',
 });
 
+export const llama4Maverick17b = modelRef({
+  name: 'groq/meta-llama/llama-4-maverick-17b-128e-instruct',
+  info: {
+    versions: ['meta-llama/llama-4-maverick-17b-128e-instruct'],
+    label: 'Llama Guard 4 Maverick 17B Instruct',
+    supports: {
+      multiturn: true,
+      tools: false, // Could be true but not recommended
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'meta-llama/llama-4-maverick-17b-128e-instruct',
+});
+
+export const llama4MScout17b = modelRef({
+  name: 'groq/meta-llama/llama-4-scout-17b-16e-instruct',
+  info: {
+    versions: ['meta-llama/llama-4-scout-17b-16e-instruct'],
+    label: 'Llama Guard 4 Scout 17B Instruct',
+    supports: {
+      multiturn: true,
+      tools: false, // Could be true but not recommended
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
+    },
+  },
+  configSchema: GroqConfigSchema,
+  version: 'meta-llama/llama-4-scout-17b-16e-instruct',
+});
+
 export const llamaGuard3x8b = modelRef({
   name: 'groq/llama-guard-3-8b',
   info: {
@@ -100,91 +134,6 @@ export const llama33x70bVersatile = modelRef({
   },
   configSchema: GroqConfigSchema,
   version: 'llama-3.3-70b-versatile',
-});
-
-export const llama33x70bSpecdec = modelRef({
-  name: 'groq/llama-3.3-70b-specdec',
-  info: {
-    versions: ['llama-3.3-70b-specdec'],
-    label: 'Llama 3.3 70B SpecDec',
-    supports: {
-      multiturn: true,
-      tools: false, // Could be true but not recommended
-      media: false,
-      systemRole: true,
-      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
-    },
-  },
-  configSchema: GroqConfigSchema,
-  version: 'llama-3.3-70b-specdec',
-});
-
-export const llama32x90bVisionPreview = modelRef({
-  name: 'groq/llama-3.2-90b-vision-preview',
-  info: {
-    versions: ['llama-3.2-90b-vision-preview'],
-    label: 'Llama 3.2 90B Vision Preview',
-    supports: {
-      multiturn: true,
-      tools: false, // Could be true but not recommended
-      media: false,
-      systemRole: true,
-      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
-    },
-  },
-  configSchema: GroqConfigSchema,
-  version: 'llama-3.2-90b-vision-preview',
-});
-
-export const llama32x11bVisionPreview = modelRef({
-  name: 'groq/llama-3.2-11b-vision-preview',
-  info: {
-    versions: ['llama-3.2-11b-vision-preview'],
-    label: 'Llama 3.2 11B Vision Preview',
-    supports: {
-      multiturn: true,
-      tools: false, // Could be true but not recommended
-      media: false,
-      systemRole: true,
-      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
-    },
-  },
-  configSchema: GroqConfigSchema,
-  version: 'llama-3.2-11b-vision-preview',
-});
-
-export const llama32x3bPreview = modelRef({
-  name: 'groq/llama-3.2-3b-preview',
-  info: {
-    versions: ['llama-3.2-3b-preview'],
-    label: 'Llama 3.2 3B Preview',
-    supports: {
-      multiturn: true,
-      tools: false, // Could be true but not recommended
-      media: false,
-      systemRole: true,
-      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
-    },
-  },
-  configSchema: GroqConfigSchema,
-  version: 'llama-3.2-3b-preview',
-});
-
-export const llama32x1bPreview = modelRef({
-  name: 'groq/llama-3.2-1b-preview',
-  info: {
-    versions: ['llama-3.2-1b-preview'],
-    label: 'Llama 3.2 1B Preview',
-    supports: {
-      multiturn: true,
-      tools: false, // Could be true but not recommended
-      media: false,
-      systemRole: true,
-      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
-    },
-  },
-  configSchema: GroqConfigSchema,
-  version: 'llama-3.2-1b-preview',
 });
 
 export const llama31x8bInstant = modelRef({
@@ -224,11 +173,11 @@ export const llama3x70b = modelRef({
 });
 
 // Best at JSON mode
-export const mixtral8x7b = modelRef({
-  name: 'groq/mixtral-8x7b',
+export const mistralSaba = modelRef({
+  name: 'groq/mistral-saba-24b',
   info: {
-    versions: ['mixtral-8x7b-32768'],
-    label: 'Mixtral 8 7B',
+    versions: ['mistral-saba-24b'],
+    label: 'Mistral Saba 24B',
     supports: {
       multiturn: true,
       tools: false,
@@ -238,7 +187,7 @@ export const mixtral8x7b = modelRef({
     },
   },
   configSchema: GroqConfigSchema,
-  version: 'mixtral-8x7b-32768',
+  version: 'mistral-saba-24b',
 });
 
 // Runner up at JSON mode
@@ -259,11 +208,11 @@ export const gemma2x9b = modelRef({
   version: 'gemma2-9b-it',
 });
 
-export const qwen25x32b = modelRef({
-  name: 'groq/qwen-2.5-32b',
+export const qwenqwqx32b = modelRef({
+  name: 'groq/qwen-qwq-32b',
   info: {
-    versions: ['qwen-2.5-32b'],
-    label: 'Qwen 2.5 32B',
+    versions: ['qwen-qwq-32b'],
+    label: 'Qwen qwq 32B',
     supports: {
       multiturn: true,
       tools: true,
@@ -273,14 +222,14 @@ export const qwen25x32b = modelRef({
     },
   },
   configSchema: GroqConfigSchema,
-  version: 'qwen-2.5-32b',
+  version: 'qwen-qwq-32b',
 });
 
-export const qwen25coderx32b = modelRef({
-  name: 'groq/qwen-2.5-coder-32b',
+export const allam2x7b = modelRef({
+  name: 'groq/allam-2-7b',
   info: {
-    versions: ['qwen-2.5-coder-32b'],
-    label: 'Qwen 2.5 Coder 32B',
+    versions: ['allam-2-7b'],
+    label: 'Allam 2 7B',
     supports: {
       multiturn: true,
       tools: true,
@@ -290,24 +239,7 @@ export const qwen25coderx32b = modelRef({
     },
   },
   configSchema: GroqConfigSchema,
-  version: 'qwen-2.5-coder-32b',
-});
-
-export const deepseekR1DistillQwenx32b = modelRef({
-  name: 'groq/deepseek-r1-distill-qwen-32b',
-  info: {
-    versions: ['deepseek-r1-distill-qwen-32b'],
-    label: 'Deepseek R1 Distill Qwen 32B',
-    supports: {
-      multiturn: true,
-      tools: true,
-      media: false,
-      systemRole: true,
-      output: ['text', 'json'], // JSON mode does not support streaming or stop sequences
-    },
-  },
-  configSchema: GroqConfigSchema,
-  version: 'deepseek-r1-distill-qwen-32b',
+  version: 'allam-2-7b',
 });
 
 export const deepseekR1DistillLlamax70b = modelRef({
@@ -332,18 +264,14 @@ export const SUPPORTED_GROQ_MODELS = {
   'llama-3-70b': llama3x70b,
   'llama-guard-3-8b': llamaGuard3x8b,
   'llama-3.3-70b-versatile': llama33x70bVersatile,
-  'llama-3.3-70b-specdec': llama33x70bSpecdec,
-  'llama-3.2-90b-vision-preview': llama32x90bVisionPreview,
-  'llama-3.2-11b-vision-preview': llama32x11bVisionPreview,
-  'llama-3.2-3b-preview': llama32x3bPreview,
-  'llama-3.2-1b-preview': llama32x1bPreview,
   'llama-3.1-8b-instant': llama31x8bInstant,
-  'mixtral-8-7b': mixtral8x7b,
+  'meta-llama/llama-4-maverick-17b-128e-instruct': llama4Maverick17b,
+  'meta-llama/llama-4-scout-17b-16e-instruct': llama4MScout17b,
+  'mistral-saba-24b': mistralSaba,
   'gemma2-9b': gemma2x9b,
-  'qwen-2.5-32b': qwen25x32b,
-  'qwen-2.5-coder-32b': qwen25coderx32b,
-  'deepseek-r1-distill-qwen-32b': deepseekR1DistillQwenx32b,
+  'qwen-qwq-32b': qwenqwqx32b,
   'deepseek-r1-distill-llama-70b': deepseekR1DistillLlamax70b,
+  'allam-2-7b': allam2x7b,
 };
 
 /**
@@ -490,6 +418,7 @@ const FINISH_REASON_MAP: Record<
   length: 'length',
   tool_calls: 'stop',
   function_call: 'stop',
+  content_filter: 'length',
 };
 
 /**
@@ -699,7 +628,10 @@ export function groqModel(ai: Genkit, name: string, client: Groq) {
                   (tc) => tc.type === 'function' && !!tc.function && !!tc.id
                 ) as ChatCompletionMessageToolCall[] | undefined,
               },
-              finish_reason: choice.finish_reason || 'stop',
+              finish_reason:
+                choice.finish_reason === 'content_filter'
+                  ? 'stop'
+                  : choice.finish_reason || 'stop',
             });
             const c = fromGroqChunkChoice(choice);
             streamingCallback({

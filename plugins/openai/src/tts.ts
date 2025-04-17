@@ -61,9 +61,25 @@ export const tts1Hd = modelRef({
   configSchema: TTSConfigSchema,
 });
 
+export const gpt4oMiniTts = modelRef({
+  name: 'openai/gpt-4o-mini-tts',
+  info: {
+    label: 'OpenAI - GPT-4o Mini Text-to-speech',
+    supports: {
+      media: false,
+      output: ['media'],
+      multiturn: false,
+      systemRole: false,
+      tools: false,
+    },
+  },
+  configSchema: TTSConfigSchema,
+});
+
 export const SUPPORTED_TTS_MODELS = {
   'tts-1': tts1,
   'tts-1-hd': tts1Hd,
+  'gpt-4o-mini-tts': gpt4oMiniTts,
 };
 
 export const RESPONSE_FORMAT_MEDIA_TYPES = {

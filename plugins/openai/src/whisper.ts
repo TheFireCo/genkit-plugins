@@ -46,6 +46,21 @@ export const whisper1 = modelRef({
   configSchema: Whisper1ConfigSchema,
 });
 
+export const gpt4oTranscribe = modelRef({
+  name: 'openai/gpt-4o-transcribe',
+  info: {
+    label: 'OpenAI - GPT-4o Transcribe',
+    supports: {
+      media: true,
+      output: ['text', 'json'],
+      multiturn: false,
+      systemRole: false,
+      tools: false,
+    },
+  },
+  configSchema: Whisper1ConfigSchema,
+});
+
 function toWhisper1Request(
   request: GenerateRequest<typeof Whisper1ConfigSchema>
 ): TranscriptionCreateParams {
@@ -117,20 +132,33 @@ function toGenerateResponse(
   };
 }
 
-export function whisper1Model(
+export const SUPPORTED_STT_MODELS = {
+  'gpt-4o-transcribe': gpt4oTranscribe,
+  'whisper-1': whisper1,
+};
+
+export function sttModel(
   ai: Genkit,
+  name: string,
   client: OpenAI
 ): ModelAction<typeof Whisper1ConfigSchema> {
+  const modelId = `openai/${name}`;
+  const model = SUPPORTED_STT_MODELS[name];
+  if (!model) throw new Error(`Unsupported model: ${name}`);
+
   return ai.defineModel<typeof Whisper1ConfigSchema>(
     {
-      name: whisper1.name,
-      ...whisper1.info,
-      configSchema: whisper1.configSchema,
+      name: modelId,
+      ...model.info,
+      configSchema: model.configSchema,
     },
     async (request) => {
-      const result = await client.audio.transcriptions.create(
-        toWhisper1Request(request)
-      );
+      const params = toWhisper1Request(request);
+      // Explicitly setting stream to false ensures we use the non-streaming overload
+      const result = await client.audio.transcriptions.create({
+        ...params,
+        stream: false,
+      });
       return toGenerateResponse(result);
     }
   );
