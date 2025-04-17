@@ -40,12 +40,26 @@ import {
   gptModel,
   o1,
   o1Mini,
+  o1Pro,
   o1Preview,
+  o3,
   o3Mini,
+  o4Mini,
   SUPPORTED_GPT_MODELS,
 } from './gpt.js';
-import { SUPPORTED_TTS_MODELS, tts1, tts1Hd, ttsModel } from './tts.js';
-import { whisper1, whisper1Model } from './whisper.js';
+import {
+  SUPPORTED_TTS_MODELS,
+  tts1,
+  tts1Hd,
+  gpt4oMiniTts,
+  ttsModel,
+} from './tts.js';
+import {
+  whisper1,
+  gpt4oTranscribe,
+  SUPPORTED_STT_MODELS,
+  sttModel,
+} from './whisper.js';
 export {
   dallE3,
   gpt35Turbo,
@@ -61,13 +75,18 @@ export {
   o1,
   o1Mini,
   o1Preview,
+  o1Pro,
+  o3,
   o3Mini,
+  o4Mini,
   textEmbedding3Large,
   textEmbedding3Small,
   textEmbeddingAda002,
   tts1,
   tts1Hd,
+  gpt4oMiniTts,
   whisper1,
+  gpt4oTranscribe,
 };
 
 export interface PluginOptions extends Partial<ClientOptions> {
@@ -138,7 +157,9 @@ export const openAI = (options?: PluginOptions) =>
     });
 
     dallE3Model(ai, client);
-    whisper1Model(ai, client);
+    for (const name of Object.keys(SUPPORTED_STT_MODELS)) {
+      sttModel(ai, name, client);
+    }
     for (const name of Object.keys(SUPPORTED_TTS_MODELS)) {
       ttsModel(ai, name, client);
     }

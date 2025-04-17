@@ -24,7 +24,7 @@
   "author": "TheFireCo",
   "license": "Apache-2.0",
   "dependencies": {
-    "openai": "^4.47.1"
+    "openai": "^4.95.0"
   },
   "peerDependencies": {
     "genkit": "^0.9.0 || ^1.0.0"
