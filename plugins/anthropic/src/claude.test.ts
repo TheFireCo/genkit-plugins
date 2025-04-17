@@ -312,6 +312,7 @@ describe('toAnthropicMessages', () => {
               {
                 text: 'hi',
                 type: 'text',
+                citations: null,
               },
             ],
             role: 'user',
@@ -321,6 +322,7 @@ describe('toAnthropicMessages', () => {
               {
                 text: 'how can I help you?',
                 type: 'text',
+                citations: null,
               },
             ],
             role: 'assistant',
@@ -330,6 +332,7 @@ describe('toAnthropicMessages', () => {
               {
                 text: 'I am testing',
                 type: 'text',
+                citations: null,
               },
             ],
             role: 'user',
@@ -351,6 +354,7 @@ describe('toAnthropicMessages', () => {
               {
                 text: 'hi',
                 type: 'text',
+                citations: null,
               },
             ],
             role: 'user',
@@ -382,6 +386,7 @@ describe('toAnthropicMessages', () => {
               {
                 text: 'describe the following image:',
                 type: 'text',
+                citations: null,
               },
               {
                 source: {
@@ -450,6 +455,7 @@ describe('fromAnthropicContentBlockChunk', () => {
         content_block: {
           type: 'text',
           text: 'Hello, World!',
+          citations: null,
         },
       },
       expectedOutput: { text: 'Hello, World!' },
@@ -561,11 +567,14 @@ describe('fromAnthropicResponse', () => {
           {
             type: 'text',
             text: 'Tell a joke about dogs.',
+            citations: null,
           },
         ],
         usage: {
           input_tokens: 10,
           output_tokens: 20,
+          cache_creation_input_tokens: null,
+          cache_read_input_tokens: null,
         },
       },
       expectedOutput: {
@@ -606,6 +615,8 @@ describe('fromAnthropicResponse', () => {
         usage: {
           input_tokens: 10,
           output_tokens: 20,
+          cache_creation_input_tokens: null,
+          cache_read_input_tokens: null,
         },
       },
       expectedOutput: {
@@ -673,6 +684,7 @@ describe('toAnthropicRequestBody', () => {
               {
                 text: 'Tell a joke about dogs.',
                 type: 'text',
+                citations: null,
               },
             ],
             role: 'user',
@@ -706,6 +718,7 @@ describe('toAnthropicRequestBody', () => {
               {
                 text: 'Tell a joke about dogs.',
                 type: 'text',
+                citations: null,
               },
             ],
             role: 'user',
@@ -739,6 +752,7 @@ describe('toAnthropicRequestBody', () => {
               {
                 text: 'Tell a joke about dogs.',
                 type: 'text',
+                citations: null,
               },
             ],
             role: 'user',
@@ -772,6 +786,7 @@ describe('toAnthropicRequestBody', () => {
               {
                 text: 'Tell a joke about dogs.',
                 type: 'text',
+                citations: null,
               },
             ],
             role: 'user',
@@ -805,6 +820,7 @@ describe('toAnthropicRequestBody', () => {
               {
                 text: 'Tell a joke about dogs.',
                 type: 'text',
+                citations: null,
               },
             ],
             role: 'user',

@@ -260,8 +260,7 @@ export function toAnthropicToolResponseContent(
           type: 'base64',
           data: base64Data.data,
           media_type:
-            ((part.toolResponse?.output as Media)
-              ?.contentType as ImageBlockParam.Source['media_type']) ??
+            (part.toolResponse?.output as Media)?.contentType ??
             base64Data.contentType,
         },
       }
@@ -283,6 +282,7 @@ export function toAnthropicMessageContent(
     return {
       type: 'text',
       text: part.text,
+      citations: null,
     };
   }
   if (part.media) {
@@ -377,15 +377,24 @@ export function toAnthropicTool(tool: ToolDefinition): Tool {
  *          start or delta, otherwise undefined.
  */
 function fromAnthropicContentBlock(contentBlock: ContentBlock): Part {
-  return contentBlock.type === 'tool_use'
-    ? {
-        toolRequest: {
-          ref: contentBlock.id,
-          name: contentBlock.name,
-          input: contentBlock.input,
-        },
-      }
-    : { text: contentBlock.text };
+  if (contentBlock.type === 'tool_use') {
+    return {
+      toolRequest: {
+        ref: contentBlock.id,
+        name: contentBlock.name,
+        input: contentBlock.input,
+      },
+    };
+  } else if (contentBlock.type === 'text') {
+    return { text: contentBlock.text };
+  } else if (contentBlock.type === 'thinking') {
+    return { text: contentBlock.thinking };
+  } else if (contentBlock.type === 'redacted_thinking') {
+    return { text: contentBlock.data };
+  } else {
+    // Handle other content block types
+    return { text: '' };
+  }
 }
 
 /**
@@ -475,16 +484,16 @@ export function toAnthropicRequestBody(
   const { system, messages } = toAnthropicMessages(request.messages);
   const mappedModelName = request.config?.version ?? model.version ?? modelName;
   const body: MessageCreateParams = {
-    system: cacheSystemPrompt
-      ? [
-          {
-            type: 'text',
-            text: system,
-            // @ts-expect-error cache_control is in beta
-            cache_control: { type: 'ephemeral' },
-          },
-        ]
-      : system,
+    system:
+      cacheSystemPrompt && system
+        ? [
+            {
+              type: 'text',
+              text: system,
+              cache_control: { type: 'ephemeral' },
+            },
+          ]
+        : system,
     messages,
     tools: request.tools?.map(toAnthropicTool),
     max_tokens: request.config?.maxOutputTokens ?? 4096,
