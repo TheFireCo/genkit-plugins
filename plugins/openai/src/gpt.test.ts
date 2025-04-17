@@ -1379,4 +1379,56 @@ describe('gptModel', () => {
       expect.any(Function)
     );
   });
+
+  it('should correctly define gpt-4.1, gpt-4.1-mini, and gpt-4.1-nano', () => {
+    jest.spyOn(ai, 'defineModel').mockImplementation((() => ({})) as any);
+    gptModel(ai, 'gpt-4.1', {} as OpenAI);
+    expect(ai.defineModel).toHaveBeenCalledWith(
+      {
+        name: 'openai/gpt-4.1',
+        ...require('./gpt').gpt41.info,
+        configSchema: require('./gpt').gpt41.configSchema,
+      },
+      expect.any(Function)
+    );
+    gptModel(ai, 'gpt-4.1-mini', {} as OpenAI);
+    expect(ai.defineModel).toHaveBeenCalledWith(
+      {
+        name: 'openai/gpt-4.1-mini',
+        ...require('./gpt').gpt41Mini.info,
+        configSchema: require('./gpt').gpt41Mini.configSchema,
+      },
+      expect.any(Function)
+    );
+    gptModel(ai, 'gpt-4.1-nano', {} as OpenAI);
+    expect(ai.defineModel).toHaveBeenCalledWith(
+      {
+        name: 'openai/gpt-4.1-nano',
+        ...require('./gpt').gpt41Nano.info,
+        configSchema: require('./gpt').gpt41Nano.configSchema,
+      },
+      expect.any(Function)
+    );
+  });
+});
+
+// Additional test to ensure toOpenAiRequestBody works for new models
+
+describe('toOpenAiRequestBody for new GPT-4.1 variants', () => {
+  const baseRequest = { messages: [] } as GenerateRequest<
+    typeof OpenAiConfigSchema
+  >;
+  it('should not throw for gpt-4.1', () => {
+    expect(() => toOpenAiRequestBody('gpt-4.1', baseRequest)).not.toThrow();
+  });
+  it('should not throw for gpt-4.1-mini', () => {
+    expect(() =>
+      toOpenAiRequestBody('gpt-4.1-mini', baseRequest)
+    ).not.toThrow();
+  });
+  it('should not throw for gpt-4.1-nano', () => {
+    expect(() =>
+      toOpenAiRequestBody('gpt-4.1-nano', baseRequest)
+    ).not.toThrow();
+  });
 });

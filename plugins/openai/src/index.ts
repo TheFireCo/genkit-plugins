@@ -15,8 +15,9 @@
  */
 import type { Genkit } from 'genkit';
 import { genkitPlugin } from 'genkit/plugin';
-import { OpenAI, ClientOptions } from 'openai';
+import { ClientOptions, OpenAI } from 'openai';
 
+import { ModelInfo } from 'genkit/model';
 import { dallE3, dallE3Model } from './dalle.js';
 import {
   openaiEmbedder,
@@ -27,41 +28,46 @@ import {
 } from './embedder.js';
 import {
   gpt35Turbo,
-  gpt45,
   gpt4,
-  gpt4Turbo,
-  gpt4Vision,
+  gpt41,
+  gpt41Mini,
+  gpt41Nano,
+  gpt45,
   gpt4o,
   gpt4oMini,
+  gpt4Turbo,
+  gpt4Vision,
   gptModel,
   o1,
-  o1Preview,
   o1Mini,
+  o1Preview,
   o3Mini,
   SUPPORTED_GPT_MODELS,
 } from './gpt.js';
-import { SUPPORTED_TTS_MODELS, ttsModel, tts1, tts1Hd } from './tts.js';
+import { SUPPORTED_TTS_MODELS, tts1, tts1Hd, ttsModel } from './tts.js';
 import { whisper1, whisper1Model } from './whisper.js';
-import { ModelInfo } from 'genkit/model';
 export {
   dallE3,
   gpt35Turbo,
-  gpt45,
   gpt4,
-  gpt4Turbo,
-  gpt4Vision,
+  gpt41,
+  gpt41Mini,
+  gpt41Nano,
+  gpt45,
   gpt4o,
   gpt4oMini,
+  gpt4Turbo,
+  gpt4Vision,
   o1,
-  o1Preview,
   o1Mini,
+  o1Preview,
   o3Mini,
-  tts1,
-  tts1Hd,
-  whisper1,
   textEmbedding3Large,
   textEmbedding3Small,
   textEmbeddingAda002,
+  tts1,
+  tts1Hd,
+  whisper1,
 };
 
 export interface PluginOptions extends Partial<ClientOptions> {
