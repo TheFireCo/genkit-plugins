@@ -9,6 +9,7 @@
     "build": "tsc",
     "build:watch": "tsc --watch",
     "genkit:dev": "cross-env GENKIT_ENV=dev npm run dev",
+    "genkit:start": "cross-env GENKIT_ENV=dev genkit start -- tsx --watch src/index.ts",
     "dev": "export GENKIT_RUNTIME_ID=$(openssl rand -hex 8) && node lib/index.js 2>&1"
   },
   "keywords": [],

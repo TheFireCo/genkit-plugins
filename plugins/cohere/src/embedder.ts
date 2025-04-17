@@ -51,6 +51,18 @@ export type TextEmbeddingGeckoConfig = z.infer<
 
 export const TextEmbeddingInputSchema = z.string();
 
+export const embedMultilingual4 = embedderRef({
+  name: 'cohere/embed-v4.0',
+  configSchema: TextEmbeddingConfigSchema,
+  info: {
+    dimensions: 1024,
+    label: 'Cohere - Embed Multilingual v4.0',
+    supports: {
+      input: ['text'],
+    },
+  },
+});
+
 export const embedEnglish3 = embedderRef({
   name: 'cohere/embed-english-v3.0',
   configSchema: TextEmbeddingConfigSchema,
@@ -100,6 +112,7 @@ export const embedMultilingualLight3 = embedderRef({
 });
 
 export const SUPPORTED_EMBEDDING_MODELS = {
+  'embed-v4.0': embedMultilingual4,
   'embed-english-v3.0': embedEnglish3,
   'embed-multilingual-v3.0': embedMultilingual3,
   'embed-english-light-v3.0': embedEnglishLight3,

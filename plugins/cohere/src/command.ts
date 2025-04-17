@@ -60,7 +60,7 @@ export const CohereConfigSchema = GenerationCommonConfigSchema.extend({
 export const commandRPlus = modelRef({
   name: 'cohere/command-r-plus',
   info: {
-    versions: ['command-r-plus'],
+    versions: ['command-r-plus', 'command-r-plus-04-2024'],
     label: 'Cohere - Command R Plus',
     supports: {
       multiturn: true,
@@ -76,8 +76,29 @@ export const commandRPlus = modelRef({
 export const commandR = modelRef({
   name: 'cohere/command-r',
   info: {
-    versions: ['command-r'],
+    versions: [
+      'command-r',
+      'command-r7b-12-2024',
+      'command-r-08-2024',
+      'command-r-03-2024',
+    ],
     label: 'Cohere - Command R',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: false,
+      systemRole: true,
+      output: ['text'],
+    },
+  },
+  configSchema: CohereConfigSchema,
+});
+
+export const commandA = modelRef({
+  name: 'cohere/command-a',
+  info: {
+    versions: ['command-a-03-2025'],
+    label: 'Cohere - Command A',
     supports: {
       multiturn: true,
       tools: true,
@@ -122,6 +143,7 @@ export const commandLight = modelRef({
 });
 
 export const SUPPORTED_COMMAND_MODELS = {
+  'command-a': commandA,
   'command-r-plus': commandRPlus,
   'command-r': commandR,
   command: command,
