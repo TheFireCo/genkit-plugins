@@ -1,6 +1,6 @@
 {
   "name": "genkit-plugins-examples",
-  "version": "0.21.1",
+  "version": "0.22.0",
   "description": "",
   "main": "lib/index.js",
   "private": true,
