@@ -18,13 +18,13 @@ import { startFlowServer } from '@genkit-ai/express';
 import dotenv from 'dotenv';
 import { GenerationCommonConfigSchema, genkit, z } from 'genkit';
 import { ModelInfo } from 'genkit/model';
-import openAI, { gpt4o, textEmbeddingAda002 } from 'genkitx-openai';
+import openAI, { gpt41, textEmbeddingAda002 } from 'genkitx-openai';
 
 dotenv.config();
 
 const ai = genkit({
   plugins: [openAI({ apiKey: process.env.OPENAI_API_KEY })],
-  model: gpt4o,
+  model: gpt41,
 });
 
 export const jokeFlow = ai.defineFlow(
