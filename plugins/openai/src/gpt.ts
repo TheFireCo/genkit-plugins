@@ -61,6 +61,14 @@ const MODELS_SUPPORTING_OPENAI_RESPONSE_FORMAT = [
   'gpt-3.5-turbo',
   'gpt-3.5-turbo-1106',
   'o1-preview',
+  'o1-mini',
+  'o1',
+  'o3',
+  'o3-mini',
+  'o4-mini',
+  'gpt-4.1',
+  'gpt-4.1-mini',
+  'gpt-4.1-nano',
 ];
 
 export const OpenAiConfigSchema = GenerationCommonConfigSchema.extend({
@@ -150,7 +158,7 @@ export const o1 = modelRef({
     supports: {
       multiturn: true,
       tools: true,
-      media: false,
+      media: true,
       systemRole: false,
       output: ['text', 'json'],
     },
@@ -166,7 +174,7 @@ export const o3 = modelRef({
     supports: {
       multiturn: true,
       tools: true,
-      media: false,
+      media: true,
       systemRole: false,
       output: ['text', 'json'],
     },
@@ -198,7 +206,7 @@ export const o4Mini = modelRef({
     supports: {
       multiturn: true,
       tools: true,
-      media: false,
+      media: true,
       systemRole: false,
       output: ['text', 'json'],
     },
@@ -284,7 +292,7 @@ export const gpt41 = modelRef({
     supports: {
       multiturn: true,
       tools: true,
-      media: false,
+      media: true,
       systemRole: true,
       output: ['text', 'json'],
     },
@@ -300,7 +308,7 @@ export const gpt41Mini = modelRef({
     supports: {
       multiturn: true,
       tools: true,
-      media: false,
+      media: true,
       systemRole: true,
       output: ['text', 'json'],
     },
@@ -316,7 +324,7 @@ export const gpt41Nano = modelRef({
     supports: {
       multiturn: true,
       tools: true,
-      media: false,
+      media: true,
       systemRole: true,
       output: ['text', 'json'],
     },

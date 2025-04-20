@@ -50,6 +50,15 @@ const MODELS_SUPPORTING_OPENAI_RESPONSE_FORMAT = [
   'gpt-3.5-turbo',
   'gpt-3.5-turbo-instruct',
   'gpt-3.5-turbo-26k',
+  'gpt-4.1-mini',
+  'gpt-4.1-nano',
+  'gpt-4.1',
+  'o3',
+  'o3-mini',
+  'o4-mini',
+  'o1',
+  'o1-mini',
+  'o1-preview',
 ];
 
 export const OpenAiConfigSchema = GenerationCommonConfigSchema.extend({
@@ -215,7 +224,7 @@ export const o1Preview = modelRef({
     supports: {
       multiturn: true,
       tools: true,
-      media: false,
+      media: true,
       systemRole: true,
       output: ['text'],
     },
@@ -231,7 +240,7 @@ export const o3 = modelRef({
     supports: {
       multiturn: true,
       tools: true,
-      media: false,
+      media: true,
       systemRole: true,
       output: ['text'],
     },
@@ -247,7 +256,7 @@ export const o4Mini = modelRef({
     supports: {
       multiturn: true,
       tools: true,
-      media: false,
+      media: true,
       systemRole: true,
       output: ['text'],
     },
