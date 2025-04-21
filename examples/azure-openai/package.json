@@ -1,6 +1,6 @@
 {
   "name": "genkitx-azure-openai-example",
-  "version": "0.22.0",
+  "version": "0.22.1",
   "description": "",
   "main": "lib/index.js",
   "private": true,
