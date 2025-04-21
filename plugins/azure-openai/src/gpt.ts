@@ -470,7 +470,8 @@ const finishReasonMap: Record<
 function fromOpenAiToolCall(
   toolCall:
     | ChatCompletionMessageToolCall
-    | ChatCompletionChunk.Choice.Delta.ToolCall
+    | ChatCompletionChunk.Choice.Delta.ToolCall,
+  choice: ChatCompletion.Choice | ChatCompletionChunk.Choice
 ) {
   if (!toolCall.function) {
     throw Error(
@@ -478,20 +479,32 @@ function fromOpenAiToolCall(
     );
   }
   const f = toolCall.function;
-  return {
-    toolRequest: {
-      name: f.name,
-      ref: toolCall.id,
-      input: f.arguments ? JSON.parse(f.arguments) : f.arguments,
-    },
-  };
+  if (choice.finish_reason === 'tool_calls') {
+    return {
+      toolRequest: {
+        name: f.name,
+        ref: toolCall.id,
+        input: f.arguments ? JSON.parse(f.arguments) : f.arguments,
+      },
+    };
+  } else {
+    return {
+      toolRequest: {
+        name: f.name,
+        ref: toolCall.id,
+        input: '',
+      },
+    };
+  }
 }
 
 function fromOpenAiChoice(
   choice: ChatCompletion['choices'][0],
   jsonMode = false
 ): CandidateData {
-  const toolRequestParts = choice.message.tool_calls?.map(fromOpenAiToolCall);
+  const toolRequestParts = choice.message.tool_calls?.map((toolCall) =>
+    fromOpenAiToolCall(toolCall, choice)
+  );
   return {
     index: choice.index,
     finishReason: finishReasonMap[choice.finish_reason] || 'other',
@@ -515,7 +528,9 @@ function fromOpenAiChunkChoice(
   choice: ChatCompletionChunk['choices'][0],
   jsonMode = false
 ): CandidateData {
-  const toolRequestParts = choice.delta.tool_calls?.map(fromOpenAiToolCall);
+  const toolRequestParts = choice.delta.tool_calls?.map((toolCall) =>
+    fromOpenAiToolCall(toolCall, choice)
+  );
   return {
     index: choice.index,
     finishReason: choice.finish_reason
