@@ -33,14 +33,33 @@ const ai = genkit({
 });
 
 // Tool definition
-const tool = ai.defineTool(
+const getWeather = ai.defineTool(
   {
-    name: 'myJoke',
-    description: 'useful when you need a joke to tell.',
-    inputSchema: z.string(),
-    outputSchema: z.string(),
+    name: 'getWeather',
+    description: 'Gets the current weather in a given location',
+    inputSchema: z.object({
+      location: z
+        .string()
+        .describe('The location to get the current weather for'),
+    }),
+    outputSchema: z.object({
+      temperature: z
+        .number()
+        .describe('The current temperature in degrees Fahrenheit'),
+      condition: z
+        .enum(['sunny', 'cloudy', 'rainy', 'snowy'])
+        .describe('The current weather condition'),
+    }),
   },
-  async (input) => `haha Just kidding no joke about for you! got you`
+  async ({ location }) => {
+    // Fake weather data
+    const randomTemp = Math.floor(Math.random() * 30) + 50; // Random temp between 50 and 80
+    const conditions = ['sunny', 'cloudy', 'rainy', 'snowy'] as const;
+    const randomCondition =
+      conditions[Math.floor(Math.random() * conditions.length)];
+
+    return { temperature: randomTemp, condition: randomCondition };
+  }
 );
 
 export const jokeFlow = ai.defineFlow(
@@ -64,12 +83,20 @@ export const toolFlow = ai.defineFlow(
     outputSchema: z.string(),
   },
   async (subject) => {
-    const responseLlm = await ai.generate({
-      prompt: `tell me a joke about ${subject}`,
-      tools: [tool],
+    const { response, stream } = ai.generateStream({
+      model: gpt4o,
+      prompt: `What is the weather like in ${subject}?`,
+      tools: [getWeather],
     });
 
-    return responseLlm.text;
+    for await (const chunk of stream) {
+      // Here, you could process the chunk in some way before sending it to
+      // the output stream via streamingCallback(). In this example, we output
+      // the text of the chunk, unmodified.
+      console.log(chunk.text);
+    }
+
+    return (await response).text;
   }
 );
 
