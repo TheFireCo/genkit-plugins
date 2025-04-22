@@ -19,8 +19,8 @@ import type { ModelAction } from 'genkit/model';
 import { modelRef } from 'genkit/model';
 import type AzureOpenAI from 'openai';
 import {
-  type TranscriptionCreateParams,
   type Transcription,
+  type TranscriptionCreateParamsNonStreaming,
 } from 'openai/resources/audio/index.mjs';
 
 export const Whisper1ConfigSchema = GenerationCommonConfigSchema.extend({
@@ -48,7 +48,7 @@ export const whisper1 = modelRef({
 
 function toWhisper1Request(
   request: GenerateRequest<typeof Whisper1ConfigSchema>
-): TranscriptionCreateParams {
+): TranscriptionCreateParamsNonStreaming {
   const message = new Message(request.messages[0]);
   const media = message.media;
   if (!media?.url) {
@@ -63,7 +63,7 @@ function toWhisper1Request(
       media.contentType ??
       media.url.slice('data:'.length, media.url.indexOf(';')),
   });
-  const options: TranscriptionCreateParams = {
+  const options: TranscriptionCreateParamsNonStreaming = {
     model: 'whisper-1',
     file: mediaFile,
     prompt: message.text,
