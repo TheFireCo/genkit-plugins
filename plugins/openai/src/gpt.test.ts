@@ -1350,6 +1350,9 @@ describe('gptRunner', () => {
     expect(openaiClient.beta.chat.completions.stream).toHaveBeenCalledWith({
       model: 'gpt-4o',
       stream: true,
+      stream_options: {
+        include_usage: true,
+      },
     });
   });
 });
