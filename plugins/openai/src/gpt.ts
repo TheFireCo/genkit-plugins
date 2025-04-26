@@ -724,6 +724,9 @@ export function gptRunner(name: string, client: OpenAI) {
       const stream = client.beta.chat.completions.stream({
         ...body,
         stream: true,
+        stream_options: {
+          include_usage: true,
+        },
       });
       for await (const chunk of stream) {
         chunk.choices?.forEach((chunk) => {
