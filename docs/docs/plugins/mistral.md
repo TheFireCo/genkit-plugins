@@ -116,6 +116,50 @@ export const ocrFlow = ai.defineFlow(
 );
 ```
 
+### Adding a model
+
+To add a new model, you can import it from `genkitx-mistral` and use it in the `generate` method:
+
+```typescript
+import { GenerationCommonConfigSchema, genkit } from 'genkit';
+import { modelRef } from 'genkit/model';
+import mistral from 'genkitx-mistral';
+
+export const customLarge2411 = modelRef({
+  name: 'mistral/mistral-large-2411',
+  info: {
+    versions: ['mistral-large-2411'],
+    label: 'Mistral - Mistral Large 2411',
+    supports: {
+      multiturn: true,
+      tools: true,
+      media: false,
+      systemRole: true,
+      output: ['text', 'json'],
+    },
+  },
+  configSchema: GenerationCommonConfigSchema,
+});
+const ai = genkit({
+  plugins: [
+    mistral({
+      apiKey: process.env.CLIENT_ID as string,
+      serverURL: process.env.MISTRAL_ENDPOINT as string,
+      customModels: {
+        'mistral-large-2411': customLarge2411,
+      },
+    }),
+  ],
+  model: customLarge2411,
+});
+
+const response = await ai.generate({
+  prompt: 'Tell me a joke.',
+});
+
+console.log(response.text);
+```
+
 ### Within a flow
 
 ```typescript
