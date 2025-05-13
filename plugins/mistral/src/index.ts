@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Genkit } from 'genkit';
+import { type GenerationCommonConfigSchema, Genkit, type ModelReference } from 'genkit';
 import { genkitPlugin } from 'genkit/plugin';
 import { Mistral, SDKOptions } from '@mistralai/mistralai';
 import { mistralEmbedder, SUPPORTED_EMBEDDING_MODELS } from './embedders';
@@ -42,7 +42,44 @@ export { ocr } from './ocr';
 
 export { mistralembed } from './embedders';
 
-export interface PluginOptions extends SDKOptions {}
+export interface PluginOptions extends SDKOptions {
+  /**
+   * Additional models references that the user wants to add to the plugin.
+   * These models should be created with the `modelRef` function and then passed in here.
+   * @example
+   * ```ts
+   * const customModel = modelRef({
+   *   name: 'mistral/custom-model',
+   *   info: {
+   *     versions: ['custom-model'],
+   *     label: 'Custom Model',
+   *     supports: {
+   *       multiturn: true,
+   *       tools: false,
+   *       media: false,
+   *       systemRole: true,
+   *       output: ['text', 'json'],
+   *     },
+   *   },
+   *   configSchema: GenerationCommonConfigSchema,
+   * });
+   *
+   * const ai = genkit({
+   *  plugins: [
+   *   mistral({
+   *     apiKey: process.env.MISTRAL_API_KEY,
+   *     serverURL: process.env.MISTRAL_ENDPOINT,
+   *     customModels: {
+   *      'custom-model': customModel,
+   *     },
+   *   }),
+   *  ],
+   * });
+   * ```
+   *
+   */
+  customModels?: Record<string, ModelReference<typeof GenerationCommonConfigSchema>>;
+}
 
 export const mistral = (options?: PluginOptions) =>
   genkitPlugin('mistral', async (ai: Genkit) => {
@@ -51,6 +88,16 @@ export const mistral = (options?: PluginOptions) =>
       throw new Error(
         'Please pass in the API key or set the MISTRAL_API_KEY environment variable'
       );
+    }
+
+    // If we have custom models, add them to the SUPPORTED_MISTRAL_MODELS
+    let customModels = options?.customModels || {};
+    if (Object.keys(customModels).length > 0) {
+      for (const [name, model] of Object.entries(customModels)) {
+        if (model) {
+          SUPPORTED_MISTRAL_MODELS[name] = model;
+        }
+      }
     }
 
     const client = new Mistral(options);
