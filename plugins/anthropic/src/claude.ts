@@ -84,7 +84,7 @@ export const claude4Sonnet = modelRef({
     },
   },
   configSchema: AnthropicConfigSchema,
-  version: 'claude-3-7-sonnet-latest',
+  version: 'claude-sonnet-4-20250514',
 });
 
 export const claude37Sonnet = modelRef({
