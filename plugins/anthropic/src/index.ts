@@ -19,6 +19,7 @@ import { genkitPlugin } from 'genkit/plugin';
 import Anthropic from '@anthropic-ai/sdk';
 
 import {
+  claude4Sonnet,
   claude37Sonnet,
   claude35Sonnet,
   claude3Opus,
@@ -30,6 +31,7 @@ import {
 } from './claude.js';
 
 export {
+  claude4Sonnet,
   claude37Sonnet,
   claude35Sonnet,
   claude3Opus,
