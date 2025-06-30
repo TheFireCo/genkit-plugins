@@ -20,6 +20,7 @@ import Anthropic from '@anthropic-ai/sdk';
 
 import {
   claude4Sonnet,
+  claude4Opus,
   claude37Sonnet,
   claude35Sonnet,
   claude3Opus,
@@ -32,6 +33,7 @@ import {
 
 export {
   claude4Sonnet,
+  claude4Opus,
   claude37Sonnet,
   claude35Sonnet,
   claude3Opus,
